@@ -20,6 +20,7 @@ type MySQL_Config struct {
 type Main_Config struct {
 	MySQL MySQL_Config
 	Static_Path string
+	Log_Path string
 }
 
 func init() {
@@ -54,6 +55,12 @@ func init() {
 
 	err = json.Unmarshal(buf, &config)
 	if err == nil {
+		// Set logger
+		log_config_str := `{"filename": "%s"}`
+		log_config := fmt.Sprintf(log_config_str, config.Log_Path)
+		beego.BeeLogger.SetLogger("file", log_config)
+		beego.SetLevel(beego.LevelTrace)
+
 		orm.RegisterDriver("mysql", orm.DR_MySQL)
 		// Init DB Connection
 		mc := config.MySQL
@@ -61,6 +68,7 @@ func init() {
 		orm.RegisterDataBase("default", "mysql", conn_uri, 30)
 	} else {
 		fmt.Println(err)
+		beego.Debug(err)
 	}
 
 	// Set static library path

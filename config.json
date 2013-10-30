@@ -6,5 +6,6 @@
 		"Database": "xblog"
 	},
 
-	"Static_Path": "/static"
+	"Static_Path": "/static",
+	"Log_Path": "logs/logs.log"
 }

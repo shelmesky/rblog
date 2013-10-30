@@ -45,13 +45,16 @@ func (this *ArticleController) Get() {
 	}
 
 	if err == orm.ErrNoRows {
+		beego.Debug(err)
 		this.Ctx.WriteString("查询不到")
 	} else if err == orm.ErrMissPK {
+		beego.Debug(err)
 		this.Ctx.WriteString("找不到主键")
 	} else {
 		if err == nil {
 			this.Ctx.WriteString(p.Body)
 		} else {
+			beego.Debug(err)
 			fmt.Println(err)
 		}
 	}
