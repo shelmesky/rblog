@@ -1,0 +1,10 @@
+{
+	"MySQL": {
+		"Host": "127.0.0.1",
+		"Username": "root",
+		"Password": "root",
+		"Database": "xblog"
+	},
+
+	"Static_Path": "/static"
+}
