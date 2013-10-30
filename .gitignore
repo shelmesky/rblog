@@ -1,2 +1,4 @@
 rblog
 *.log
+*.exe
+*.dat
