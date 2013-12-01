@@ -2,8 +2,8 @@
 	"MySQL": {
 		"Host": "127.0.0.1",
 		"Username": "root",
-		"Password": "root",
-		"Database": "xblog"
+		"Password": "4974481lmh",
+		"Database": "rblog"
 	},
 
 	"Static_Path": "/static",

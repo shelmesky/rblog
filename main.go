@@ -77,6 +77,8 @@ func init() {
 
 
 func main() {
+	orm.RunCommand()
+
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/admin", &controllers.AdminController{})
 	beego.Router("/post/:id([^/]+)", &controllers.ArticleController{})
