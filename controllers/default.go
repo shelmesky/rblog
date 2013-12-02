@@ -6,10 +6,29 @@ import (
 	"rblog/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/cache"
+	"crypto/md5"
+	"encoding/hex"
 )
 
 type MainController struct {
 	beego.Controller
+}
+
+
+var (
+	urllist cache.Cache
+)
+
+
+func init() {
+	// init cache
+	c, err := cache.NewCache("memory", `{"interval": 60}`)
+	if err != nil {
+		fmt.Println(err)
+		beego.Debug(err)
+	}
+	urllist = c
 }
 
 //HOME
@@ -64,6 +83,20 @@ func (this *ArticleController) Get() {
 		this.Ctx.WriteString("找不到主键")
 	} else {
 		if err == nil {
+			// query cache for article body
+			url := this.Ctx.Input.Uri()
+			hash := md5.New()
+			hash.Write([]byte(url))
+			var url_hash string
+			url_hash = hex.EncodeToString(hash.Sum(nil))
+			var body *models.Post
+			if ok := urllist.IsExist(url_hash); ok {
+				value := urllist.Get(url_hash)
+				if value != nil {
+					body = value.(*models.Post)
+				}
+			}
+			
 			var site_config models.SiteConfig
 			o.QueryTable(new(models.SiteConfig)).One(&site_config)
 			
@@ -73,9 +106,18 @@ func (this *ArticleController) Get() {
 			this.Data["AdminEmail"] = site_config.AdminEmail
 			this.Data["CopyRight"] = site_config.CopyRight
 			
-			this.Data["Title"] = p.Title
-			this.Data["CreatedTime"] = p.Time
-			this.Data["Body"] = p.Body
+			if body != nil {
+				beego.Debug("Hit cache for Post.")
+				this.Data["Body"] = body.Body
+				this.Data["Title"] = body.Title
+				this.Data["CreatedTime"] = body.Time
+			} else {
+				beego.Debug("Cache missed for Post.")
+				this.Data["Body"] = p.Body
+				this.Data["Title"] = p.Title
+				this.Data["CreatedTime"] = p.Time
+				urllist.Put(url_hash, &p, 3600)
+			}
 			this.TplNames = "post.html"
 			this.Render()
 		} else {
