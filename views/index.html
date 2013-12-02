@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Blog Home Template for Bootstrap 3</title>
+    <title>暗夜编码人</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.css" rel="stylesheet">
@@ -27,15 +27,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.php">Start Bootstrap</a>
+          <a class="navbar-brand" href="{{ .BlogUrl }}">{{ .BlogName }}</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/projects">Projects</a></li>
+            <li><a href="/concact">Contact</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container -->
@@ -45,45 +45,20 @@
 
       <div class="row">
         <div class="col-lg-8">
-        
+          {{ with .Posts }}
+		  {{ range . }}
           <!-- blog entry -->
-          <h1><a href="#">A Blog Home Template for Bootstrap 3</a></h1>
+          <h1><a href="/post/{{ .Shortname }}">{{ .Title }}</a></h1>
           <p class="lead">by <a href="index.php">Start Bootstrap</a></p>
           <hr>
-          <p><span class="glyphicon glyphicon-time"></span> Posted on August 28, 2013 at 10:00 PM</p>
+          <p><span class="glyphicon glyphicon-time"></span> {{ .Time }}</p>
           <hr>
-          <img src="http://placehold.it/900x300" class="img-responsive">
+          {{ .Body }}
           <hr>
-          <p>This is a very basic starter template for a blog homepage. It makes use of Glyphicons that are built into Bootstrap 3, and it makes use of the Pager at the bottom of the page. Make sure you get the Glyphicons files by downloading the entire <code>/fonts</code> directory that you can download in the source files or at <a href="http://getbootstrap.com">getbootstrap.com</a>. That directory has all of the web fonts in it which makes Glyphicons work.</p>
-          <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
-                    
-          <hr>
+		  {{ end }}
+		  {{ end }}
 
-          <!-- second blog entry -->
-          <h1><a href="#">Another Blog Post</a></h1>
-          <p class="lead">by <a href="index.php">Start Bootstrap</a></p>
-          <hr>
-          <p><span class="glyphicon glyphicon-time"></span> Posted on August 28, 2013 at 10:45 PM</p>
-          <hr>
-          <img src="http://placehold.it/900x300" class="img-responsive">
-          <hr>
-          <p>Science cuts two ways, of course; its products can be used for both good and evil. But there's no turning back from science. The early warnings about technological dangers also come from science...</p>
-          <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
-                    
-          <hr>
-
-          <!-- third blog entry -->
-          <h1><a href="#">Third Blog Post Entry</a></h1>
-          <p class="lead">by <a href="index.php">Start Bootstrap</a></p>
-          <hr>
-          <p><span class="glyphicon glyphicon-time"></span> Posted on August 28, 2013 at 10:45 PM</p>
-          <hr>
-          <img src="http://placehold.it/900x300" class="img-responsive">
-          <hr>
-          <p>Science cuts two ways, of course; its products can be used for both good and evil. But there's no turning back from science. The early warnings about technological dangers also come from science...</p>
-          <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
-                    
-          <hr>
+          
           
           <!-- pager -->
           <ul class="pager">
@@ -136,7 +111,7 @@
       <footer>
         <div class="row">
           <div class="col-lg-12">
-            <p>Copyright &copy; Company 2013</p>
+            <p>{{ .CopyRight }}</p>
           </div>
         </div>
       </footer>

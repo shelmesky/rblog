@@ -72,12 +72,13 @@ func init() {
 	}
 
 	// Set static library path
-	beego.SetStaticPath("/static", config.Static_Path)
+	beego.SetStaticPath("./static", config.Static_Path)
 }
 
 
 func main() {
 	orm.RunCommand()
+	orm.Debug = true
 
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/admin", &controllers.AdminController{})

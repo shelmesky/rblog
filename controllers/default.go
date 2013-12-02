@@ -13,9 +13,21 @@ type MainController struct {
 }
 
 //HOME
-func (this *MainController) Get() { this.Data["Website"] = "beego.me"
-	this.Data["Email"] = "astaxie@gmail.com"
+func (this *MainController) Get() { 
+	o := orm.NewOrm()
+	var p []*models.Post
+	o.QueryTable(new(models.Post)).All(&p)
+	
+	var site_config models.SiteConfig
+	o.QueryTable(new(models.SiteConfig)).One(&site_config)
+	
 	this.TplNames = "index.html"
+	this.Data["Posts"] = p
+	this.Data["BlogName"] = site_config.BlogName
+	this.Data["BlogUrl"] = site_config.BlogUrl
+	this.Data["AdminEmail"] = site_config.AdminEmail
+	this.Data["CopyRight"] = site_config.CopyRight
+	this.Render()
 }
 
 type ArticleController struct {
@@ -52,7 +64,20 @@ func (this *ArticleController) Get() {
 		this.Ctx.WriteString("找不到主键")
 	} else {
 		if err == nil {
-			this.Ctx.WriteString(p.Body)
+			var site_config models.SiteConfig
+			o.QueryTable(new(models.SiteConfig)).One(&site_config)
+			
+			this.Data["Posts"] = p
+			this.Data["BlogName"] = site_config.BlogName
+			this.Data["BlogUrl"] = site_config.BlogUrl
+			this.Data["AdminEmail"] = site_config.AdminEmail
+			this.Data["CopyRight"] = site_config.CopyRight
+			
+			this.Data["Title"] = p.Title
+			this.Data["CreatedTime"] = p.Time
+			this.Data["Body"] = p.Body
+			this.TplNames = "post.html"
+			this.Render()
 		} else {
 			beego.Debug(err)
 			fmt.Println(err)
