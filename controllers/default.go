@@ -70,7 +70,11 @@ func GetCategoryId(name string) (int, error) {
 func (this *MainController) Get() {
 	o := orm.NewOrm()
 	var p []*models.Post
-	o.QueryTable(new(models.Post)).Limit(Site_config.NumPerPage).All(&p)
+	qs := o.QueryTable(new(models.Post))
+	_, err := qs.Limit(Site_config.NumPerPage).All(&p)
+	if err != nil {
+		beego.Error(err)
+	}
 	
 	this.TplNames = "index.html"
 	this.Data["Posts"] = p
@@ -79,8 +83,14 @@ func (this *MainController) Get() {
 	this.Data["AdminEmail"] = Site_config.AdminEmail
 	this.Data["CopyRight"] = Site_config.CopyRight
 	
-	this.Data["OldPage"] = 1
+	count, _ := qs.Count()
+	if int(count) <= Site_config.NumPerPage {
+		this.Data["OldPage"] = -1
+	} else {
+		this.Data["OldPage"] = 1
+	}
 	this.Data["NewPage"] = -1
+	
 	this.Render()
 }
 
@@ -179,10 +189,19 @@ func (this *CategoryController) Get() {
 	
 	o := orm.NewOrm()
 	var posts []*models.Post
-	num, err := o.QueryTable(new(models.Post)).Filter("CategoryId", category_id).Limit(10).All(&posts)
+	qs := o.QueryTable(new(models.Post)).Filter("CategoryId", category_id)
+	_, err = qs.Limit(Site_config.NumPerPage).All(&posts)
 	if err != nil {
 		beego.Error(err)
 	}
+	
+	count, _ := qs.Count()
+	if int(count) <= Site_config.NumPerPage {
+		this.Data["OldPage"] = -1
+	} else {
+		this.Data["OldPage"] = 1
+	}
+	this.Data["NewPage"] = -1
 	
 	this.Data["Posts"] = posts
 			
@@ -190,7 +209,7 @@ func (this *CategoryController) Get() {
 	this.Data["BlogUrl"] = Site_config.BlogUrl
 	this.Data["AdminEmail"] = Site_config.AdminEmail
 	this.Data["CopyRight"] = Site_config.CopyRight
-	this.Data["CategoryCounts"] = num
+	this.Data["CategoryCounts"] = count
 	this.Data["CategoryName"] = category_name
 	
 	this.TplNames = "category.html"
@@ -205,6 +224,59 @@ type CategoryPageController struct {
 
 
 func (this *CategoryPageController) Get() {
+	category_name := this.Ctx.Input.Params(":name")
+	category_id, err := GetCategoryId(category_name)
+	if err != nil {
+		beego.Error(err)
+	}
+	
+	page_id_str := this.Ctx.Input.Params(":page_id")
+	page_id, err := strconv.Atoi(page_id_str)
+	if err != nil {
+		page_id = 0
+	}
+	
+	o := orm.NewOrm()
+	var posts []*models.Post
+	fmt.Println(Site_config.NumPerPage, page_id)
+	qs := o.QueryTable(new(models.Post)).Filter("CategoryId", category_id)
+	_, err = qs.Limit(Site_config.NumPerPage, page_id*Site_config.NumPerPage).All(&posts)
+	
+	if err != nil {
+		beego.Error(err)
+	}
+	
+	count, _ := qs.Count()
+	
+	this.Data["CategoryName"] = category_name
+	this.Data["CategoryCounts"] = count
+	this.Data["Posts"] = posts
+	this.Data["BlogName"] = Site_config.BlogName
+	this.Data["BlogUrl"] = Site_config.BlogUrl
+	this.Data["AdminEmail"] = Site_config.AdminEmail
+	this.Data["CopyRight"] = Site_config.CopyRight
+	
+	/*
+	算出总的文章数
+	再根据当前页和每页数量，计算出还剩几条记录
+	如果剩余记录数的大于每页数量，就显示Older按钮
+	否则不显示
+	*/
+	remain_page := int(count) - (page_id * Site_config.NumPerPage)
+	if remain_page > Site_config.NumPerPage {
+		this.Data["OldPage"] = page_id + 1
+	} else if remain_page <= Site_config.NumPerPage {
+		this.Data["OldPage"] = -1
+	}
+	
+	/*
+	当page_id==1，NewPage==0，显示第一页
+	当page_id==0，NewPage==-1，不显示Newer按钮
+	以上是在index.html中判断
+	*/
+	this.Data["NewPage"] = page_id - 1
+	this.TplNames = "category.html"
+	this.Render()
 }
 
 

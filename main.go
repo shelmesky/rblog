@@ -83,7 +83,7 @@ func init() {
 
 func main() {
 	orm.RunCommand()
-	orm.Debug = true
+	//orm.Debug = true
 
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/admin", &controllers.AdminController{})
