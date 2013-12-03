@@ -62,8 +62,13 @@
           
           <!-- pager -->
           <ul class="pager">
-            <li class="previous"><a href="#">&larr; Older</a></li>
-            <li class="next"><a href="#">Newer &rarr;</a></li>
+			{{ if ne .OldPage -1 }}
+            	<li class="previous"><a href="/page/{{ .OldPage }}">&larr; Older</a></li>
+			{{ end }}
+			
+			{{ if ne .NewPage -1 }}
+            	<li class="next"><a href="/page/{{ .NewPage }}">Newer &rarr;</a></li>
+			{{ end }}
           </ul>
 
         </div>
