@@ -48,7 +48,7 @@
           {{ with .Posts }}
 		  {{ range . }}
           <!-- blog entry -->
-          <h1><a href="/post/{{ .Shortname }}">{{ .Title }}</a></h1>
+          <h2><a href="/post/{{ .Shortname }}">{{ .Title }}</a></h2>
           <p class="lead">by <a href="index.php">Start Bootstrap</a></p>
           <hr>
           <p><span class="glyphicon glyphicon-time"></span> {{ .Time }}</p>

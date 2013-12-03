@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"encoding/json"
+	"rblog/models"
 	"rblog/controllers"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -73,16 +74,21 @@ func init() {
 
 	// Set static library path
 	beego.SetStaticPath("./static", config.Static_Path)
+	
+	//init global site config
+	o := orm.NewOrm()
+	o.QueryTable(new(models.SiteConfig)).One(&controllers.Site_config)
 }
 
 
 func main() {
 	orm.RunCommand()
-	//orm.Debug = true
+	orm.Debug = true
 
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/admin", &controllers.AdminController{})
 	beego.Router("/post/:id([^/]+)", &controllers.ArticleController{})
+	beego.Router("/category/:name([^/]+)", &controllers.CategoryController{})
 	beego.Run()
 }
 

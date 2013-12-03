@@ -9,6 +9,7 @@ import (
 	"github.com/astaxie/beego/cache"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 )
 
 type MainController struct {
@@ -18,6 +19,7 @@ type MainController struct {
 
 var (
 	urllist cache.Cache
+	Site_config models.SiteConfig
 )
 
 
@@ -31,21 +33,51 @@ func init() {
 	urllist = c
 }
 
+
+func GetCategoryName(id int) (string, error) {
+	var category models.Category
+	o := orm.NewOrm()
+	err := o.QueryTable(new(models.Category)).Filter("Id", id).One(&category)
+		if err == orm.ErrMultiRows {
+	    // 多条的时候报错
+	    return "", errors.New("Returned Multi Rows Not One")
+	}
+	if err == orm.ErrNoRows {
+	    // 没有找到记录
+	    return "", errors.New("Not row found")
+	}
+	return category.Name, nil
+}
+
+
+func GetCategoryId(name string) (int, error) {
+	var category models.Category
+	o := orm.NewOrm()
+	err := o.QueryTable(new(models.Category)).Filter("Name", name).One(&category)
+		if err == orm.ErrMultiRows {
+	    // 多条的时候报错
+	    return 0, errors.New("Returned Multi Rows Not One")
+	}
+	if err == orm.ErrNoRows {
+	    // 没有找到记录
+	    return 0, errors.New("Not row found")
+	}
+	return category.Id, nil
+}
+
+
 //HOME
-func (this *MainController) Get() { 
+func (this *MainController) Get() {
 	o := orm.NewOrm()
 	var p []*models.Post
-	o.QueryTable(new(models.Post)).All(&p)
-	
-	var site_config models.SiteConfig
-	o.QueryTable(new(models.SiteConfig)).One(&site_config)
+	o.QueryTable(new(models.Post)).Limit(Site_config.NumPerPage).All(&p)
 	
 	this.TplNames = "index.html"
 	this.Data["Posts"] = p
-	this.Data["BlogName"] = site_config.BlogName
-	this.Data["BlogUrl"] = site_config.BlogUrl
-	this.Data["AdminEmail"] = site_config.AdminEmail
-	this.Data["CopyRight"] = site_config.CopyRight
+	this.Data["BlogName"] = Site_config.BlogName
+	this.Data["BlogUrl"] = Site_config.BlogUrl
+	this.Data["AdminEmail"] = Site_config.AdminEmail
+	this.Data["CopyRight"] = Site_config.CopyRight
 	this.Render()
 }
 
@@ -97,22 +129,26 @@ func (this *ArticleController) Get() {
 				}
 			}
 			
-			var site_config models.SiteConfig
-			o.QueryTable(new(models.SiteConfig)).One(&site_config)
 			
-			this.Data["Posts"] = p
-			this.Data["BlogName"] = site_config.BlogName
-			this.Data["BlogUrl"] = site_config.BlogUrl
-			this.Data["AdminEmail"] = site_config.AdminEmail
-			this.Data["CopyRight"] = site_config.CopyRight
+			this.Data["BlogName"] = Site_config.BlogName
+			this.Data["BlogUrl"] = Site_config.BlogUrl
+			this.Data["AdminEmail"] = Site_config.AdminEmail
+			this.Data["CopyRight"] = Site_config.CopyRight
 			
 			if body != nil {
 				beego.Debug("Hit cache for Post.")
 				this.Data["Body"] = body.Body
 				this.Data["Title"] = body.Title
 				this.Data["CreatedTime"] = body.Time
+				category_name, err := GetCategoryName(body.CategoryId)
+				if err != nil {
+					beego.Error(err)
+				}
+				this.Data["CategoryName"] = category_name
 			} else {
 				beego.Debug("Cache missed for Post.")
+				category_name, _ := GetCategoryName(p.CategoryId)
+				this.Data["CategoryName"] = category_name
 				this.Data["Body"] = p.Body
 				this.Data["Title"] = p.Title
 				this.Data["CreatedTime"] = p.Time
@@ -125,6 +161,38 @@ func (this *ArticleController) Get() {
 			fmt.Println(err)
 		}
 	}
+}
+
+type CategoryController struct {
+	beego.Controller
+}
+
+func (this *CategoryController) Get() {
+	category_name := this.Ctx.Input.Params(":name")
+	category_id, err := GetCategoryId(category_name)
+	if err != nil {
+		beego.Error(err)
+	}
+	
+	o := orm.NewOrm()
+	var posts []*models.Post
+	num, err := o.QueryTable(new(models.Post)).Filter("CategoryId", category_id).Limit(10).All(&posts)
+	if err != nil {
+		beego.Error(err)
+	}
+	
+	this.Data["Posts"] = posts
+			
+	this.Data["BlogName"] = Site_config.BlogName
+	this.Data["BlogUrl"] = Site_config.BlogUrl
+	this.Data["AdminEmail"] = Site_config.AdminEmail
+	this.Data["CopyRight"] = Site_config.CopyRight
+	this.Data["CategoryCounts"] = num
+	this.Data["CategoryName"] = category_name
+	
+	this.TplNames = "category.html"
+	this.Render()
+	
 }
 
 type AdminController struct {
