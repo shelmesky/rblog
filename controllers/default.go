@@ -208,7 +208,7 @@ func (this *CategoryController) Get() {
 	
 	o := orm.NewOrm()
 	var posts []*models.Post
-	qs := o.QueryTable(new(models.Post)).Filter("CategoryId", category_id)
+	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("CategoryId", category_id)
 	_, err = qs.Limit(Site_config.NumPerPage).All(&posts)
 	if err != nil {
 		beego.Error(err)
@@ -257,7 +257,7 @@ func (this *CategoryPageController) Get() {
 	
 	o := orm.NewOrm()
 	var posts []*models.Post
-	qs := o.QueryTable(new(models.Post)).Filter("CategoryId", category_id)
+	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("CategoryId", category_id)
 	_, err = qs.Limit(Site_config.NumPerPage, page_id*Site_config.NumPerPage).All(&posts)
 	
 	if err != nil {
@@ -311,7 +311,7 @@ func (this *PageController) Get() {
 	}
 	o := orm.NewOrm()
 	var posts []*models.Post
-	qs := o.QueryTable(new(models.Post))
+	qs := o.QueryTable(new(models.Post)).OrderBy("-id")
 	_, err = qs.Limit(Site_config.NumPerPage, page_id*Site_config.NumPerPage).All(&posts)
 	
 	if err != nil {
