@@ -257,7 +257,6 @@ func (this *CategoryPageController) Get() {
 	
 	o := orm.NewOrm()
 	var posts []*models.Post
-	fmt.Println(Site_config.NumPerPage, page_id)
 	qs := o.QueryTable(new(models.Post)).Filter("CategoryId", category_id)
 	_, err = qs.Limit(Site_config.NumPerPage, page_id*Site_config.NumPerPage).All(&posts)
 	
