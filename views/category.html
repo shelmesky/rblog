@@ -55,7 +55,7 @@
           <hr>
           <p><span class="glyphicon glyphicon-time"></span> {{ .Time }}</p>
           <hr>
-          {{str2html .Body }}
+          {{ .Body | markdown | str2html }}
           <hr>
 		  {{ end }}
 		  {{ end }}

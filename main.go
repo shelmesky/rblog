@@ -84,6 +84,7 @@ func init() {
 func main() {
 	orm.RunCommand()
 	//orm.Debug = true
+	beego.AddFuncMap("markdown", controllers.RenderMarkdown)
 
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/admin", &controllers.AdminController{})

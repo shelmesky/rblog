@@ -8,6 +8,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/cache"
 	"github.com/astaxie/beego/context"
+	"github.com/russross/blackfriday"
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/base64"
@@ -15,7 +16,20 @@ import (
 	"net/http/pprof"
 	"net/http"
 	"strings"
+	"html/template"
 )
+
+func RenderMarkdown(content interface{}) (string) {
+	var output []byte
+	if value, ok := content.(template.HTML); ok {
+		output = blackfriday.MarkdownCommon([]byte(value))
+	} else if value, ok := content.(string); ok {
+		output = blackfriday.MarkdownCommon([]byte(value))
+	}
+	return string(output)
+	
+}
+
 
 type MainController struct {
 	beego.Controller
@@ -76,7 +90,7 @@ func (this *MainController) Get() {
 	o := orm.NewOrm()
 	var p []*models.Post
 	qs := o.QueryTable(new(models.Post))
-	_, err := qs.Limit(Site_config.NumPerPage).All(&p)
+	_, err := qs.Limit(Site_config.NumPerPage).OrderBy("-id").All(&p)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -298,7 +312,6 @@ func (this *PageController) Get() {
 	}
 	o := orm.NewOrm()
 	var posts []*models.Post
-	fmt.Println(Site_config.NumPerPage, page_id)
 	qs := o.QueryTable(new(models.Post))
 	_, err = qs.Limit(Site_config.NumPerPage, page_id*Site_config.NumPerPage).All(&posts)
 	

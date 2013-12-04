@@ -53,7 +53,7 @@
           <p><span class="glyphicon glyphicon-time"></span> Posted on {{ .CreatedTime }}  <a href="/category/{{ .CategoryName }}">{{ .CategoryName }}</a></p>
           <hr>
 		
-			{{str2html .Body }}
+			{{ .Body | markdown | str2html }}
 		
           <hr>
 
