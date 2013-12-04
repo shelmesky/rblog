@@ -91,6 +91,10 @@ func main() {
 	beego.Router("/category/:name([^/]+)", &controllers.CategoryController{})
 	beego.Router("/category/:name([^/]+)/page/:page_id([^/]+)", &controllers.CategoryPageController{})
 	beego.Router("/page/:page_id([^/]+)", &controllers.PageController{})
+	
+	//add http pprof url handler
+	beego.Router("/debug/pprof", &controllers.ProfController{})
+	beego.Router("/debug/pprof/:pp([^/]+)", &controllers.ProfController{})
 	beego.Run()
 }
 

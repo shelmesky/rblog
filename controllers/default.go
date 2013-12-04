@@ -10,6 +10,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
+	"net/http/pprof"
 )
 
 type MainController struct {
@@ -342,4 +343,26 @@ func (this *AdminController) Get() {
 	this.Ctx.WriteString("admin page")
 }
 
+
+// HTTP Server Performance profile
+type ProfController struct {
+    beego.Controller
+}
+
+func (this *ProfController) Get() {
+
+    switch this.Ctx.Input.Params(":pp") {
+    default:
+        pprof.Index(this.Ctx.ResponseWriter, this.Ctx.Request)
+    case "":
+        pprof.Index(this.Ctx.ResponseWriter, this.Ctx.Request)
+    case "cmdline":
+        pprof.Cmdline(this.Ctx.ResponseWriter, this.Ctx.Request)
+    case "profile":
+        pprof.Profile(this.Ctx.ResponseWriter, this.Ctx.Request)
+    case "symbol":
+        pprof.Symbol(this.Ctx.ResponseWriter, this.Ctx.Request)
+    }
+    this.Ctx.ResponseWriter.WriteHeader(200)
+}
 
