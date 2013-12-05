@@ -136,10 +136,10 @@ func (this *ArticleController) Get() {
 
 	if err == orm.ErrNoRows {
 		beego.Debug(err)
-		this.Ctx.WriteString("查询不到")
+		this.Abort("404")
 	} else if err == orm.ErrMissPK {
 		beego.Debug(err)
-		this.Ctx.WriteString("找不到主键")
+		this.Abort("500")
 	} else {
 		if err == nil {
 			// query cache for article body
@@ -189,7 +189,7 @@ func (this *ArticleController) Get() {
 			this.Render()
 		} else {
 			beego.Debug(err)
-			fmt.Println(err)
+			this.Abort("500")
 		}
 	}
 }
@@ -210,6 +210,7 @@ func (this *CategoryController) Get() {
 	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("CategoryId", category_id)
 	_, err = qs.Limit(Site_config.NumPerPage).All(&posts)
 	if err != nil {
+		this.Abort("404")
 		beego.Error(err)
 	}
 	
@@ -245,6 +246,7 @@ func (this *CategoryPageController) Get() {
 	category_name := this.Ctx.Input.Params(":name")
 	category_id, err := GetCategoryId(category_name)
 	if err != nil {
+		this.Abort("404")
 		beego.Error(err)
 	}
 	
