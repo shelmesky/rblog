@@ -7,15 +7,10 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/cache"
-	"github.com/astaxie/beego/context"
 	"github.com/russross/blackfriday"
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/base64"
 	"errors"
-	"net/http/pprof"
-	"net/http"
-	"strings"
 	"html/template"
 )
 
@@ -171,7 +166,8 @@ func (this *ArticleController) Get() {
 				beego.Debug("Hit cache for Post.")
 				this.Data["Body"] = body.Body
 				this.Data["Title"] = body.Title
-				this.Data["CreatedTime"] = body.Time
+				this.Data["CreatedTime"] = body.CreatedTime
+				this.Data["UpdateTime"] = body.UpdateTime
 				category_name, err := GetCategoryName(body.CategoryId)
 				if err != nil {
 					beego.Error(err)
@@ -183,7 +179,8 @@ func (this *ArticleController) Get() {
 				this.Data["CategoryName"] = category_name
 				this.Data["Body"] = p.Body
 				this.Data["Title"] = p.Title
-				this.Data["CreatedTime"] = p.Time
+				this.Data["CreatedTime"] = p.CreatedTime
+				this.Data["UpdateTime"] = p.UpdateTime
 				urllist.Put(url_hash, &p, 3600)
 			}
 			this.TplNames = "post.html"
@@ -348,69 +345,4 @@ func (this *PageController) Get() {
 	this.Render()
 }
 
-
-type AdminController struct {
-	beego.Controller
-}
-
-
-//管理后台
-func (this *AdminController) Get() {
-	this.Ctx.WriteString("admin page")
-}
-
-
-// HTTP Server Performance profile
-type ProfController struct {
-    beego.Controller
-}
-
-func (this *ProfController) CheckAuth(w http.ResponseWriter, r *context.Context) (bool) {
-	authorization_array := r.Request.Header["Authorization"]
-	if len(authorization_array) > 0 {
-    	authorization := strings.TrimSpace(authorization_array[0])
-		var splited []string
-		splited = strings.Split(authorization, " ")
-		data, err := base64.StdEncoding.DecodeString(splited[1])
-		if err != nil {
-			this.SetBasicAuth(w)
-		}
-		auth_info := strings.Split(string(data), ":")
-		if auth_info[0] == "admin" && auth_info[1] == "password" {
-			return true
-		}
-		this.SetBasicAuth(w)
-	} else {
-    	this.SetBasicAuth(w)	
-	}
-	return false
-}
-
-
-func (this *ProfController) SetBasicAuth(w http.ResponseWriter) {
-	w.Header().Set("WWW-Authenticate", "Basic realm=\"Performace Profile\"")
-    http.Error(w, http.StatusText(401), 401)
-}
-
-
-func (this *ProfController) Get() {
-	if !this.CheckAuth(this.Ctx.ResponseWriter, this.Ctx) {
-		beego.Error("Pprof check user failed.")
-		return
-	}
-
-    switch this.Ctx.Input.Params(":pp") {
-    default:
-        pprof.Index(this.Ctx.ResponseWriter, this.Ctx.Request)
-    case "":
-        pprof.Index(this.Ctx.ResponseWriter, this.Ctx.Request)
-    case "cmdline":
-        pprof.Cmdline(this.Ctx.ResponseWriter, this.Ctx.Request)
-    case "profile":
-        pprof.Profile(this.Ctx.ResponseWriter, this.Ctx.Request)
-    case "symbol":
-        pprof.Symbol(this.Ctx.ResponseWriter, this.Ctx.Request)
-    }
-    this.Ctx.ResponseWriter.WriteHeader(200)
-}
 

@@ -5,7 +5,9 @@ import (
 	"os"
 	"encoding/json"
 	"rblog/models"
-	"rblog/controllers"
+	"rblog/controllers/default"
+	"rblog/controllers/admin"
+	"rblog/controllers/debug"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
@@ -87,15 +89,23 @@ func main() {
 	beego.AddFuncMap("markdown", controllers.RenderMarkdown)
 
 	beego.Router("/", &controllers.MainController{})
-	beego.Router("/admin", &controllers.AdminController{})
 	beego.Router("/post/:id([^/]+)", &controllers.ArticleController{})
 	beego.Router("/category/:name([^/]+)", &controllers.CategoryController{})
 	beego.Router("/category/:name([^/]+)/page/:page_id([^/]+)", &controllers.CategoryPageController{})
 	beego.Router("/page/:page_id([^/]+)", &controllers.PageController{})
 	
+	// admin console
+	beego.Router("/admin", &admincontrollers.AdminController{})
+	beego.Router("/admin/login", &admincontrollers.AdminLoginController{})
+	beego.Router("/admin/logout", &admincontrollers.AdminLogoutController{})
+	beego.Router("/admin/article", &admincontrollers.AdminArticleController{})
+	beego.Router("/admin/category", &admincontrollers.AdminCategoryController{})
+	beego.Router("/admin/comment", &admincontrollers.AdminCommentController{})
+	beego.Router("/admin/site", &admincontrollers.AdminSiteController{})
+	
 	//add http pprof url handler
-	beego.Router("/debug/pprof", &controllers.ProfController{})
-	beego.Router("/debug/pprof/:pp([^/]+)", &controllers.ProfController{})
+	beego.Router("/debug/pprof", &debugcontrollers.ProfController{})
+	beego.Router("/debug/pprof/:pp([^/]+)", &debugcontrollers.ProfController{})
 	beego.Run()
 }
 

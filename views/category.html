@@ -55,7 +55,7 @@
           <h2><a href="/post/{{ .Shortname }}">{{ .Title }}</a></h2>
           <p class="lead">by <a href="index.php">Start Bootstrap</a></p>
           <hr>
-          <p><span class="glyphicon glyphicon-time"></span> {{ .Time }}</p>
+          <p><span class="glyphicon glyphicon-time"></span> {{ .CreatedTime }}</p>
           <hr>
           {{ .Body | markdown | str2html }}
           <hr>
