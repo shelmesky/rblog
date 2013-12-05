@@ -5,7 +5,7 @@ import (
 	"os"
 	"encoding/json"
 	"rblog/models"
-	"rblog/controllers/default"
+	"rblog/controllers/primary"
 	"rblog/controllers/admin"
 	"rblog/controllers/debug"
 	"github.com/astaxie/beego"
@@ -73,6 +73,10 @@ func init() {
 		fmt.Println(err)
 		beego.Debug(err)
 	}
+	
+	// Set Config fit ORM
+	orm.RunCommand()
+	orm.Debug = false
 
 	// Set static library path
 	beego.SetStaticPath("./static", config.Static_Path)
@@ -80,13 +84,23 @@ func init() {
 	//init global site config
 	o := orm.NewOrm()
 	o.QueryTable(new(models.SiteConfig)).One(&controllers.Site_config)
+	
+	// int corotine safe map
+	admincontrollers.Category_map = beego.NewBeeMap()
+	
+	// insert catagories to map
+	var categories []*models.Category
+	o.QueryTable(new(models.Category)).All(&categories)
+	
+	for _, category := range categories {
+		admincontrollers.Category_map.Set(category.Id, category.Name)
+	}
 }
 
 
 func main() {
-	orm.RunCommand()
-	//orm.Debug = true
 	beego.AddFuncMap("markdown", controllers.RenderMarkdown)
+	beego.AddFuncMap("categoryname", admincontrollers.GetCategoryName)
 
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/post/:id([^/]+)", &controllers.ArticleController{})

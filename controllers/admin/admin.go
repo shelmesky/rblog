@@ -4,6 +4,7 @@ import (
 	//"fmt"
 	//"strconv"
 	"rblog/models"
+	"rblog/controllers/primary"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	//"github.com/astaxie/beego/cache"
@@ -17,7 +18,36 @@ import (
 	//"net/http"
 	//"strings"
 	"html/template"
+	//"reflect"
 )
+
+var (
+	Category_map *beego.BeeMap
+)
+
+
+func GetCategoryName(content interface{}) (string) {
+	//fmt.Println(reflect.TypeOf(content))
+	var category_name string
+	if value, ok := content.(int); ok {
+		if Category_map.Check(value) {
+			category := Category_map.Get(value)
+			category_name, _ := category.(string)
+			return category_name
+		} else {
+			o := orm.NewOrm()
+			var category models.Category
+			err := o.QueryTable(new(models.Category)).Filter("Id", value).One(&category)
+			if err != nil {
+				beego.Error(err)
+				return string(value)
+			}
+			return category.Name
+		}
+	}
+	
+	return category_name
+}
 
 
 type Article struct {
@@ -68,6 +98,17 @@ type AdminArticleController struct {
 }
 
 func (this *AdminArticleController) Get() {
+	var posts []*models.Post
+	o := orm.NewOrm()
+	o.QueryTable(new(models.Post)).All(&posts)
+	this.Data["Posts"] = posts
+	
+	this.Data["BlogUrl"] = controllers.Site_config.BlogUrl
+	
+	var categories []*models.Category
+	o.QueryTable(new(models.Category)).All(&categories)
+	this.Data["Categories"] = categories
+	
 	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
 	this.TplNames = "admin/article.html"
 	this.Render()
