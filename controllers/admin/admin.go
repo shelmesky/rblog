@@ -16,8 +16,9 @@ import (
 	//"errors"
 	//"net/http/pprof"
 	//"net/http"
-	//"strings"
+	"strings"
 	"html/template"
+	"regexp"
 	//"reflect"
 	"rblog/common/utils"
 )
@@ -121,11 +122,14 @@ func (this *AdminArticleController) Get() {
 }
 
 func (this *AdminArticleController) Post() {
+	var MessageError string
+	
 	// 检查是否为重复提交
 	session_key := "admin_article_get"
-	session_value := this.GetSession(session_key).(string)
-	if session_value == "" {
-		this.Ctx.Redirect(302, "/admin/article")
+	session := this.GetSession(session_key)
+	if session == nil {
+		this.Ctx.Redirect(301, "/admin/article")
+		return
 	}
 	
 	article := Article{}
@@ -135,15 +139,25 @@ func (this *AdminArticleController) Post() {
 	o := orm.NewOrm()
 	var post models.Post
 	post.CategoryId = article.Category
-	post.User = article.User
-	post.Shortname = article.Shortname
-	post.Title = article.Title
+	post.User = strings.Trim(article.User, " ")
+	post.Shortname = strings.Trim(article.Shortname, " ")
+	post.Title = strings.Trim(article.Title, " ")
 	post.Body = article.Body
 	
-	post.Ip = this.Ctx.Input.IP()
-	o.Insert(&post)
-	
-	this.SetSession(session_key, "")
+	only_words_match, _ := regexp.Match(`[^\d]+$`, []byte(post.Shortname))
+	if !only_words_match {
+		MessageError = "短名称不能包含数字!"
+	} else {
+		post.Ip = this.Ctx.Input.IP()
+		o.Insert(&post)
+		
+		this.Data["MessageOK"] = "Post new article success."
+		
+		// 验证成功则删除session
+		// 解决由于失败也删除session
+		// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
+		this.DelSession(session_key)
+	}
 	
 	// send articles to template
 	var posts []*models.Post
@@ -158,7 +172,7 @@ func (this *AdminArticleController) Post() {
 	
 	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
 	
-	this.Data["MessageOK"] = "Post new article success."
+	this.Data["MessageError"] = MessageError
 	this.TplNames = "admin/article.html"
 	this.Render()
 }
