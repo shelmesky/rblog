@@ -146,7 +146,7 @@ func (this *AdminArticleController) Post() {
 	
 	only_words_match, _ := regexp.Match(`[^\d]+$`, []byte(post.Shortname))
 	if !only_words_match {
-		MessageError = "短名称不能包含数字!"
+		MessageError = "短名称不能为纯数字!"
 	} else {
 		post.Ip = this.Ctx.Input.IP()
 		o.Insert(&post)
