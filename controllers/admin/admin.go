@@ -19,6 +19,7 @@ import (
 	//"strings"
 	"html/template"
 	//"reflect"
+	"rblog/common/utils"
 )
 
 var (
@@ -110,11 +111,23 @@ func (this *AdminArticleController) Get() {
 	this.Data["Categories"] = categories
 	
 	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+	
+	// 防止重复提交，设置session
+	session_key := "admin_article_get"
+	this.SetSession(session_key, utils.MakeRandomID())
+	
 	this.TplNames = "admin/article.html"
 	this.Render()
 }
 
 func (this *AdminArticleController) Post() {
+	// 检查是否为重复提交
+	session_key := "admin_article_get"
+	session_value := this.GetSession(session_key).(string)
+	if session_value == "" {
+		this.Ctx.Redirect(302, "/admin/article")
+	}
+	
 	article := Article{}
 	if err := this.ParseForm(&article); err != nil {
 		beego.Error(err)
@@ -130,7 +143,24 @@ func (this *AdminArticleController) Post() {
 	post.Ip = this.Ctx.Input.IP()
 	o.Insert(&post)
 	
-	this.Ctx.Redirect(301, "/")
+	this.SetSession(session_key, "")
+	
+	// send articles to template
+	var posts []*models.Post
+	o.QueryTable(new(models.Post)).All(&posts)
+	this.Data["Posts"] = posts
+	
+	this.Data["BlogUrl"] = controllers.Site_config.BlogUrl
+	
+	var categories []*models.Category
+	o.QueryTable(new(models.Category)).All(&categories)
+	this.Data["Categories"] = categories
+	
+	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+	
+	this.Data["MessageOK"] = "Post new article success."
+	this.TplNames = "admin/article.html"
+	this.Render()
 }
 
 
