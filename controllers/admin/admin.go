@@ -54,6 +54,7 @@ func GetCategoryName(content interface{}) (string) {
 
 type Article struct {
 	Title string `form:"Title"`
+	Password string `form:"Password"`
 	User string `form:"User"`
 	Category int `form:"Category"`
 	Shortname string `form:"Shortname"`
@@ -143,6 +144,7 @@ func (this *AdminArticleController) Post() {
 	post.Shortname = strings.Trim(article.Shortname, " ")
 	post.Title = strings.Trim(article.Title, " ")
 	post.Body = article.Body
+	post.Password = strings.Trim(article.Password, " ")
 	
 	only_words_match, _ := regexp.Match(`[^\d]+$`, []byte(post.Shortname))
 	if !only_words_match {

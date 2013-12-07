@@ -55,8 +55,18 @@
           <p><span class="glyphicon glyphicon-time"></span> Posted on {{ .CreatedTime }}  <a href="/category/{{ .CategoryName }}">{{ .CategoryName }}</a></p>
           <hr>
 		
+		{{ if .Password }}
+		<form action="" method="post">
+			<div class="input-append">
+				{{ .xsrfdata }}
+	  			<input type="password" class="span2" name="ArticlePassword">
+				<input type="hidden" name="ArticleId" value="{{ .Id }}">
+	  			<button class="btn" type="submit">Go!</button>
+			</div>
+		</form>
+		{{ else }}
 			{{ .Body | markdown | str2html }}
-		
+		{{ end }}
           <hr>
 
           <!-- the comment box -->

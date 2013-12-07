@@ -25,9 +25,10 @@ type Post struct {
 	Shortname string
 	Title string `orm:"size(256)"`
 	Body string `orm:"type(text)"`
+	Password string `orm:"size(256);null"`
 	CreatedTime time.Time `orm:"auto_now_add;type(datetime)"`
 	UpdateTime time.Time `orm:"auto_now;type(datetime)"`
-	Ip string
+	Ip string `orm:"size(256);null"`
 	Archive time.Time `orm:"auto_now_add;type(date)"`
 }
 

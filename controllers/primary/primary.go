@@ -164,6 +164,86 @@ func (this *ArticleController) Get() {
 			
 			if body != nil {
 				beego.Debug("Hit cache for Post.")
+				this.Data["Id"] = body.Id
+				this.Data["Body"] = body.Body
+				this.Data["User"] = body.User
+				this.Data["Title"] = body.Title
+				this.Data["Password"] = body.Password
+				this.Data["CreatedTime"] = body.CreatedTime
+				this.Data["UpdateTime"] = body.UpdateTime
+				this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+				category_name, err := GetCategoryName(body.CategoryId)
+				if err != nil {
+					beego.Error(err)
+				}
+				this.Data["CategoryName"] = category_name
+			} else {
+				beego.Debug("Cache missed for Post.")
+				category_name, _ := GetCategoryName(p.CategoryId)
+				this.Data["CategoryName"] = category_name
+				this.Data["Id"] = p.Id
+				this.Data["Body"] = p.Body
+				this.Data["User"] = p.User
+				this.Data["Title"] = p.Title
+				this.Data["Password"] = p.Password
+				this.Data["CreatedTime"] = p.CreatedTime
+				this.Data["UpdateTime"] = p.UpdateTime
+				this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+				urllist.Put(url_hash, &p, 3600)
+			}
+			this.TplNames = "post.html"
+			this.Render()
+		} else {
+			beego.Debug(err)
+			this.Abort("500")
+		}
+	}
+}
+
+
+func (this *ArticleController) Post() {
+	Password := this.GetString("ArticlePassword")
+	Id := this.Input().Get("ArticleId")
+	IdInt, err := strconv.Atoi(Id)
+	if err != nil {
+		beego.Error(err)
+		this.Abort("500")
+	}
+	
+	url := this.Ctx.Input.Uri()
+	
+	if Password != "" {
+		var p models.Post
+		o := orm.NewOrm()
+		err = o.QueryTable(new(models.Post)).Filter("Id", IdInt).One(&p)
+		if err != nil {
+			beego.Error(err)
+			this.Abort("500")
+		}
+		
+		if Password == p.Password {
+			// query cache for article body
+			hash := md5.New()
+			hash.Write([]byte(url))
+			var url_hash string
+			url_hash = hex.EncodeToString(hash.Sum(nil))
+			var body *models.Post
+			if ok := urllist.IsExist(url_hash); ok {
+				value := urllist.Get(url_hash)
+				if value != nil {
+					body = value.(*models.Post)
+				}
+			}
+			
+			
+			this.Data["BlogName"] = Site_config.BlogName
+			this.Data["BlogUrl"] = Site_config.BlogUrl
+			this.Data["AdminEmail"] = Site_config.AdminEmail
+			this.Data["CopyRight"] = Site_config.CopyRight
+			
+			if body != nil {
+				beego.Debug("Hit cache for Post.")
+				this.Data["Id"] = body.Id
 				this.Data["Body"] = body.Body
 				this.Data["User"] = body.User
 				this.Data["Title"] = body.Title
@@ -178,6 +258,7 @@ func (this *ArticleController) Get() {
 				beego.Debug("Cache missed for Post.")
 				category_name, _ := GetCategoryName(p.CategoryId)
 				this.Data["CategoryName"] = category_name
+				this.Data["Id"] = p.Id
 				this.Data["Body"] = p.Body
 				this.Data["User"] = p.User
 				this.Data["Title"] = p.Title
@@ -187,12 +268,14 @@ func (this *ArticleController) Get() {
 			}
 			this.TplNames = "post.html"
 			this.Render()
-		} else {
-			beego.Debug(err)
-			this.Abort("500")
+			return
 		}
+		this.Ctx.Redirect(301, url)
+	} else {
+		this.Ctx.Redirect(301, url)
 	}
 }
+
 
 type CategoryController struct {
 	beego.Controller
