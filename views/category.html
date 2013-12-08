@@ -57,7 +57,11 @@
           <hr>
           <p><span class="glyphicon glyphicon-time"></span> {{ .CreatedTime }}</p>
           <hr>
-          {{ .Body | markdown | str2html }}
+          {{ if .Password }}
+		  	<p>需要密码访问</p>
+		  {{ else }}
+          	{{ .Body | markdown | str2html }}
+		  {{ end }}
           <hr>
 		  {{ end }}
 		  {{ end }}
