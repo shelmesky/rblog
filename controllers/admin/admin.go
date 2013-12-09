@@ -145,6 +145,7 @@ func (this *AdminArticleController) Post() {
 	post.Title = strings.Trim(article.Title, " ")
 	post.Body = article.Body
 	post.Password = strings.Trim(article.Password, " ")
+	post.Archive = utils.YearMonth()
 	
 	only_words_match, _ := regexp.Match(`[^\d]+$`, []byte(post.Shortname))
 	if !only_words_match {

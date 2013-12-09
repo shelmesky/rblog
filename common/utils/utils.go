@@ -35,3 +35,31 @@ func GetFuncName(function interface{}) string {
 	return runtime.FuncForPC(func_pointer).Name()
 }
 
+
+type NewTime struct {
+    time.Time
+}
+
+func (t NewTime)YearMonthString() string {
+    const layout = "2006-01"
+    return t.Format(layout)
+}
+
+func (t NewTime)NowString() string {
+    const layout = "2006-01-02 15:04:05"
+    return t.Format(layout)
+}
+
+func YearMonth() string {
+    ta := time.Now()
+    t := NewTime{ta}
+    return t.YearMonthString()
+}
+
+func Now() string {
+    ta := time.Now()
+    t := NewTime{ta}
+    return t.NowString()
+}
+
+

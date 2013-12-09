@@ -29,7 +29,7 @@ type Post struct {
 	CreatedTime time.Time `orm:"auto_now_add;type(datetime)"`
 	UpdateTime time.Time `orm:"auto_now;type(datetime)"`
 	Ip string `orm:"size(256);null"`
-	Archive time.Time `orm:"auto_now_add;type(date)"`
+	Archive string `orm:"size(256)"`
 }
 
 //评论
