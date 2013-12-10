@@ -110,10 +110,15 @@ func main() {
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
 
 	beego.Router("/", &controllers.MainController{})
+	
 	beego.Router("/post/:id([^/]+)", &controllers.ArticleController{})
+	beego.Router("/page/:page_id([^/]+)", &controllers.PageController{})
+	
 	beego.Router("/category/:name([^/]+)", &controllers.CategoryController{})
 	beego.Router("/category/:name([^/]+)/page/:page_id([^/]+)", &controllers.CategoryPageController{})
-	beego.Router("/page/:page_id([^/]+)", &controllers.PageController{})
+	
+	beego.Router("/archive/:name([^/]+)", &controllers.ArchiveController{})
+	beego.Router("/archive/:name([^/]+)/page/:page_id([^/]+)", &controllers.ArchivePageController{})
 	
 	// admin console
 	beego.Router("/admin", &admincontrollers.AdminController{})

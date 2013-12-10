@@ -47,7 +47,7 @@
 
       <div class="row">
         <div class="col-lg-8">
-		  <h3>找到目录 {{ .CategoryName }} 的文章 {{ .CategoryCounts }} 篇.</h3>
+		  <h3>找到归档 {{ .ArchiveName }} 的文章 {{ .ArchiveCounts }} 篇.</h3>
 		  <hr>
           {{ with .Posts }}
 		  {{ range . }}
@@ -71,11 +71,11 @@
           <!-- pager -->
           <ul class="pager">
 			{{ if ne .OldPage -1 }}
-            	<li class="previous"><a href="/category/{{ .CategoryName }}/page/{{ .OldPage }}">&larr; Older</a></li>
+            	<li class="previous"><a href="/archive/{{ .ArchiveName }}/page/{{ .OldPage }}">&larr; Older</a></li>
 			{{ end }}
 			
 			{{ if ne .NewPage -1 }}
-            	<li class="next"><a href="/category/{{ .CategoryName }}/page/{{ .NewPage }}">Newer &rarr;</a></li>
+            	<li class="next"><a href="/archive/{{ .ArchiveName }}/page/{{ .NewPage }}">Newer &rarr;</a></li>
 			{{ end }}
           </ul>
 
