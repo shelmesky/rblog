@@ -4,7 +4,6 @@ import (
 	//"fmt"
 	//"strconv"
 	"rblog/models"
-	"rblog/controllers/primary"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	//"github.com/astaxie/beego/cache"
@@ -22,34 +21,6 @@ import (
 	//"reflect"
 	"rblog/common/utils"
 )
-
-var (
-	Category_map *beego.BeeMap
-)
-
-
-func GetCategoryName(content interface{}) (string) {
-	//fmt.Println(reflect.TypeOf(content))
-	var category_name string
-	if value, ok := content.(int); ok {
-		if Category_map.Check(value) {
-			category := Category_map.Get(value)
-			category_name, _ := category.(string)
-			return category_name
-		} else {
-			o := orm.NewOrm()
-			var category models.Category
-			err := o.QueryTable(new(models.Category)).Filter("Id", value).One(&category)
-			if err != nil {
-				beego.Error(err)
-				return string(value)
-			}
-			return category.Name
-		}
-	}
-	
-	return category_name
-}
 
 
 type Article struct {
@@ -106,7 +77,7 @@ func (this *AdminArticleController) Get() {
 	o.QueryTable(new(models.Post)).All(&posts)
 	this.Data["Posts"] = posts
 	
-	this.Data["BlogUrl"] = controllers.Site_config.BlogUrl
+	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 	
 	var categories []*models.Category
 	o.QueryTable(new(models.Category)).All(&categories)
@@ -167,7 +138,7 @@ func (this *AdminArticleController) Post() {
 	o.QueryTable(new(models.Post)).All(&posts)
 	this.Data["Posts"] = posts
 	
-	this.Data["BlogUrl"] = controllers.Site_config.BlogUrl
+	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 	
 	var categories []*models.Category
 	o.QueryTable(new(models.Category)).All(&categories)

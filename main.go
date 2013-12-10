@@ -11,6 +11,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
+	"rblog/common/utils"
 )
 
 type MySQL_Config struct {
@@ -83,21 +84,21 @@ func init() {
 	
 	//init global site config
 	o := orm.NewOrm()
-	o.QueryTable(new(models.SiteConfig)).One(&controllers.Site_config)
+	o.QueryTable(new(models.SiteConfig)).One(&utils.Site_config)
 	
 	// int corotine safe map
-	admincontrollers.Category_map = beego.NewBeeMap()
+	utils.Category_map = beego.NewBeeMap()
 	
 	// insert catagories to map
 	var categories []*models.Category
 	o.QueryTable(new(models.Category)).All(&categories)
 	
 	for _, category := range categories {
-		admincontrollers.Category_map.Set(category.Id, category.Name)
+		utils.Category_map.Set(category.Id, category.Name)
 	}
 	
 	// cache the archives count
-	controllers.ArCount, err = controllers.GetArchives()
+	utils.ArCount, err = utils.GetArchives()
 	if err != nil {
 		beego.Error(err)
 	}
@@ -105,8 +106,8 @@ func init() {
 
 
 func main() {
-	beego.AddFuncMap("markdown", controllers.RenderMarkdown)
-	beego.AddFuncMap("categoryname", admincontrollers.GetCategoryName)
+	beego.AddFuncMap("markdown", utils.RenderMarkdown)
+	beego.AddFuncMap("categoryname", utils.GetCategoryName)
 
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/post/:id([^/]+)", &controllers.ArticleController{})
