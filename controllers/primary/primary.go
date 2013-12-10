@@ -31,9 +31,16 @@ type MainController struct {
 }
 
 
+type ArchiveCount struct {
+	Archive string
+	Count int
+}
+
+
 var (
 	urllist cache.Cache
 	Site_config models.SiteConfig
+	ArCount []ArchiveCount
 )
 
 
@@ -77,6 +84,19 @@ func GetCategoryId(name string) (int, error) {
 	    return 0, errors.New("Not row found")
 	}
 	return category.Id, nil
+}
+
+
+func GetArchives() ([]ArchiveCount, error) {
+	var sql = `select distinct archive as ar,count(archive) as count
+	from post group by archive`
+	o := orm.NewOrm()
+	var archives []ArchiveCount
+	_, err := o.Raw(sql).QueryRows(&archives)
+	if err != nil {
+		return archives, err
+	}
+	return archives, nil
 }
 
 
@@ -156,7 +176,7 @@ func (this *ArticleController) Get() {
 				}
 			}
 			
-			
+			this.Data["ArchiveCount"] = ArCount
 			this.Data["BlogName"] = Site_config.BlogName
 			this.Data["BlogUrl"] = Site_config.BlogUrl
 			this.Data["AdminEmail"] = Site_config.AdminEmail

@@ -95,6 +95,12 @@ func init() {
 	for _, category := range categories {
 		admincontrollers.Category_map.Set(category.Id, category.Name)
 	}
+	
+	// cache the archives count
+	controllers.ArCount, err = controllers.GetArchives()
+	if err != nil {
+		beego.Error(err)
+	}
 }
 
 
