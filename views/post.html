@@ -14,7 +14,17 @@
 	<script src="/static/js/highlight.pack.js"></script>
     <!-- Add custom CSS here -->
     <link href="/static/css/blog.css" rel="stylesheet">
-	<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+	<script type="text/javascript">
+		hljs.initHighlightingOnLoad();
+		
+		function submit_encrypt() {
+			$("#PasswordForm").submit();
+		}
+		
+		function submit_comment() {
+			$("#CommentForm").submit();
+		}
+	</script>
 
   </head>
 
@@ -56,13 +66,13 @@
           <hr>
 		
 		{{ if .Password }}
-		<form action="" method="post">
+		<form action="" method="post" name="PasswordForm">
 			<div class="input-append">
 				{{ .xsrfdata }}
 	  			<input type="password" class="span2" name="ArticlePassword">
 				<input type="hidden" name="ArticleId" value="{{ .Id }}">
 				<input type="hidden" name="FormType" value="Encrypt" />
-	  			<button class="btn" type="submit">Go!</button>
+	  			<button class="btn" onclick="submit_encrypt();">Go!</button>
 			</div>
 		</form>
 		{{ else }}
@@ -72,7 +82,7 @@
 
           <!-- the comment box -->
           <div class="well">
-            <form role="form" action="" method="post">
+            <form role="form" action="" method="post" name="CommentForm">
 			  {{ .xsrfdata }}
 			  <input type="hidden" name="FormType" value="Comment" />
 			  <input type="hidden" name="PostId" value="{{ .Id }}" />
@@ -91,7 +101,7 @@
                 <textarea class="form-control" rows="4" name="Body"></textarea>
               </div>
 			
-              <button type="submit" class="btn btn-primary">Submit</button>
+              <button class="btn btn-primary" onclick="submit_comment();">Submit</button>
             </form>
           </div>
           
