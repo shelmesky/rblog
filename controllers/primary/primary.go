@@ -11,6 +11,13 @@ import (
 	"strconv"
 )
 
+type ArticleComment struct {
+	PostId string `form:"PostId"`
+	User   string `form:"User"`
+	Email  string `form:"Email"`
+	Body   string `form:"Body"`
+}
+
 type MainController struct {
 	beego.Controller
 }
@@ -127,6 +134,16 @@ func (this *ArticleController) Get() {
 				this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
 				utils.Urllist.Put(url_hash, &p, 3600)
 			}
+
+			// Get content for article
+			var comments []*models.Comment
+			_, err := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int)).All(&comments)
+			if err != nil {
+				beego.Error(err)
+			}
+
+			this.Data["Comments"] = comments
+
 			this.TplNames = "post.html"
 			this.Render()
 		} else {
@@ -137,77 +154,104 @@ func (this *ArticleController) Get() {
 }
 
 func (this *ArticleController) Post() {
-	Password := this.GetString("ArticlePassword")
-	Id := this.Input().Get("ArticleId")
-	IdInt, err := strconv.Atoi(Id)
-	if err != nil {
-		beego.Error(err)
-		this.Abort("500")
-	}
-
-	url := this.Ctx.Input.Uri()
-
-	if Password != "" {
-		var p models.Post
-		o := orm.NewOrm()
-		err = o.QueryTable(new(models.Post)).Filter("Id", IdInt).One(&p)
+	FormType := this.GetString("FormType")
+	if FormType == "Encrypt" {
+		Password := this.GetString("ArticlePassword")
+		Id := this.Input().Get("ArticleId")
+		IdInt, err := strconv.Atoi(Id)
 		if err != nil {
 			beego.Error(err)
 			this.Abort("500")
 		}
 
-		if Password == p.Password {
-			// query cache for article body
-			hash := md5.New()
-			hash.Write([]byte(url))
-			var url_hash string
-			url_hash = hex.EncodeToString(hash.Sum(nil))
-			var body *models.Post
-			if ok := utils.Urllist.IsExist(url_hash); ok {
-				value := utils.Urllist.Get(url_hash)
-				if value != nil {
-					body = value.(*models.Post)
-				}
+		url := this.Ctx.Input.Uri()
+
+		if Password != "" {
+			var p models.Post
+			o := orm.NewOrm()
+			err = o.QueryTable(new(models.Post)).Filter("Id", IdInt).One(&p)
+			if err != nil {
+				beego.Error(err)
+				this.Abort("500")
 			}
 
-			this.Data["Catagories"] = utils.Category_map.Items()
-			this.Data["ArchiveCount"] = utils.ArCount
-			this.Data["BlogName"] = utils.Site_config.BlogName
-			this.Data["BlogUrl"] = utils.Site_config.BlogUrl
-			this.Data["AdminEmail"] = utils.Site_config.AdminEmail
-			this.Data["CopyRight"] = utils.Site_config.CopyRight
-
-			if body != nil {
-				beego.Debug("Hit cache for Post.")
-				this.Data["Id"] = body.Id
-				this.Data["Body"] = body.Body
-				this.Data["User"] = body.User
-				this.Data["Title"] = body.Title
-				this.Data["CreatedTime"] = body.CreatedTime
-				this.Data["UpdateTime"] = body.UpdateTime
-				category_name := utils.GetCategoryName(body.CategoryId)
-				if err != nil {
-					beego.Error(err)
+			if Password == p.Password {
+				// query cache for article body
+				hash := md5.New()
+				hash.Write([]byte(url))
+				var url_hash string
+				url_hash = hex.EncodeToString(hash.Sum(nil))
+				var body *models.Post
+				if ok := utils.Urllist.IsExist(url_hash); ok {
+					value := utils.Urllist.Get(url_hash)
+					if value != nil {
+						body = value.(*models.Post)
+					}
 				}
-				this.Data["CategoryName"] = category_name
-			} else {
-				beego.Debug("Cache missed for Post.")
-				category_name := utils.GetCategoryName(p.CategoryId)
-				this.Data["CategoryName"] = category_name
-				this.Data["Id"] = p.Id
-				this.Data["Body"] = p.Body
-				this.Data["User"] = p.User
-				this.Data["Title"] = p.Title
-				this.Data["CreatedTime"] = p.CreatedTime
-				this.Data["UpdateTime"] = p.UpdateTime
-				utils.Urllist.Put(url_hash, &p, 3600)
+
+				this.Data["Catagories"] = utils.Category_map.Items()
+				this.Data["ArchiveCount"] = utils.ArCount
+				this.Data["BlogName"] = utils.Site_config.BlogName
+				this.Data["BlogUrl"] = utils.Site_config.BlogUrl
+				this.Data["AdminEmail"] = utils.Site_config.AdminEmail
+				this.Data["CopyRight"] = utils.Site_config.CopyRight
+
+				if body != nil {
+					beego.Debug("Hit cache for Post.")
+					this.Data["Id"] = body.Id
+					this.Data["Body"] = body.Body
+					this.Data["User"] = body.User
+					this.Data["Title"] = body.Title
+					this.Data["CreatedTime"] = body.CreatedTime
+					this.Data["UpdateTime"] = body.UpdateTime
+					category_name := utils.GetCategoryName(body.CategoryId)
+					if err != nil {
+						beego.Error(err)
+					}
+					this.Data["CategoryName"] = category_name
+				} else {
+					beego.Debug("Cache missed for Post.")
+					category_name := utils.GetCategoryName(p.CategoryId)
+					this.Data["CategoryName"] = category_name
+					this.Data["Id"] = p.Id
+					this.Data["Body"] = p.Body
+					this.Data["User"] = p.User
+					this.Data["Title"] = p.Title
+					this.Data["CreatedTime"] = p.CreatedTime
+					this.Data["UpdateTime"] = p.UpdateTime
+					utils.Urllist.Put(url_hash, &p, 3600)
+				}
+				this.TplNames = "post.html"
+				this.Render()
+				return
 			}
-			this.TplNames = "post.html"
-			this.Render()
-			return
+			this.Ctx.Redirect(301, url)
+		} else {
+			this.Ctx.Redirect(301, url)
 		}
-		this.Ctx.Redirect(301, url)
-	} else {
+
+	} else if FormType == "Comment" {
+		var comment_form = ArticleComment{}
+		if err := this.ParseForm(&comment_form); err != nil {
+			beego.Error(err)
+		}
+		var comment models.Comment
+		PostId, err := strconv.Atoi(comment_form.PostId)
+		if err != nil {
+			beego.Error(err)
+		}
+		o := orm.NewOrm()
+		UserIp := this.Ctx.Input.IP()
+		comment.PostId = PostId
+		comment.User = comment_form.User
+		comment.Email = comment_form.Email
+		comment.Body = comment_form.Body
+		comment.Ip = UserIp
+		_, err = o.Insert(&comment)
+		if err != nil {
+			beego.Error(err)
+		}
+		url := this.Ctx.Input.Uri()
 		this.Ctx.Redirect(301, url)
 	}
 }

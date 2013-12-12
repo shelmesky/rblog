@@ -61,6 +61,7 @@
 				{{ .xsrfdata }}
 	  			<input type="password" class="span2" name="ArticlePassword">
 				<input type="hidden" name="ArticleId" value="{{ .Id }}">
+				<input type="hidden" name="FormType" value="Encrypt" />
 	  			<button class="btn" type="submit">Go!</button>
 			</div>
 		</form>
@@ -71,24 +72,40 @@
 
           <!-- the comment box -->
           <div class="well">
-            <h4>Leave a Comment:</h4>
-            <form role="form">
+            <form role="form" action="" method="post">
+			  {{ .xsrfdata }}
+			  <input type="hidden" name="FormType" value="Comment" />
+			  <input type="hidden" name="PostId" value="{{ .Id }}" />
+			  <h4>Name:</h4>
+			  <div class="form-group">
+				<input type="text" class="form-control" name="User" />
+			  </div>
+			
+			  <h4>Email:</h4>
+			  <div class="form-group">
+				<input type="text" class="form-control" name="Email" />
+			  </div>
+			
+			  <h4>Content:</h4>
               <div class="form-group">
-                <textarea class="form-control" rows="3"></textarea>
+                <textarea class="form-control" rows="4" name="Body"></textarea>
               </div>
+			
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
           
-          <hr>
+          <!-- <hr> -->
 
           <!-- the comments -->
-          <h3>Start Bootstrap <small>9:41 PM on August 24, 2013</small></h3>
-          <p>This has to be the worst blog post I have ever read. It simply makes no sense. You start off by talking about space or something, then you randomly start babbling about cupcakes, and you end off with random fish names.</p>
-
-          <h3>Start Bootstrap <small>9:47 PM on August 24, 2013</small></h3>
-          <p>Don't listen to this guy, any blog with the categories 'dinosaurs, spaceships, fried foods, wild animals, alien abductions, business casual, robots, and fireworks' has true potential.</p>
-
+		{{ with .Comments }}
+		{{ range . }}
+		  <hr>
+          <h3><a href="mailto:{{ .Email }}">{{ .User }}</a><small>{{ .CreatedTime }}</small><small> From {{ .Ip }}</small></h3>
+          <p>{{ .Body | markdown | str2html }}</p>
+		{{ end }}
+		{{ end }}
+          
         </div>
         
         <div class="col-lg-4">
