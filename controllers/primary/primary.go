@@ -1,21 +1,19 @@
 package controllers
 
 import (
-	"strconv"
-	"rblog/models"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
 	"crypto/md5"
 	"encoding/hex"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 	"html/template"
 	"rblog/common/utils"
+	"rblog/models"
+	"strconv"
 )
-
 
 type MainController struct {
 	beego.Controller
 }
-
 
 //HOME
 func (this *MainController) Get() {
@@ -26,9 +24,9 @@ func (this *MainController) Get() {
 	if err != nil {
 		beego.Error(err)
 	}
-	
+
 	this.TplNames = "index.html"
-	
+
 	this.Data["Catagories"] = utils.Category_map.Items()
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["Posts"] = p
@@ -36,7 +34,7 @@ func (this *MainController) Get() {
 	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 	this.Data["AdminEmail"] = utils.Site_config.AdminEmail
 	this.Data["CopyRight"] = utils.Site_config.CopyRight
-	
+
 	count, _ := qs.Count()
 	if int(count) <= utils.Site_config.NumPerPage {
 		this.Data["OldPage"] = -1
@@ -44,7 +42,7 @@ func (this *MainController) Get() {
 		this.Data["OldPage"] = 1
 	}
 	this.Data["NewPage"] = -1
-	
+
 	this.Render()
 }
 
@@ -95,14 +93,14 @@ func (this *ArticleController) Get() {
 					body = value.(*models.Post)
 				}
 			}
-			
+
 			this.Data["Catagories"] = utils.Category_map.Items()
 			this.Data["ArchiveCount"] = utils.ArCount
 			this.Data["BlogName"] = utils.Site_config.BlogName
 			this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 			this.Data["AdminEmail"] = utils.Site_config.AdminEmail
 			this.Data["CopyRight"] = utils.Site_config.CopyRight
-			
+
 			if body != nil {
 				beego.Debug("Hit cache for Post.")
 				this.Data["Id"] = body.Id
@@ -138,7 +136,6 @@ func (this *ArticleController) Get() {
 	}
 }
 
-
 func (this *ArticleController) Post() {
 	Password := this.GetString("ArticlePassword")
 	Id := this.Input().Get("ArticleId")
@@ -147,9 +144,9 @@ func (this *ArticleController) Post() {
 		beego.Error(err)
 		this.Abort("500")
 	}
-	
+
 	url := this.Ctx.Input.Uri()
-	
+
 	if Password != "" {
 		var p models.Post
 		o := orm.NewOrm()
@@ -158,7 +155,7 @@ func (this *ArticleController) Post() {
 			beego.Error(err)
 			this.Abort("500")
 		}
-		
+
 		if Password == p.Password {
 			// query cache for article body
 			hash := md5.New()
@@ -172,14 +169,14 @@ func (this *ArticleController) Post() {
 					body = value.(*models.Post)
 				}
 			}
-			
+
 			this.Data["Catagories"] = utils.Category_map.Items()
 			this.Data["ArchiveCount"] = utils.ArCount
 			this.Data["BlogName"] = utils.Site_config.BlogName
 			this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 			this.Data["AdminEmail"] = utils.Site_config.AdminEmail
 			this.Data["CopyRight"] = utils.Site_config.CopyRight
-			
+
 			if body != nil {
 				beego.Debug("Hit cache for Post.")
 				this.Data["Id"] = body.Id
@@ -215,7 +212,6 @@ func (this *ArticleController) Post() {
 	}
 }
 
-
 type CategoryController struct {
 	beego.Controller
 }
@@ -226,7 +222,7 @@ func (this *CategoryController) Get() {
 	if err != nil {
 		beego.Error(err)
 	}
-	
+
 	o := orm.NewOrm()
 	var posts []*models.Post
 	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("CategoryId", category_id)
@@ -235,7 +231,7 @@ func (this *CategoryController) Get() {
 		this.Abort("404")
 		beego.Error(err)
 	}
-	
+
 	count, _ := qs.Count()
 	if int(count) <= utils.Site_config.NumPerPage {
 		this.Data["OldPage"] = -1
@@ -243,7 +239,7 @@ func (this *CategoryController) Get() {
 		this.Data["OldPage"] = 1
 	}
 	this.Data["NewPage"] = -1
-	
+
 	this.Data["Catagories"] = utils.Category_map.Items()
 	this.Data["Posts"] = posts
 	this.Data["ArchiveCount"] = utils.ArCount
@@ -253,17 +249,15 @@ func (this *CategoryController) Get() {
 	this.Data["CopyRight"] = utils.Site_config.CopyRight
 	this.Data["CategoryCounts"] = count
 	this.Data["CategoryName"] = category_name
-	
+
 	this.TplNames = "category.html"
 	this.Render()
-	
-}
 
+}
 
 type CategoryPageController struct {
 	beego.Controller
 }
-
 
 func (this *CategoryPageController) Get() {
 	category_name := this.Ctx.Input.Params(":name")
@@ -272,24 +266,24 @@ func (this *CategoryPageController) Get() {
 		this.Abort("404")
 		beego.Error(err)
 	}
-	
+
 	page_id_str := this.Ctx.Input.Params(":page_id")
 	page_id, err := strconv.Atoi(page_id_str)
 	if err != nil {
 		page_id = 0
 	}
-	
+
 	o := orm.NewOrm()
 	var posts []*models.Post
 	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("CategoryId", category_id)
 	_, err = qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
-	
+
 	if err != nil {
 		beego.Error(err)
 	}
-	
+
 	count, _ := qs.Count()
-	
+
 	this.Data["Catagories"] = utils.Category_map.Items()
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["CategoryName"] = category_name
@@ -299,12 +293,12 @@ func (this *CategoryPageController) Get() {
 	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 	this.Data["AdminEmail"] = utils.Site_config.AdminEmail
 	this.Data["CopyRight"] = utils.Site_config.CopyRight
-	
+
 	/*
-	算出总的文章数
-	再根据当前页和每页数量，计算出还剩几条记录
-	如果剩余记录数的大于每页数量，就显示Older按钮
-	否则不显示
+		算出总的文章数
+		再根据当前页和每页数量，计算出还剩几条记录
+		如果剩余记录数的大于每页数量，就显示Older按钮
+		否则不显示
 	*/
 	remain_page := int(count) - (page_id * utils.Site_config.NumPerPage)
 	if remain_page > utils.Site_config.NumPerPage {
@@ -312,22 +306,20 @@ func (this *CategoryPageController) Get() {
 	} else if remain_page <= utils.Site_config.NumPerPage {
 		this.Data["OldPage"] = -1
 	}
-	
+
 	/*
-	当page_id==1，NewPage==0，显示第一页
-	当page_id==0，NewPage==-1，不显示Newer按钮
-	以上是在index.html中判断
+		当page_id==1，NewPage==0，显示第一页
+		当page_id==0，NewPage==-1，不显示Newer按钮
+		以上是在index.html中判断
 	*/
 	this.Data["NewPage"] = page_id - 1
 	this.TplNames = "category.html"
 	this.Render()
 }
 
-
 type PageController struct {
 	beego.Controller
 }
-
 
 func (this *PageController) Get() {
 	page_id_str := this.Ctx.Input.Params(":page_id")
@@ -339,11 +331,11 @@ func (this *PageController) Get() {
 	var posts []*models.Post
 	qs := o.QueryTable(new(models.Post)).OrderBy("-id")
 	_, err = qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
-	
+
 	if err != nil {
 		beego.Error(err)
 	}
-	
+
 	this.Data["Catagories"] = utils.Category_map.Items()
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["Posts"] = posts
@@ -351,12 +343,12 @@ func (this *PageController) Get() {
 	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 	this.Data["AdminEmail"] = utils.Site_config.AdminEmail
 	this.Data["CopyRight"] = utils.Site_config.CopyRight
-	
+
 	/*
-	算出总的文章数
-	再根据当前页和每页数量，计算出还剩几条记录
-	如果剩余记录数的大于每页数量，就显示Older按钮
-	否则不显示
+		算出总的文章数
+		再根据当前页和每页数量，计算出还剩几条记录
+		如果剩余记录数的大于每页数量，就显示Older按钮
+		否则不显示
 	*/
 	count, _ := qs.Count()
 	remain_page := int(count) - (page_id * utils.Site_config.NumPerPage)
@@ -365,15 +357,13 @@ func (this *PageController) Get() {
 	} else if remain_page <= utils.Site_config.NumPerPage {
 		this.Data["OldPage"] = -1
 	}
-	
+
 	/*
-	当page_id==1，NewPage==0，显示第一页
-	当page_id==0，NewPage==-1，不显示Newer按钮
-	以上是在index.html中判断
+		当page_id==1，NewPage==0，显示第一页
+		当page_id==0，NewPage==-1，不显示Newer按钮
+		以上是在index.html中判断
 	*/
 	this.Data["NewPage"] = page_id - 1
 	this.TplNames = "index.html"
 	this.Render()
 }
-
-

@@ -1,30 +1,30 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"encoding/json"
-	"rblog/models"
-	"rblog/controllers/primary"
-	"rblog/controllers/admin"
-	"rblog/controllers/debug"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
+	"os"
 	"rblog/common/utils"
+	"rblog/controllers/admin"
+	"rblog/controllers/debug"
+	"rblog/controllers/primary"
+	"rblog/models"
 )
 
 type MySQL_Config struct {
-	Host string
+	Host     string
 	Username string
 	Password string
 	Database string
 }
 
 type Main_Config struct {
-	MySQL MySQL_Config
+	MySQL       MySQL_Config
 	Static_Path string
-	Log_Path string
+	Log_Path    string
 }
 
 func init() {
@@ -74,29 +74,29 @@ func init() {
 		fmt.Println(err)
 		beego.Debug(err)
 	}
-	
+
 	// Set Config fit ORM
 	orm.RunCommand()
 	orm.Debug = false
 
 	// Set static library path
 	beego.SetStaticPath("./static", config.Static_Path)
-	
+
 	//init global site config
 	o := orm.NewOrm()
 	o.QueryTable(new(models.SiteConfig)).One(&utils.Site_config)
-	
+
 	// int corotine safe map
 	utils.Category_map = beego.NewBeeMap()
-	
+
 	// insert catagories to map
 	var categories []*models.Category
 	o.QueryTable(new(models.Category)).All(&categories)
-	
+
 	for _, category := range categories {
 		utils.Category_map.Set(category.Id, category.Name)
 	}
-	
+
 	// cache the archives count
 	utils.ArCount, err = utils.GetArchives()
 	if err != nil {
@@ -104,22 +104,21 @@ func init() {
 	}
 }
 
-
 func main() {
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
 
 	beego.Router("/", &controllers.MainController{})
-	
+
 	beego.Router("/post/:id([^/]+)", &controllers.ArticleController{})
 	beego.Router("/page/:page_id([^/]+)", &controllers.PageController{})
-	
+
 	beego.Router("/category/:name([^/]+)", &controllers.CategoryController{})
 	beego.Router("/category/:name([^/]+)/page/:page_id([^/]+)", &controllers.CategoryPageController{})
-	
+
 	beego.Router("/archive/:name([^/]+)", &controllers.ArchiveController{})
 	beego.Router("/archive/:name([^/]+)/page/:page_id([^/]+)", &controllers.ArchivePageController{})
-	
+
 	// admin console
 	beego.Router("/admin", &admincontrollers.AdminController{})
 	beego.Router("/admin/login", &admincontrollers.AdminLoginController{})
@@ -128,10 +127,9 @@ func main() {
 	beego.Router("/admin/category", &admincontrollers.AdminCategoryController{})
 	beego.Router("/admin/comment", &admincontrollers.AdminCommentController{})
 	beego.Router("/admin/site", &admincontrollers.AdminSiteController{})
-	
+
 	//add http pprof url handler
 	beego.Router("/debug/pprof", &debugcontrollers.ProfController{})
 	beego.Router("/debug/pprof/:pp([^/]+)", &debugcontrollers.ProfController{})
 	beego.Run()
 }
-

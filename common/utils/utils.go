@@ -1,37 +1,34 @@
 package utils
 
 import (
-	"time"
 	"crypto/md5"
-	"math/rand"
-	"strconv"
-	"io"
+	"errors"
 	"fmt"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/cache"
+	"github.com/astaxie/beego/orm"
+	"github.com/russross/blackfriday"
+	"html/template"
+	"io"
+	"math/rand"
+	"rblog/models"
 	"reflect"
 	"runtime"
-	"errors"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
-	"rblog/models"
-	"html/template"
-	"github.com/russross/blackfriday"
-	"github.com/astaxie/beego/cache"
+	"strconv"
+	"time"
 )
-
 
 var (
 	Category_map *beego.BeeMap
-	Urllist cache.Cache
-	Site_config models.SiteConfig
-	ArCount []ArchiveCount
+	Urllist      cache.Cache
+	Site_config  models.SiteConfig
+	ArCount      []ArchiveCount
 )
-
 
 type ArchiveCount struct {
 	Archive string
-	Count int
+	Count   int
 }
-
 
 func init() {
 	// init cache
@@ -43,12 +40,11 @@ func init() {
 	Urllist = c
 }
 
-
-func MakeRandomID()(string) {
+func MakeRandomID() string {
 	nano := time.Now().UnixNano()
 	rand.Seed(nano)
 	rndNum := rand.Int63()
-	
+
 	md5_nano := MD5(strconv.FormatInt(nano, 10))
 	md5_rand := MD5(strconv.FormatInt(rndNum, 10))
 	RandomID := MD5(md5_nano + md5_rand)
@@ -61,41 +57,38 @@ func MD5(text string) string {
 	return fmt.Sprintf("%x", hashMD5.Sum(nil))
 }
 
-
 func GetFuncName(function interface{}) string {
 	func_pointer := reflect.ValueOf(function).Pointer()
 	return runtime.FuncForPC(func_pointer).Name()
 }
 
-
 type NewTime struct {
-    time.Time
+	time.Time
 }
 
-func (t NewTime)YearMonthString() string {
-    const layout = "2006-01"
-    return t.Format(layout)
+func (t NewTime) YearMonthString() string {
+	const layout = "2006-01"
+	return t.Format(layout)
 }
 
-func (t NewTime)NowString() string {
-    const layout = "2006-01-02 15:04:05"
-    return t.Format(layout)
+func (t NewTime) NowString() string {
+	const layout = "2006-01-02 15:04:05"
+	return t.Format(layout)
 }
 
 func YearMonth() string {
-    ta := time.Now()
-    t := NewTime{ta}
-    return t.YearMonthString()
+	ta := time.Now()
+	t := NewTime{ta}
+	return t.YearMonthString()
 }
 
 func Now() string {
-    ta := time.Now()
-    t := NewTime{ta}
-    return t.NowString()
+	ta := time.Now()
+	t := NewTime{ta}
+	return t.NowString()
 }
 
-
-func GetCategoryName(content interface{}) (string) {
+func GetCategoryName(content interface{}) string {
 	//fmt.Println(reflect.TypeOf(content))
 	var category_name string
 	if value, ok := content.(int); ok {
@@ -114,12 +107,11 @@ func GetCategoryName(content interface{}) (string) {
 			return category.Name
 		}
 	}
-	
+
 	return category_name
 }
 
-
-func RenderMarkdown(content interface{}) (string) {
+func RenderMarkdown(content interface{}) string {
 	var output []byte
 	if value, ok := content.(template.HTML); ok {
 		output = blackfriday.MarkdownCommon([]byte(value))
@@ -127,25 +119,23 @@ func RenderMarkdown(content interface{}) (string) {
 		output = blackfriday.MarkdownCommon([]byte(value))
 	}
 	return string(output)
-	
-}
 
+}
 
 func GetCategoryId(name string) (int, error) {
 	var category models.Category
 	o := orm.NewOrm()
 	err := o.QueryTable(new(models.Category)).Filter("Name", name).One(&category)
-		if err == orm.ErrMultiRows {
-	    // 多条的时候报错
-	    return 0, errors.New("Returned Multi Rows Not One")
+	if err == orm.ErrMultiRows {
+		// 多条的时候报错
+		return 0, errors.New("Returned Multi Rows Not One")
 	}
 	if err == orm.ErrNoRows {
-	    // 没有找到记录
-	    return 0, errors.New("Not row found")
+		// 没有找到记录
+		return 0, errors.New("Not row found")
 	}
 	return category.Id, nil
 }
-
 
 func GetArchives() ([]ArchiveCount, error) {
 	var sql = `select distinct archive as ar,count(archive) as count
