@@ -57,7 +57,24 @@ type ArticleController struct {
 	beego.Controller
 }
 
-//查询文章，根据Id或者Shortname
+/*
+	如果是检查文章密码的表单，检测XSRF字段
+	如果是提交评论的表单，则直接返回true
+*/
+func (this *ArticleController) CheckXsrfCookie() bool {
+	FormType := this.GetString("FormType")
+	if FormType == "Encrypt" {
+		return this.Controller.CheckXsrfCookie()
+	} else if FormType == "Comment" {
+		return true
+	}
+	return true
+}
+
+/*
+	查询文章
+	根据Id或者Shortname
+*/
 func (this *ArticleController) Get() {
 	id_str := this.Ctx.Input.Params(":id")
 	id, err := strconv.ParseInt(id_str, 10, 32)
@@ -157,7 +174,10 @@ func (this *ArticleController) Post() {
 	FormType := this.GetString("FormType")
 	if FormType == "Encrypt" {
 		Password := this.GetString("ArticlePassword")
-		Id := this.Input().Get("ArticleId")
+		Id := this.GetString("ArticleId")
+		if Password == "" || Id == "" {
+			this.Abort("404")
+		}
 		IdInt, err := strconv.Atoi(Id)
 		if err != nil {
 			beego.Error(err)
