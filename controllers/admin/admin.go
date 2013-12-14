@@ -149,6 +149,9 @@ func (this *AdminArticleController) Post() {
 	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
 
 	// 再次设置session
+	// 解决POST文章之后，立刻再POST一篇会失败的问题
+	// 但导致了F5刷新重复提交的问题
+	// 不过因为上面有检测Shortname是否重复，所以最终避免了这个问题
 	session_key = "admin_article_get"
 	this.SetSession(session_key, utils.MakeRandomID())
 
