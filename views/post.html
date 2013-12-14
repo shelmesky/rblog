@@ -67,7 +67,7 @@
         
           <!-- the actual blog post: title/author/date/content -->
           <h2>{{ .Title }}</h2>
-          <p class="lead">by <a href="index.php">{{ .User }}</a></p>
+          <p class="lead">by <a href="index.php">{{ .User }}</a> <a href="#comment">Comment({{ .CommentCountNums }})</a></p>
           <hr>
           <p><span class="glyphicon glyphicon-time"></span> Posted on {{ .CreatedTime }}  <a href="/category/{{ .CategoryName }}">{{ .CategoryName }}</a></p>
           <hr>
