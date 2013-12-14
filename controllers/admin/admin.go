@@ -119,7 +119,7 @@ func (this *AdminArticleController) Post() {
 	} else {
 		// 检查短名称是否重复
 		post_count, _ := o.QueryTable(new(models.Post)).Filter("Shortname", post.Shortname).Count()
-		if post_count > 0 {
+		if post_count < 0 {
 			MessageError = "短名称重复!"
 		} else {
 
@@ -147,6 +147,10 @@ func (this *AdminArticleController) Post() {
 	this.Data["Categories"] = categories
 
 	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+
+	// 再次设置session
+	session_key = "admin_article_get"
+	this.SetSession(session_key, utils.MakeRandomID())
 
 	this.Data["MessageError"] = MessageError
 	this.TplNames = "admin/article.html"
