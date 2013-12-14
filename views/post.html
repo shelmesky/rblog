@@ -33,8 +33,8 @@
 			$("#CommentForm").submit();
 		}
 		$(document).ready(function(){
-			$("#title").highlight("keyword");
-			$("#body").highlight("keyword");
+			$("#article_title").highlight("keyword");
+			$("#article_body").highlight("keyword");
 			$(".highlight").css({ backgroundColor: "#FFFF88" });
 		});
 		
@@ -73,7 +73,7 @@
         <div class="col-lg-8">
         
           <!-- the actual blog post: title/author/date/content -->
-          <h2 id="title">{{ .Title }}</h2>
+          <h2 id="article_title">{{ .Title }}</h2>
           <p class="lead">by <a href="index.php">{{ .User }}</a> <a href="#comment">Comment({{ .CommentCountNums }})</a></p>
           <hr>
           <p><span class="glyphicon glyphicon-time"></span> Posted on {{ .CreatedTime }}  <a href="/category/{{ .CategoryName }}">{{ .CategoryName }}</a></p>
@@ -94,9 +94,9 @@
 			</div>
 		</form>
 		{{ else }}
-			<div id="body">
+			<div id="article_body">
 				{{ .Body | markdown | str2html }}
-			</body>
+			</div>
 		{{ end }}
           <hr>
 
