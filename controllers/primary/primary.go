@@ -173,20 +173,48 @@ func (this *ArticleController) Get() {
 			/*
 				计算总的页数，如取模有余数则加1
 			*/
-			all_pages := (int(comment_count) / comment_per_page)
+			// 最大显示几页
+			max_per_page := 5
+
+			max_pages := (int(comment_count) / comment_per_page)
 			if (int(comment_count) % comment_per_page) > 0 {
-				all_pages += 1
+				max_pages += 1
 			}
+
 			var comment_count_elements []int
-			for i := 0; i < all_pages; i++ {
+			// 默认从第0页开始
+			var start int = 0
+			var end int = 0
+
+			// 如果总页数大于5，则默认到第5页结束
+			// 否则到最大页数结束
+			if max_pages >= max_per_page {
+				end = max_per_page
+			} else {
+				end = max_pages
+			}
+
+			/*
+				如果当前页数，大于等于最大页数
+				就根据当前页数，算出当前页落在哪个区间
+				例如当前第7页，处于5~10这个区间
+			*/
+			if int(page_id) >= max_per_page {
+				current_five_page := int(page_id) / max_per_page
+				start = current_five_page * max_per_page
+				end = start + 5
+			}
+
+			for i := start; i < end; i++ {
 				comment_count_elements = append(comment_count_elements, i)
 			}
+
 			this.Data["Comments"] = comments
 			this.Data["CommentsCount"] = comment_count_elements
 			this.Data["CurrentCommentPage"] = page_id
 			this.Data["PrevCommentPage"] = page_id - 1
 			this.Data["NextCommentPage"] = page_id + 1
-			this.Data["MaxCommentPage"] = all_pages - 1
+			this.Data["MaxCommentPage"] = max_pages - 1
 			this.Data["MinCommentPage"] = 0
 
 			this.TplNames = "post.html"

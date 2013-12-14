@@ -145,14 +145,14 @@
 			{{ end }}
 			
 			<!-- 迭代所有页，如果正好是当前页，则为disabled -->
-			{{ range $count := .CommentsCount }}
-				{{ if eq $count $current_page }}
+			{{ range $count, $value := .CommentsCount }}
+				{{ if eq $value $current_page }}
 					<li class="disabled">
-						<a href="#">{{ $count }}</a>
+						<a href="#">{{ $value }}</a>
 					</li>
 				{{ else }}
 					<li>
-						<a href="?comment={{ $count }}#comment">{{ $count }}</a>
+						<a href="?comment={{ $value }}#comment">{{ $value }}</a>
 					</li>
 				{{ end }}
 			{{ end }}
