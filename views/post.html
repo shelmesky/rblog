@@ -16,6 +16,7 @@
 	<script src="/static/js/jquery-2.0.2.min.js"></script>
 	<script src="/static/js/bootstrap.min.js"></script>
 	<script src="/static/js/highlight.pack.js"></script>
+	<script src="/static/js/jquery.highlight-4.js"></script>
 	
 	<link rel="stylesheet" href="/static/css/monokai.css">
 	
@@ -31,6 +32,12 @@
 		function submit_comment() {
 			$("#CommentForm").submit();
 		}
+		$(document).ready(function(){
+			$("#title").highlight("keyword");
+			$("#body").highlight("keyword");
+			$(".highlight").css({ backgroundColor: "#FFFF88" });
+		});
+		
 	</script>
 
   </head>
@@ -66,7 +73,7 @@
         <div class="col-lg-8">
         
           <!-- the actual blog post: title/author/date/content -->
-          <h2>{{ .Title }}</h2>
+          <h2 id="title">{{ .Title }}</h2>
           <p class="lead">by <a href="index.php">{{ .User }}</a> <a href="#comment">Comment({{ .CommentCountNums }})</a></p>
           <hr>
           <p><span class="glyphicon glyphicon-time"></span> Posted on {{ .CreatedTime }}  <a href="/category/{{ .CategoryName }}">{{ .CategoryName }}</a></p>
@@ -87,7 +94,9 @@
 			</div>
 		</form>
 		{{ else }}
-			{{ .Body | markdown | str2html }}
+			<div id="body">
+				{{ .Body | markdown | str2html }}
+			</body>
 		{{ end }}
           <hr>
 
