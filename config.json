@@ -1,6 +1,7 @@
 {
 	"MySQL": {
 		"Host": "127.0.0.1",
+		"Port": "3306",
 		"Username": "root",
 		"Password": "4974481lmh",
 		"Database": "rblog"

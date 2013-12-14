@@ -16,6 +16,7 @@ import (
 
 type MySQL_Config struct {
 	Host     string
+	Port     string
 	Username string
 	Password string
 	Database string
@@ -68,7 +69,7 @@ func init() {
 		orm.RegisterDriver("mysql", orm.DR_MySQL)
 		// Init DB Connection
 		mc := config.MySQL
-		conn_uri := mc.Username + ":" + mc.Password + "@/" + mc.Database + "?charset=utf8"
+		conn_uri := mc.Username + ":" + mc.Password + "@tcp(" + mc.Host + ":" + mc.Port + ")" + "/" + mc.Database + "?charset=utf8"
 		orm.RegisterDataBase("default", "mysql", conn_uri, 30)
 	} else {
 		fmt.Println(err)
