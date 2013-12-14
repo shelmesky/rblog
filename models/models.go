@@ -7,14 +7,15 @@ import (
 
 //站点配置
 type SiteConfig struct {
-	Id            int    `orm:"auto"`
-	BlogName      string `orm:"size(256)"`
-	NumPerPage    int
-	BlogUrl       string `orm:"size(256)"`
-	AdminEmail    string `orm:"size(256)"`
-	CopyRight     string `orm:"size(256)"`
-	AdminUser     string `orm:"size(256)"`
-	AdminPassword string `orm:"size(256)"`
+	Id                int    `orm:"auto"`
+	BlogName          string `orm:"size(256)"`
+	NumPerPage        int
+	CommentNumPerPage int
+	BlogUrl           string `orm:"size(256)"`
+	AdminEmail        string `orm:"size(256)"`
+	CopyRight         string `orm:"size(256)"`
+	AdminUser         string `orm:"size(256)"`
+	AdminPassword     string `orm:"size(256)"`
 }
 
 //文章

@@ -126,6 +126,45 @@
           <p>{{ .Body | markdown | str2html }}</p>
 		{{ end }}
 		{{ end }}
+		
+		<!-- Comment Pagenation -->
+		{{ $max_page := .MaxCommentPage }}
+		{{ $min_page := .MinCommentPage }}
+		{{ $current_page := .CurrentCommentPage }}
+		{{ $prev_page := .PrevCommentPage }}
+		{{ $next_page := .NextCommentPage }}
+		<!-- 如果当前页等于0 -->
+		<ul class="pagination">
+			{{ if eq $current_page 0 }}
+				<li class="disabled"><a><</a></li>
+			{{ else }}
+				<li>
+					<a href="?comment={{ $prev_page }}"><</a>
+				</li>
+			{{ end }}
+			
+			<!-- 迭代所有页，如果正好是当前页，则为disabled -->
+			{{ range $count := .CommentsCount }}
+				{{ if eq $count $current_page }}
+					<li class="disabled">
+						<a href="#">{{ $count }}</a>
+					</li>
+				{{ else }}
+					<li>
+						<a href="?comment={{ $count }}">{{ $count }}</a>
+					</li>
+				{{ end }}
+			{{ end }}
+			
+			<!-- 如果当前页等于最大的页数 -->
+			{{ if eq $current_page $max_page }}
+				<li class="disabled"><a>></a></li>
+			{{ else }}
+				<li>
+					<a href="?comment={{ $next_page }}">></a>
+				</li>
+			{{ end }}
+		</ul>
           
         </div>
         

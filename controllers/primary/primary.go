@@ -76,6 +76,8 @@ func (this *ArticleController) CheckXsrfCookie() bool {
 	根据Id或者Shortname
 */
 func (this *ArticleController) Get() {
+	page_id, err := this.GetInt("comment")
+
 	id_str := this.Ctx.Input.Params(":id")
 	id, err := strconv.ParseInt(id_str, 10, 32)
 
@@ -104,6 +106,13 @@ func (this *ArticleController) Get() {
 		this.Abort("500")
 	} else {
 		if err == nil {
+			// check if the `page` number in url
+			comment_count, err := o.QueryTable(new(models.Comment)).Count()
+			if (int(page_id) * utils.Site_config.CommentNumPerPage) > int(comment_count) {
+				beego.Error(err)
+				this.Abort("404")
+			}
+
 			// query cache for article body
 			url := this.Ctx.Input.Uri()
 			hash := md5.New()
@@ -152,14 +161,33 @@ func (this *ArticleController) Get() {
 				utils.Urllist.Put(url_hash, &p, 3600)
 			}
 
-			// Get content for article
+			// Get comment for article
 			var comments []*models.Comment
-			_, err := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int)).All(&comments)
+			comment_per_page := utils.Site_config.CommentNumPerPage
+			qs := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int))
+			_, err = qs.Limit(comment_per_page, int(page_id)*comment_per_page).All(&comments)
 			if err != nil {
 				beego.Error(err)
 			}
 
+			/*
+				计算总的页数，如取模有余数则加1
+			*/
+			all_pages := (int(comment_count) / comment_per_page)
+			if (int(comment_count) % comment_per_page) > 0 {
+				all_pages += 1
+			}
+			var comment_count_elements []int
+			for i := 0; i < all_pages; i++ {
+				comment_count_elements = append(comment_count_elements, i)
+			}
 			this.Data["Comments"] = comments
+			this.Data["CommentsCount"] = comment_count_elements
+			this.Data["CurrentCommentPage"] = page_id
+			this.Data["PrevCommentPage"] = page_id - 1
+			this.Data["NextCommentPage"] = page_id + 1
+			this.Data["MaxCommentPage"] = all_pages - 1
+			this.Data["MinCommentPage"] = 0
 
 			this.TplNames = "post.html"
 			this.Render()
