@@ -203,6 +203,16 @@ func (this *ArticleController) Get() {
 				current_five_page := int(page_id) / max_per_page
 				start = current_five_page * max_per_page
 				end = start + 5
+
+				/*
+					根据 总页数 % 最大显示页数 = 剩余的页数
+					如果有剩余的页数，则end等于剩余的页数
+					意味着页数不能被max_per_page整除
+				*/
+				remain_page_nums := max_pages % max_per_page
+				if remain_page_nums > 0 {
+					end = start + remain_page_nums
+				}
 			}
 
 			for i := start; i < end; i++ {
