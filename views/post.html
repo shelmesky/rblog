@@ -127,6 +127,7 @@
 		{{ end }}
 		{{ end }}
 		
+		{{ if .MaxCommentPage }}
 		<!-- Comment Pagenation -->
 		{{ $max_page := .MaxCommentPage }}
 		{{ $min_page := .MinCommentPage }}
@@ -166,7 +167,7 @@
 				</li>
 			{{ end }}
 		</ul>
-          
+        {{ end }}
         </div>
         
         <div class="col-lg-4">

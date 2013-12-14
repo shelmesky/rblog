@@ -239,6 +239,7 @@ func (this *ArticleController) Get() {
 }
 
 func (this *ArticleController) Post() {
+	page_id, _ := this.GetInt("comment")
 	FormType := this.GetString("FormType")
 	if FormType == "Encrypt" {
 		Password := this.GetString("ArticlePassword")
@@ -309,6 +310,82 @@ func (this *ArticleController) Post() {
 					this.Data["UpdateTime"] = p.UpdateTime
 					utils.Urllist.Put(url_hash, &p, 3600)
 				}
+
+				// check if the `page` number in url
+				comment_count, err := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int)).Count()
+				if (int(page_id) * utils.Site_config.CommentNumPerPage) > int(comment_count) {
+					beego.Error(err)
+					this.Abort("404")
+				}
+
+				// Get comment for article
+				var comments []*models.Comment
+				comment_per_page := utils.Site_config.CommentNumPerPage
+				qs := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int))
+				_, err = qs.Limit(comment_per_page, int(page_id)*comment_per_page).All(&comments)
+				if err != nil {
+					beego.Error(err)
+				}
+
+				/*
+					计算总的页数，如取模有余数则加1
+				*/
+				// 最大显示几页
+				max_per_page := 5
+
+				max_pages := (int(comment_count) / comment_per_page)
+				if (int(comment_count) % comment_per_page) > 0 {
+					max_pages += 1
+				}
+
+				var comment_count_elements []int
+				// 默认从第0页开始
+				var start int = 0
+				var end int = 0
+
+				// 如果总页数大于5，则默认到第5页结束
+				// 否则到最大页数结束
+				if max_pages >= max_per_page {
+					end = max_per_page
+				} else {
+					end = max_pages
+				}
+
+				/*
+					如果当前页数，大于等于最大页数
+					就根据当前页数，算出当前页落在哪个区间
+					例如当前第7页，处于5~10这个区间
+				*/
+				if int(page_id) >= max_per_page {
+					current_five_page := int(page_id) / max_per_page
+					start = current_five_page * max_per_page
+					end = start + 5
+
+					/*
+						根据 总页数 % 最大显示页数 = 剩余的页数
+						如果有剩余的页数，则end等于剩余的页数
+						意味着页数不能被max_per_page整除
+					*/
+					remain_page_nums := max_pages % max_per_page
+					if remain_page_nums > 0 {
+						end = start + remain_page_nums
+					}
+				}
+
+				for i := start; i < end; i++ {
+					comment_count_elements = append(comment_count_elements, i)
+				}
+
+				page_id := int(page_id)
+				this.Data["CommentCountNums"] = comment_count
+				this.Data["Comments"] = comments
+				this.Data["CommentsCount"] = comment_count_elements
+				this.Data["CurrentCommentPage"] = page_id
+				this.Data["PrevCommentPage"] = page_id - 1
+				this.Data["NextCommentPage"] = page_id + 1
+				this.Data["MaxCommentPage"] = max_pages - 1
+				this.Data["MinCommentPage"] = 0
+
 				this.TplNames = "post.html"
 				this.Render()
 				return
