@@ -106,13 +106,6 @@ func (this *ArticleController) Get() {
 		this.Abort("500")
 	} else {
 		if err == nil {
-			// check if the `page` number in url
-			comment_count, err := o.QueryTable(new(models.Comment)).Count()
-			if (int(page_id) * utils.Site_config.CommentNumPerPage) > int(comment_count) {
-				beego.Error(err)
-				this.Abort("404")
-			}
-
 			// query cache for article body
 			url := this.Ctx.Input.Uri()
 			hash := md5.New()
@@ -159,6 +152,13 @@ func (this *ArticleController) Get() {
 				this.Data["UpdateTime"] = p.UpdateTime
 				this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
 				utils.Urllist.Put(url_hash, &p, 3600)
+			}
+
+			// check if the `page` number in url
+			comment_count, err := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int)).Count()
+			if (int(page_id) * utils.Site_config.CommentNumPerPage) > int(comment_count) {
+				beego.Error(err)
+				this.Abort("404")
 			}
 
 			// Get comment for article
