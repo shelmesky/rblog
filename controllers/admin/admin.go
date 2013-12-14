@@ -117,15 +117,22 @@ func (this *AdminArticleController) Post() {
 	if !only_words_match {
 		MessageError = "短名称不能为纯数字!"
 	} else {
-		post.Ip = this.Ctx.Input.IP()
-		o.Insert(&post)
+		// 检查短名称是否重复
+		post_count, _ := o.QueryTable(new(models.Post)).Filter("Shortname", post.Shortname).Count()
+		if post_count > 0 {
+			MessageError = "短名称重复!"
+		} else {
 
-		this.Data["MessageOK"] = "Post new article success."
+			post.Ip = this.Ctx.Input.IP()
+			o.Insert(&post)
 
-		// 验证成功则删除session
-		// 解决由于失败也删除session
-		// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
-		this.DelSession(session_key)
+			this.Data["MessageOK"] = "Post new article success."
+
+			// 验证成功则删除session
+			// 解决由于失败也删除session
+			// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
+			this.DelSession(session_key)
+		}
 	}
 
 	// send articles to template
