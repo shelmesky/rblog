@@ -219,6 +219,7 @@ func (this *ArticleController) Get() {
 				comment_count_elements = append(comment_count_elements, i)
 			}
 
+			page_id := int(page_id)
 			this.Data["CommentCountNums"] = comment_count
 			this.Data["Comments"] = comments
 			this.Data["CommentsCount"] = comment_count_elements
