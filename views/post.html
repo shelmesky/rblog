@@ -134,12 +134,13 @@
 		{{ $prev_page := .PrevCommentPage }}
 		{{ $next_page := .NextCommentPage }}
 		<!-- 如果当前页等于0 -->
+		<a name="comment"></a>
 		<ul class="pagination">
 			{{ if eq $current_page 0 }}
 				<li class="disabled"><a><</a></li>
 			{{ else }}
 				<li>
-					<a href="?comment={{ $prev_page }}"><</a>
+					<a href="?comment={{ $prev_page }}#comment"><</a>
 				</li>
 			{{ end }}
 			
@@ -151,7 +152,7 @@
 					</li>
 				{{ else }}
 					<li>
-						<a href="?comment={{ $count }}">{{ $count }}</a>
+						<a href="?comment={{ $count }}#comment">{{ $count }}</a>
 					</li>
 				{{ end }}
 			{{ end }}
@@ -161,7 +162,7 @@
 				<li class="disabled"><a>></a></li>
 			{{ else }}
 				<li>
-					<a href="?comment={{ $next_page }}">></a>
+					<a href="?comment={{ $next_page }}#comment">></a>
 				</li>
 			{{ end }}
 		</ul>
