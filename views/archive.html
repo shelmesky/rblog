@@ -88,13 +88,15 @@
         <div class="col-lg-4">
           <div class="well">
             <h4>Blog Search</h4>
-            <div class="input-group">
-              <input type="text" class="form-control">
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
-              </span>
-            </div><!-- /input-group -->
-          </div><!-- /well -->
+            <form action="/post/search" method="post" id="SearchForm">
+	            <div class="input-group">
+		              <input type="text" class="form-control" name="SearchKeyword">
+		              <span class="input-group-btn">
+		                <button class="btn btn-default" type="button" onclick="submit_search();"><span class="glyphicon glyphicon-search"></span></button>
+		              </span>
+	            </div><!-- /input-group -->
+			</form>
+        </div><!-- /well -->
 		<div class="well">
 		    <h4>Global Maps</h4>
 		    <div>
@@ -138,9 +140,6 @@
 
     </div><!-- /.container -->
 
-    <!-- JavaScript -->
-    <script src="/static/js/jquery-1.10.2.js"></script>
-    <script src="/static/js/bootstrap.js"></script>
 
   </body>
 </html>

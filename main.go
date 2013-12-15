@@ -11,6 +11,7 @@ import (
 	"rblog/controllers/admin"
 	"rblog/controllers/debug"
 	"rblog/controllers/primary"
+	"rblog/controllers/search"
 	"rblog/models"
 )
 
@@ -119,6 +120,10 @@ func main() {
 
 	beego.Router("/archive/:name([^/]+)", &controllers.ArchiveController{})
 	beego.Router("/archive/:name([^/]+)/page/:page_id([^/]+)", &controllers.ArchivePageController{})
+
+	// search handler
+	beego.Router("/post/search", &searchcontrollers.SearchController{})
+	beego.Router("/post/search/:keyword([^/]+)/page/:page_id([^/]+)", &searchcontrollers.SearchPageController{})
 
 	// admin console
 	beego.Router("/admin", &admincontrollers.AdminController{})

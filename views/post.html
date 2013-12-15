@@ -16,7 +16,6 @@
 	<script src="/static/js/jquery-2.0.2.min.js"></script>
 	<script src="/static/js/bootstrap.min.js"></script>
 	<script src="/static/js/highlight.pack.js"></script>
-	<script src="/static/js/jquery.highlight-4.js"></script>
 	
 	<link rel="stylesheet" href="/static/css/monokai.css">
 	
@@ -32,6 +31,11 @@
 		function submit_comment() {
 			$("#CommentForm").submit();
 		}
+		
+		function submit_search() {
+			$("#SearchForm").submit();
+		}
+		
 		$(document).ready(function(){
 			$("#article_title").highlight("keyword");
 			$("#article_body").highlight("keyword");
@@ -182,12 +186,14 @@
         <div class="col-lg-4">
           <div class="well">
             <h4>Blog Search</h4>
-            <div class="input-group">
-              <input type="text" class="form-control">
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
-              </span>
-            </div><!-- /input-group -->
+			<form action="/post/search" method="post" id="SearchForm">
+	            <div class="input-group">
+		              <input type="text" class="form-control" name="SearchKeyword">
+		              <span class="input-group-btn">
+		                <button class="btn btn-default" type="button" onclick="submit_search();"><span class="glyphicon glyphicon-search"></span></button>
+		              </span>
+	            </div><!-- /input-group -->
+			</form>
           </div><!-- /well -->
 		
 		  <div class="well">

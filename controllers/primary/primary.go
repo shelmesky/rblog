@@ -154,14 +154,14 @@ func (this *ArticleController) Get() {
 				utils.Urllist.Put(url_hash, &p, 3600)
 			}
 
-			// check if the `page` number in url
+			// 检查是否URL中传递的页数超过总的页数
 			comment_count, err := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int)).Count()
 			if (int(page_id) * utils.Site_config.CommentNumPerPage) > int(comment_count) {
 				beego.Error(err)
 				this.Abort("404")
 			}
 
-			// Get comment for article
+			// 获取每篇问站的评论
 			var comments []*models.Comment
 			comment_per_page := utils.Site_config.CommentNumPerPage
 			qs := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int))
@@ -170,12 +170,10 @@ func (this *ArticleController) Get() {
 				beego.Error(err)
 			}
 
-			/*
-				计算总的页数，如取模有余数则加1
-			*/
 			// 最大显示几页
 			max_per_page := 5
 
+			// 计算总的页数，如果不能被max_per_page整除，则加1页
 			max_pages := (int(comment_count) / comment_per_page)
 			if (int(comment_count) % comment_per_page) > 0 {
 				max_pages += 1
