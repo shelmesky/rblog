@@ -113,8 +113,8 @@ func (this *AdminArticleController) Post() {
 	post.Password = strings.Trim(article.Password, " ")
 	post.Archive = utils.YearMonth()
 
-	only_words_match, _ := regexp.Match(`[^\d]+$`, []byte(post.Shortname))
-	if !only_words_match {
+	only_digests_match, _ := regexp.Match(`^[\d]+$`, []byte(post.Shortname))
+	if only_digests_match {
 		MessageError = "短名称不能为纯数字!"
 	} else {
 		// 检查短名称是否重复
