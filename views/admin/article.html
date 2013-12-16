@@ -103,7 +103,7 @@
 							{{ range . }}
 							<tr>
 								<td><input type="checkbox" class="checkbox" /></td>
-								<td><h3><a href="{{ $BlogUrl }}/post/{{ .Shortname }}" target="_blank">{{ .Title }}</a></h3></td>
+								<td><h3><a href="{{ $BlogUrl }}/post/{{ .Shortname }}.html" target="_blank">{{ .Title }}</a></h3></td>
 								<td>{{ .CreatedTime }}</td>
 								<td>{{ .Shortname }}</td>
 								<td>{{ .CategoryId | categoryname }}</td>

@@ -112,7 +112,7 @@ func main() {
 
 	beego.Router("/", &controllers.MainController{})
 
-	beego.Router("/post/:id([^/]+)", &controllers.ArticleController{})
+	beego.Router("/post/:id([^/]+).html", &controllers.ArticleController{})
 	beego.Router("/page/:page_id([^/]+)", &controllers.PageController{})
 
 	beego.Router("/category/:name([^/]+)", &controllers.CategoryController{})
