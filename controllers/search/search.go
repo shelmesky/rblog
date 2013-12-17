@@ -66,12 +66,12 @@ type SearchPageController struct {
 }
 
 func (this *SearchPageController) Get() {
-	Keyword := this.Ctx.Input.Params(":keyword")
+	Keyword := this.Ctx.Input.Param(":keyword")
 	if Keyword == "" {
 		this.Abort("404")
 	}
 
-	page_id_str := this.Ctx.Input.Params(":page_id")
+	page_id_str := this.Ctx.Input.Param(":page_id")
 	page_id, err := strconv.Atoi(page_id_str)
 	if err != nil {
 		page_id = 0

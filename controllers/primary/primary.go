@@ -78,7 +78,7 @@ func (this *ArticleController) CheckXsrfCookie() bool {
 func (this *ArticleController) Get() {
 	page_id, err := this.GetInt("comment")
 
-	id_str := this.Ctx.Input.Params(":id")
+	id_str := this.Ctx.Input.Param(":id")
 	id, err := strconv.ParseInt(id_str, 10, 32)
 
 	o := orm.NewOrm()
@@ -424,7 +424,7 @@ type CategoryController struct {
 }
 
 func (this *CategoryController) Get() {
-	category_name := this.Ctx.Input.Params(":name")
+	category_name := this.Ctx.Input.Param(":name")
 	category_id, err := utils.GetCategoryId(category_name)
 	if err != nil {
 		beego.Error(err)
@@ -467,14 +467,14 @@ type CategoryPageController struct {
 }
 
 func (this *CategoryPageController) Get() {
-	category_name := this.Ctx.Input.Params(":name")
+	category_name := this.Ctx.Input.Param(":name")
 	category_id, err := utils.GetCategoryId(category_name)
 	if err != nil {
 		this.Abort("404")
 		beego.Error(err)
 	}
 
-	page_id_str := this.Ctx.Input.Params(":page_id")
+	page_id_str := this.Ctx.Input.Param(":page_id")
 	page_id, err := strconv.Atoi(page_id_str)
 	if err != nil {
 		page_id = 0
@@ -529,7 +529,7 @@ type PageController struct {
 }
 
 func (this *PageController) Get() {
-	page_id_str := this.Ctx.Input.Params(":page_id")
+	page_id_str := this.Ctx.Input.Param(":page_id")
 	page_id, err := strconv.Atoi(page_id_str)
 	if err != nil {
 		page_id = 0

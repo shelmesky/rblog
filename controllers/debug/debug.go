@@ -46,7 +46,7 @@ func (this *ProfController) Get() {
 		return
 	}
 
-	switch this.Ctx.Input.Params(":pp") {
+	switch this.Ctx.Input.Param(":pp") {
 	default:
 		pprof.Index(this.Ctx.ResponseWriter, this.Ctx.Request)
 	case "":

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	beego_utils "github.com/astaxie/beego/utils"
 	_ "github.com/go-sql-driver/mysql"
 	"os"
 	"rblog/common/utils"
@@ -89,7 +90,7 @@ func init() {
 	o.QueryTable(new(models.SiteConfig)).One(&utils.Site_config)
 
 	// int corotine safe map
-	utils.Category_map = beego.NewBeeMap()
+	utils.Category_map = beego_utils.NewBeeMap()
 
 	// insert catagories to map
 	var categories []*models.Category
@@ -109,6 +110,9 @@ func init() {
 func main() {
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
+	beego.EnableAdmin = true
+	beego.AdminHttpAddr = "0.0.0.0"
+	beego.AdminHttpPort = 8088
 
 	beego.Router("/", &controllers.MainController{})
 

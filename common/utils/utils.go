@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/utils"
 	"github.com/russross/blackfriday"
 	"html/template"
 	"io"
@@ -19,7 +20,7 @@ import (
 )
 
 var (
-	Category_map *beego.BeeMap
+	Category_map *utils.BeeMap
 	Urllist      cache.Cache
 	Site_config  models.SiteConfig
 	ArCount      []ArchiveCount

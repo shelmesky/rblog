@@ -13,7 +13,7 @@ type ArchiveController struct {
 }
 
 func (this *ArchiveController) Get() {
-	archive := this.Ctx.Input.Params(":name")
+	archive := this.Ctx.Input.Param(":name")
 
 	o := orm.NewOrm()
 	var posts []*models.Post
@@ -52,9 +52,9 @@ type ArchivePageController struct {
 }
 
 func (this *ArchivePageController) Get() {
-	archive := this.Ctx.Input.Params(":name")
+	archive := this.Ctx.Input.Param(":name")
 
-	page_id_str := this.Ctx.Input.Params(":page_id")
+	page_id_str := this.Ctx.Input.Param(":page_id")
 	page_id, err := strconv.Atoi(page_id_str)
 	if err != nil {
 		page_id = 0
