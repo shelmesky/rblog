@@ -144,7 +144,7 @@ func main() {
 	beego.Router("/debug/pprof/:pp([^/]+)", &debugcontrollers.ProfController{})
 
 	// add feed handler
-	beego.Router("/feed/rss", &feedcontrollers.RssController{})
+	beego.Router("/feed", &feedcontrollers.RssController{})
 
 	beego.Run()
 }
