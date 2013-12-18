@@ -11,6 +11,7 @@ import (
 	"rblog/common/utils"
 	"rblog/controllers/admin"
 	"rblog/controllers/debug"
+	"rblog/controllers/feed"
 	"rblog/controllers/primary"
 	"rblog/controllers/search"
 	"rblog/models"
@@ -141,5 +142,9 @@ func main() {
 	//add http pprof url handler
 	beego.Router("/debug/pprof", &debugcontrollers.ProfController{})
 	beego.Router("/debug/pprof/:pp([^/]+)", &debugcontrollers.ProfController{})
+
+	// add feed handler
+	beego.Router("/feed/rss", &feedcontrollers.RssController{})
+
 	beego.Run()
 }
