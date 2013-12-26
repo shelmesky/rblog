@@ -112,6 +112,9 @@ func init() {
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
+	// global filter
+	beego.AddFilter("/admin/:all", "AfterStatic", utils.AuthFilter)
+
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
 	beego.EnableAdmin = true

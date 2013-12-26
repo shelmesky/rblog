@@ -2,20 +2,24 @@ package utils
 
 import (
 	"crypto/md5"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/cache"
+	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/utils"
 	"github.com/russross/blackfriday"
 	"html/template"
 	"io"
 	"math/rand"
+	"net/http"
 	"rblog/models"
 	"reflect"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -148,4 +152,37 @@ func GetArchives() ([]ArchiveCount, error) {
 		return archives, err
 	}
 	return archives, nil
+}
+
+var AuthFilter = func(ctx *context.Context) {
+	if !CheckAuth(ctx.ResponseWriter, ctx) {
+		beego.Error("Admin check user failed.")
+		return
+	}
+}
+
+func CheckAuth(w http.ResponseWriter, r *context.Context) bool {
+	authorization_array := r.Request.Header["Authorization"]
+	if len(authorization_array) > 0 {
+		authorization := strings.TrimSpace(authorization_array[0])
+		var splited []string
+		splited = strings.Split(authorization, " ")
+		data, err := base64.StdEncoding.DecodeString(splited[1])
+		if err != nil {
+			SetBasicAuth(w)
+		}
+		auth_info := strings.Split(string(data), ":")
+		if auth_info[0] == "admin" && auth_info[1] == "19840820" {
+			return true
+		}
+		SetBasicAuth(w)
+	} else {
+		SetBasicAuth(w)
+	}
+	return false
+}
+
+func SetBasicAuth(w http.ResponseWriter) {
+	w.Header().Set("WWW-Authenticate", "Basic realm=\"Admin console\"")
+	http.Error(w, http.StatusText(401), 401)
 }
