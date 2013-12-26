@@ -14,7 +14,7 @@ textarea { overflow:hidden; }
 
 .checkbox { width:13px; height:13px; vertical-align:top; position:relative; top:2px; }
 
-.button { background:#eee url(images/button.gif) repeat-x 0 0; border:solid 1px #b1a874; color:#7f7f7f; font-size:11px; padding:2px 6px 2px 6px; cursor:pointer; line-height:14px !important; }
+.button { background:#eee url(/static/admin/images/button.gif) repeat-x 0 0; border:solid 1px #b1a874; color:#7f7f7f; font-size:11px; padding:2px 6px 2px 6px; cursor:pointer; line-height:14px !important; }
 .button:hover { color:#333; border-color:#857b42; }
 
 

@@ -15,6 +15,7 @@ import (
 	"rblog/controllers/primary"
 	"rblog/controllers/search"
 	"rblog/models"
+	"runtime"
 )
 
 type MySQL_Config struct {
@@ -109,6 +110,8 @@ func init() {
 }
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
 	beego.EnableAdmin = true

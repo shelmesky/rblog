@@ -156,17 +156,17 @@
 								</p>	
 								
 								<p class="inline-field">
-									<label>Password</label>
+									<label>Password <span>(Optional Field)</span></label>
 									<input name="Password" type="text" class="field size3" />
 								</p>
 								
 								<p class="inline-field">
-									<label>User</label>
+									<label>User <span>(Required Field)</span></label>
 									<input name="User" type="text" class="field size3" />
 								</p>
 								
 								<p class="inline-field">
-									<label>Category</label>
+									<label>Category <span>(Required Field)</span></label>
 									<select class="field" name="Category">
 										{{ with .Categories }}
 										{{ range . }}
@@ -177,14 +177,20 @@
 								</p>
 								
 								<p class="inline-field">
-									<label>Short Name</label>
+									<label>Short Name <span>(Required Field)</span></label>
 									<input name="Shortname" type="text" class="field size1" />
 								</p>
 								
 								<p>
 									<span class="req">max 100 symbols</span>
+									<label>Summary <span>(Optional Field)</span></label>
+									<textarea name="Summary" class="field size1" rows="10" cols="30"></textarea>
+								</p>
+								
+								<p>
+									<span class="req">max 100 symbols</span>
 									<label>Content <span>(Required Field)</span></label>
-									<textarea name="Body" class="field size1" rows="10" cols="30"></textarea>
+									<textarea name="Body" class="field size1" cols="30"></textarea>
 								</p>	
 							
 						</div>

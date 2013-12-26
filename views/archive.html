@@ -57,15 +57,18 @@
           {{ with .Posts }}
 		  {{ range . }}
           <!-- blog entry -->
-          <h2><a href="/post/{{ .Shortname }}.html">{{ .Title }}</a></h2>
-          <p class="lead">by <a href="index.php">{{ .User }}</a></p>
-          <hr>
-          <p><span class="glyphicon glyphicon-time"></span> {{ .CreatedTime }}</p>
-          <hr>
-          {{ if .Password }}
+          <h3><a href="/post/{{ .Shortname }}.html">{{ .Title }}</a></h3>
+          <p>by <a href="index.php">{{ .User }}</a> <span class="glyphicon glyphicon-time"></span> {{ .CreatedTime }}</p>
+		  {{ if .Password }}
 		  	<p>需要密码访问</p>
 		  {{ else }}
-          	{{ .Body | markdown | str2html }}
+			{{ if .Summary }}
+				摘要：
+          		{{ .Summary | markdown | str2html }}
+				<a href="/post/{{ .Shortname }}.html">阅读全文</a>
+			{{ else }}
+				{{ .Body | markdown | str2html }}
+			{{ end }}
 		  {{ end }}
           <hr>
 		  {{ end }}

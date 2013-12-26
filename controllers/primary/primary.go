@@ -130,6 +130,7 @@ func (this *ArticleController) Get() {
 			if body != nil {
 				beego.Debug("Hit cache for Post.")
 				this.Data["Id"] = body.Id
+				this.Data["Summary"] = body.Summary
 				this.Data["Body"] = body.Body
 				this.Data["User"] = body.User
 				this.Data["Title"] = body.Title
@@ -144,6 +145,7 @@ func (this *ArticleController) Get() {
 				category_name := utils.GetCategoryName(p.CategoryId)
 				this.Data["CategoryName"] = category_name
 				this.Data["Id"] = p.Id
+				this.Data["Summary"] = p.Summary
 				this.Data["Body"] = p.Body
 				this.Data["User"] = p.User
 				this.Data["Title"] = p.Title
@@ -286,6 +288,7 @@ func (this *ArticleController) Post() {
 				if body != nil {
 					beego.Debug("Hit cache for Post.")
 					this.Data["Id"] = body.Id
+					this.Data["Summary"] = body.Summary
 					this.Data["Body"] = body.Body
 					this.Data["User"] = body.User
 					this.Data["Title"] = body.Title
@@ -301,6 +304,7 @@ func (this *ArticleController) Post() {
 					category_name := utils.GetCategoryName(p.CategoryId)
 					this.Data["CategoryName"] = category_name
 					this.Data["Id"] = p.Id
+					this.Data["Summary"] = p.Summary
 					this.Data["Body"] = p.Body
 					this.Data["User"] = p.User
 					this.Data["Title"] = p.Title

@@ -28,6 +28,7 @@ type Article struct {
 	User      string `form:"User"`
 	Category  int    `form:"Category"`
 	Shortname string `form:"Shortname"`
+	Summary   string `form:"Summary"`
 	Body      string `form:"Body"`
 }
 
@@ -109,6 +110,7 @@ func (this *AdminArticleController) Post() {
 	post.User = strings.Trim(article.User, " ")
 	post.Shortname = strings.Trim(article.Shortname, " ")
 	post.Title = strings.Trim(article.Title, " ")
+	post.Summary = article.Summary
 	post.Body = article.Body
 	post.Password = strings.Trim(article.Password, " ")
 	post.Archive = utils.YearMonth()
