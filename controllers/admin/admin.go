@@ -108,7 +108,8 @@ func (this *AdminArticleController) Post() {
 	var post models.Post
 	post.CategoryId = article.Category
 	post.User = strings.Trim(article.User, " ")
-	post.Shortname = strings.Trim(article.Shortname, " ")
+	shortname := strings.Trim(article.Shortname, " ")
+	post.Shortname = strings.Replace(shortname, " ", "-", -1)
 	post.Title = strings.Trim(article.Title, " ")
 	post.Summary = article.Summary
 	post.Body = article.Body
