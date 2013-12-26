@@ -113,6 +113,7 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// global filter
+	beego.AddFilter("/admin", "AfterStatic", utils.AuthFilter)
 	beego.AddFilter("/admin/:all", "AfterStatic", utils.AuthFilter)
 
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
