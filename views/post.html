@@ -145,9 +145,7 @@
 		{{ $next_page := .NextCommentPage }}
 		<!-- 如果当前页等于0 -->
 		<ul class="pagination">
-			{{ if eq $current_page $min_page }}
-				<li class="disabled"><a><</a></li>
-			{{ else }}
+			{{ if ne $current_page $min_page }}
 				<li>
 					<a href="?comment={{ $prev_page }}#comment"><</a>
 				</li>
