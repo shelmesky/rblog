@@ -15,6 +15,8 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
+	"net/smtp"
+	"rblog/common/api/smtp"
 	"rblog/models"
 	"reflect"
 	"runtime"
@@ -185,4 +187,36 @@ func CheckAuth(w http.ResponseWriter, r *context.Context) bool {
 func SetBasicAuth(w http.ResponseWriter) {
 	w.Header().Set("WWW-Authenticate", "Basic realm=\"Admin console\"")
 	http.Error(w, http.StatusText(401), 401)
+}
+
+func SendEmailWithAttachments(from, subject string, to []string, message string, attach_file []string) (err error) {
+	auth := smtp.PlainAuth(
+		"",
+		"ox55aa@126.com",
+		"63897100",
+		"smtp.126.com",
+	)
+	smtp_host := "smtp.126.com:25"
+
+	if from == "" || subject == "" || message == "" {
+		return errors.New("from or subject or body is empty.")
+	}
+	if len(to) == 0 {
+		return errors.New("to address is empty.")
+	}
+
+	e := email.NewEmail()
+	e.From = from
+	e.To = to
+	e.Subject = subject
+	e.Text = message
+	e.HTML = "<h3>" + message + "</h3>"
+	for _, file := range attach_file {
+		e.AttachFile(file)
+	}
+	err = e.Send(smtp_host, auth)
+	if err != nil {
+		return err
+	}
+	return nil
 }

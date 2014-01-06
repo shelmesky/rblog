@@ -153,5 +153,14 @@ func main() {
 	// add feed handler
 	beego.Router("/feed", &feedcontrollers.RssController{})
 
+	go utils.SendEmailWithAttachments(
+		"33326771@qq.com",
+		"attachments email from qq.com",
+		[]string{"33326771@qq.com"},
+		"message is here",
+		[]string{"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/main.go",
+			"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/logs.log"},
+	)
+
 	beego.Run()
 }
