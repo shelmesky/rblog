@@ -154,7 +154,7 @@ func main() {
 	beego.Router("/feed", &feedcontrollers.RssController{})
 
 	go utils.SendEmailWithAttachments(
-		"33326771@qq.com",
+		"ox55aa@126.com",
 		"attachments email from qq.com",
 		[]string{"33326771@qq.com"},
 		"message is here",
