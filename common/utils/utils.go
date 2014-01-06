@@ -14,8 +14,11 @@ import (
 	"html/template"
 	"io"
 	"math/rand"
+	"mime"
 	"net/http"
 	"net/smtp"
+	"os"
+	"path/filepath"
 	"rblog/common/api/smtp"
 	"rblog/models"
 	"reflect"
@@ -199,10 +202,14 @@ func SendEmailWithAttachments(from, subject string, to []string, message string,
 	smtp_host := "smtp.126.com:25"
 
 	if from == "" || subject == "" || message == "" {
-		return errors.New("from or subject or body is empty.")
+		err := errors.New("from or subject or body is empty.")
+		beego.Critical(err)
+		return err
 	}
 	if len(to) == 0 {
-		return errors.New("to address is empty.")
+		err := errors.New("to address is empty.")
+		beego.Critical(err)
+		return err
 	}
 
 	e := email.NewEmail()
@@ -212,11 +219,31 @@ func SendEmailWithAttachments(from, subject string, to []string, message string,
 	e.Text = message
 	e.HTML = "<h3>" + message + "</h3>"
 	for _, file := range attach_file {
-		e.AttachFile(file)
+		_, err := AttachFile(e, file)
+		if err != nil {
+			beego.Critical(err)
+			return err
+		}
 	}
 	err = e.Send(smtp_host, auth)
 	if err != nil {
+		beego.Critical(err)
 		return err
 	}
 	return nil
+}
+
+func AttachFile(e *email.Email, filename string) (a *email.Attachment, err error) {
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		beego.Critical(err)
+		return nil, err
+	}
+	f, err := os.Open(filename)
+	if err != nil {
+		beego.Critical(err)
+		return nil, err
+	}
+	_, file := filepath.Split(filename)
+	ct := mime.TypeByExtension(filepath.Ext(filename))
+	return e.Attach(f, file, ct)
 }
