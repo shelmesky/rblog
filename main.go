@@ -158,8 +158,8 @@ func main() {
 		"来自126的测试邮件",
 		[]string{"33326771@qq.com"},
 		"附件列表",
-		[]string{"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/main.go",
-			"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/logs.log"},
+		[]string{"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/测试1.log",
+			"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/测试2.log"},
 	)
 
 	beego.Run()

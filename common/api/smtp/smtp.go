@@ -63,7 +63,12 @@ func (e *Email) Attach(r io.Reader, filename string, c string) (a *Attachment, e
 		//If the Content-Type is blank, set the Content-Type to "application/octet-stream"
 		at.Header.Set("Content-Type", "application/octet-stream")
 	}
-	at.Header.Set("Content-Disposition", fmt.Sprintf("attachment;\r\n filename=\"%s\"", filename))
+	// set the charset
+	at.Header.Set("charset", "utf-8")
+
+	filename_encoded := EncodeFilename(filename)
+
+	at.Header.Set("Content-Disposition", fmt.Sprintf("attachment;\r\n filename=\"%s\"", filename_encoded))
 	at.Header.Set("Content-Transfer-Encoding", "base64")
 	return at, nil
 }
@@ -121,26 +126,34 @@ func (e *Email) Bytes() ([]byte, error) {
 		}
 		//Create the body sections
 		if e.Text != "" {
-			header.Set("Content-Type", fmt.Sprintf("text/plain; charset=UTF-8"))
-			header.Set("Content-Transfer-Encoding", "quoted-printable")
+			header.Set("Content-Type", fmt.Sprintf("text/plain; charset=utf-8"))
+			//header.Set("Content-Transfer-Encoding", "quoted-printable")
+			header.Set("Content-Transfer-Encoding", "base64")
 			if _, err := subWriter.CreatePart(header); err != nil {
 				return nil, err
 			}
 			// Write the text
+			base64Wrap(buff, []byte(e.Text))
+			/*
 			if err := quotePrintEncode(buff, e.Text); err != nil {
 				return nil, err
 			}
+			*/
 		}
 		if e.HTML != "" {
-			header.Set("Content-Type", fmt.Sprintf("text/html; charset=UTF-8"))
-			header.Set("Content-Transfer-Encoding", "quoted-printable")
+			header.Set("Content-Type", fmt.Sprintf("text/html; charset=utf-8"))
+			//header.Set("Content-Transfer-Encoding", "quoted-printable")
+			header.Set("Content-Transfer-Encoding", "base64")
 			if _, err := subWriter.CreatePart(header); err != nil {
 				return nil, err
 			}
 			// Write the text
+			base64Wrap(buff, []byte(e.HTML))
+			/*
 			if err := quotePrintEncode(buff, e.HTML); err != nil {
 				return nil, err
 			}
+			*/
 		}
 		if err := subWriter.Close(); err != nil {
 			return nil, err
@@ -264,3 +277,12 @@ func headerToBytes(w io.Writer, t textproto.MIMEHeader) error {
 	}
 	return nil
 }
+
+func EncodeFilename(filename string) string {
+	var filename_format = "=?utf-8?B?%s?="
+	encoded := base64.StdEncoding.EncodeToString([]byte(filename))
+	buf := bytes.NewBuffer(nil)
+	fmt.Fprintf(buf, filename_format, encoded)
+	return buf.String()
+}
+
