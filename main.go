@@ -155,9 +155,9 @@ func main() {
 
 	go utils.SendEmailWithAttachments(
 		"ox55aa@126.com",
-		"attachments email from qq.com",
+		"来自126的测试邮件",
 		[]string{"33326771@qq.com"},
-		"message is here",
+		"附件列表",
 		[]string{"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/main.go",
 			"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/logs.log"},
 	)
