@@ -13,3 +13,8 @@ pre {
 .well {
 	border-radius: 0px;
 }
+
+code {
+	font-family: consolas, sans-serif;
+	font-size: 10px;;
+}
