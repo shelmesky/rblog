@@ -177,7 +177,7 @@ func CheckAuth(w http.ResponseWriter, r *context.Context) bool {
 			SetBasicAuth(w)
 		}
 		auth_info := strings.Split(string(data), ":")
-		if auth_info[0] == "admin" && auth_info[1] == "19840820" {
+		if auth_info[0] == "admin" && auth_info[1] == "password" {
 			return true
 		}
 		SetBasicAuth(w)
