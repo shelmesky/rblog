@@ -6,6 +6,7 @@ import (
 	. "github.com/gorilla/feeds"
 	"rblog/common/utils"
 	"rblog/models"
+	"time"
 )
 
 const ns = "http://www.w3.org/2005/Atom"
@@ -35,10 +36,11 @@ func (this *RssController) Get() {
 		body := post.Body
 		body = utils.RenderMarkdown(body)
 		item := &AtomEntry{
-			Title:   post.Title,
-			Content: &AtomContent{Type: "text/html", Content: body},
-			Link:    &AtomLink{Rel: "alternate", Href: utils.Site_config.BlogUrl + "/post/" + post.Shortname + ".html"},
-			Updated: post.CreatedTime.Format("2006-01-02 15:04:05"),
+			Title:     post.Title,
+			Content:   &AtomContent{Type: "text/html", Content: body},
+			Link:      &AtomLink{Rel: "alternate", Href: utils.Site_config.BlogUrl + "/post/" + post.Shortname + ".html"},
+			Updated:   post.CreatedTime.Format(time.RFC3339),
+			Published: post.CreatedTime.Format(time.RFC3339),
 		}
 		feed.Entries = append(feed.Entries, item)
 	}
