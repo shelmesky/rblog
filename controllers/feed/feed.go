@@ -8,6 +8,8 @@ import (
 	"rblog/models"
 )
 
+const ns = "http://www.w3.org/2005/Atom"
+
 type RssController struct {
 	beego.Controller
 }
@@ -21,6 +23,7 @@ func (this *RssController) Get() {
 	}
 
 	feed := &AtomFeed{
+		Xmlns:    ns,
 		Title:    utils.Site_config.BlogName,
 		Link:     &AtomLink{Href: utils.Site_config.BlogUrl},
 		Subtitle: "编程/生活/思考",
@@ -34,8 +37,8 @@ func (this *RssController) Get() {
 		item := &AtomEntry{
 			Title:   post.Title,
 			Content: &AtomContent{Type: "text/html", Content: body},
-			Link:    &AtomLink{Href: utils.Site_config.BlogUrl + "/post/" + post.Shortname + ".html"},
-			Updated: utils.Now(),
+			Link:    &AtomLink{Rel: "alternate", Href: utils.Site_config.BlogUrl + "/post/" + post.Shortname + ".html"},
+			Updated: post.CreatedTime.Format("2006-01-02 15:04:05"),
 		}
 		feed.Entries = append(feed.Entries, item)
 	}
