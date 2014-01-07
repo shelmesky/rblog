@@ -6,3 +6,10 @@ footer {
 	margin: 50px 0;
 }
 
+pre {
+	border-radius: 0px;
+}
+
+.well {
+	border-radius: 0px;
+}
