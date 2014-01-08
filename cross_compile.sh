@@ -2,11 +2,11 @@
 
 case $1 in
 	windows_386)
-		CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -o server_windows_x86.exe main.go
+		CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -ldflags "-s -w" -o server_windows_x86.exe main.go
 		;;
 
 	windows_amd64)
-		CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o server_windows_x64.exe main.go
+		CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o server_windows_x64.exe main.go
 		;;
 
 	linux_386)
