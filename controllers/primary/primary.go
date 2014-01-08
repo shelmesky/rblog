@@ -221,7 +221,6 @@ func (this *ArticleController) Get() {
 					}
 				}
 			}
-			beego.Info(start, end)
 
 			for i := start; i < end; i++ {
 				comment_count_elements = append(comment_count_elements, i)
