@@ -176,7 +176,8 @@ func (this *ArticleController) Get() {
 			max_per_page := 5
 
 			// 计算总的页数，如果不能被max_per_page整除，则加1页
-			max_pages := (int(comment_count) / comment_per_page)
+			var max_pages int
+			max_pages = (int(comment_count) / comment_per_page)
 			if (int(comment_count) % comment_per_page) > 0 {
 				max_pages += 1
 			}
@@ -208,12 +209,19 @@ func (this *ArticleController) Get() {
 					根据 总页数 % 最大显示页数 = 剩余的页数
 					如果有剩余的页数，则end等于剩余的页数
 					意味着页数不能被max_per_page整除
+
+					如果end大于最大的页数
+					说明已经达到末尾
+					应该根据remain_page_nums重新计算end
 				*/
-				remain_page_nums := max_pages % max_per_page
-				if remain_page_nums > 0 {
-					end = start + remain_page_nums
+				if end > max_pages {
+					remain_page_nums := max_pages % max_per_page
+					if remain_page_nums > 0 {
+						end = start + remain_page_nums
+					}
 				}
 			}
+			beego.Info(start, end)
 
 			for i := start; i < end; i++ {
 				comment_count_elements = append(comment_count_elements, i)
