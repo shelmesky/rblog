@@ -192,3 +192,14 @@ func (this *AdminSiteController) Get() {
 	this.TplNames = "admin/site.html"
 	this.Render()
 }
+
+// FileUplaod
+type AdminFileController struct {
+	beego.Controller
+}
+
+func (this *AdminFileController) Get() {
+	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+	this.TplNames = "admin/file.html"
+	this.Render()
+}

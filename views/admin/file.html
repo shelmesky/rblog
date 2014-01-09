@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>RBlog Admin</title>>
+	
+	<script src="/static/js/jquery-2.0.2.min.js"></script>
+	<script src="/static/ajax_upload/jquery.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="/static/admin/css/style.css" type="text/css" media="all" />
+	<script src="/static/ajax_upload/ajaxfileupload.js" type="text/javascript"></script>
+	
+	<script type="text/javascript">
+		var count = 1;
+         
+        function add() {
+            count += 1;
+            var content = "<tr id='uparea_" + count +"'><td>"
+            content += "<input type='file' name='fileToUpload' id='fileToUpload_"+ count+"' class='input' /><input type='button' id='removeButton_" + count + "' value='Remove' onclick='iremove(this)' />";
+            content += "<button href='#' class='button' id='buttonUpload' onclick='return ajaxFileUpload(" + count +");'>上传</button>"
+            content += "<img id='loading_" + count + "' src='/static/ajax_upload/loading.gif' style='display: none'";
+            content += "</td></tr>"
+            $("#fileArea").append(content);
+        }
+        
+        //删除当前行<tr>
+        function iremove(obj) {
+            $(obj).parent().parent().remove();
+        }
+        
+        function do_submit(args) {
+            $("#main_form").submit();
+        }
+        
+	
+        function ajaxFileUpload(id)
+        {
+            //starting setting some animation when the ajax starts and completes
+            $("#loading_" + id)
+            .ajaxStart(function(){
+                $(this).show();
+            })
+            .ajaxComplete(function(){
+                $(this).hide();
+            });
+            
+            $.ajaxFileUpload
+            (
+                {
+					var xsrf = $("input[name$='_xsrf']").val();
+                    data: {count: id, _xsrf: xsrf},
+                    url:'/post/upload',
+                    secureuri:false,
+                    fileElementId:'fileToUpload_' + id,
+                    dataType: 'json',
+                    
+                    success: function (data, status)
+                    {
+                        if(typeof(data.error) != 'undefined')
+                        {
+                            if(data.error != '')
+                            {
+                                alert(data.error);
+                            }else
+                            {
+                                count = data.msg.count;
+                                filename = data.msg.filename;
+                                filesize = data.msg.filesize;
+                                var content = "";
+                                content += "<div style='color: #F00;'>";
+                                content += filename;
+                                content += " : " + filesize;
+                                content += "</div>";
+                                $("#uparea_" + count).html(content);
+                            }
+                        }
+                    },
+                    error: function (data, status, e)
+                    {
+                        alert(e);
+                    }
+                }
+            )
+            
+            return false;
+         }
+         
+        </script>
+</head>
+<body>
+<!-- Header -->
+<div id="header">
+	<div class="shell">
+		<!-- Logo + Top Nav -->
+		<div id="top">
+			<h1><a href="#">RBlog Admin</a></h1>
+			<div id="top-navigation">
+				Welcome <strong>Administrator</strong></a>
+				<span>|</span>
+				<a href="/admin/site">Settings</a>
+				<span>|</span>
+				<a href="/admin/logout">Log out</a>
+			</div>
+		</div>
+		<!-- End Logo + Top Nav -->
+		
+		<!-- Main Nav -->
+		<div id="navigation">
+			<ul>
+				<li><a href="/admin"><span>Dashboard</span></a></li>
+			    <li><a href="/admin/article"><span>Articles</span></a></li>
+			    <li><a href="/admin/comment"><span>Comments</span></a></li>
+			    <li><a href="/admin/site"><span>Site Config</span></a></li>
+			    <li><a href="/admin/category"><span>Category</span></a></li>
+			    <li><a href="/admin/guestbook"><span>Guest Book</span></a></li>
+			    <li><a href="/admin/files" class="active"><span>Files</span></a></li>
+			</ul>
+		</div>
+		<!-- End Main Nav -->
+	</div>
+</div>
+<!-- End Header -->
+
+<!-- Container -->
+<div id="container">
+	<div class="shell">
+		
+		<!-- Small Nav -->
+		<div class="small-nav">
+			<a href="/admin/article">File Management</a>
+		</div>
+		<!-- End Small Nav -->
+		
+		<!-- Message OK -->
+		{{ if .MessageOK }}		
+		<div class="msg msg-ok">
+			<p><strong>{{ .MessageOK }}</strong></p>
+			<a href="#" class="close">close</a>
+		</div>
+		{{ end }}
+		<!-- End Message OK -->		
+		
+		<!-- Message Error -->
+		{{ if .MessageError }}
+		<div class="msg msg-error">
+			<p><strong>{{ .MessageError }}</strong></p>
+			<a href="#" class="close">close</a>
+		</div>
+		{{ end }}
+		<!-- End Message Error -->
+		<br />
+		<!-- Main -->
+		<div id="main">
+			<div class="cl">&nbsp;</div>
+			
+			<!-- Content -->
+			<div id="content">
+				
+				<!-- Box -->
+				<div class="box">
+					<!-- Box Head -->
+					<div class="box-head">
+						<h2 class="left">Current Files</h2>
+						<div class="right">
+							<label>search articles</label>
+							<input type="text" class="field small-field" />
+							<input type="submit" class="button" value="search" />
+						</div>
+					</div>
+					<!-- End Box Head -->	
+
+					<!-- Table -->
+					<div class="table">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<th width="13"><input type="checkbox" class="checkbox" /></th>
+								<th>Title</th>
+								<th>Date</th>
+								<th>Short Name</th>
+								<th width="60" class="ac">Category</th>
+								<th width="110" class="ac">Actions</th>
+							</tr>
+						</table>
+						
+						
+						<!-- Pagging -->
+						<div class="pagging">
+							<div class="left">Showing 1-12 of 44</div>
+							<div class="right">
+								<a href="#">Previous</a>
+								<a href="#">1</a>
+								<a href="#">2</a>
+								<a href="#">3</a>
+								<a href="#">4</a>
+								<a href="#">245</a>
+								<span>...</span>
+								<a href="#">Next</a>
+								<a href="#">View all</a>
+							</div>
+						</div>
+						<!-- End Pagging -->
+						
+					</div>
+					<!-- Table -->
+					
+				</div>
+				<!-- End Box -->
+				
+				<!-- Box -->
+				<div class="box">
+					<!-- Box Head -->
+					<div class="box-head">
+						<h2>Upload File</h2>
+					</div>
+					<!-- End Box Head -->
+					
+						<!-- Form -->
+						<div class="form">
+							<form name="form" action="" method="POST" enctype="multipart/form-data">
+								{{ .xsrfdata }}
+            					<div class="well" style="width: 70%;">
+            					<h3>上传文件</h3>
+            						<p><input type="button" id="addButon" value="增加" onclick="add()"></p>
+            						<table id="fileArea">
+                						<tbody>
+                						<tr id="uparea_1">
+                    						<td>
+                        						<input type="file" name="fileToUpload" id='fileToUpload_1' class="input" />
+                        						<button href="#" class="button" id="buttonUpload" onclick="return ajaxFileUpload(1);">上传</button>
+                    							<img id="loading_1" src="/static/ajax_upload/loading.gif" style="display: none">
+                    						</td>
+                						</tr>
+                						</tbody>
+            						</table>
+            					</div>
+        					</form>
+						</div>
+						<!-- End Form -->
+						
+						<!-- Form Buttons -->
+						<div class="buttons">
+							<input type="button" class="button" value="preview" />
+							<input type="submit" class="button" value="submit" />
+						</div>
+						<!-- End Form Buttons -->
+				</div>
+				<!-- End Box -->
+
+			</div>
+			<!-- End Content -->
+			
+			<!-- Sidebar -->
+			<div id="sidebar">
+				
+				<!-- Box -->
+				<div class="box">
+					
+					<!-- Box Head -->
+					<div class="box-head">
+						<h2>Management</h2>
+					</div>
+					<!-- End Box Head-->
+					
+					<div class="box-content">
+						<a href="#" class="add-button"><span>Upload File</span></a>
+						<div class="cl">&nbsp;</div>
+						
+						<p class="select-all"><input type="checkbox" class="checkbox" /><label>select all</label></p>
+						<p><a href="#">Delete Selected</a></p>
+						
+						<!-- Sort -->
+						<div class="sort">
+							<label>Sort by</label>
+							<select class="field">
+								<option value="">Title</option>
+							</select>
+							<select class="field">
+								<option value="">Date</option>
+							</select>
+							<select class="field">
+								<option value="">Author</option>
+							</select>
+						</div>
+						<!-- End Sort -->
+						
+					</div>
+				</div>
+				<!-- End Box -->
+			</div>
+			<!-- End Sidebar -->
+			
+			<div class="cl">&nbsp;</div>			
+		</div>
+		<!-- Main -->
+	</div>
+</div>
+<!-- End Container -->
+
+<!-- Footer -->
+<div id="footer">
+	<div class="shell">
+		<span class="left">&copy; 2010 - CompanyName</span>
+		<span class="right">
+			Design by <a href="http://chocotemplates.com" target="_blank" title="The Sweetest CSS Templates WorldWide">Chocotemplates.com</a>
+		</span>
+	</div>
+</div>
+<!-- End Footer -->
+	
+</body>
+</html>

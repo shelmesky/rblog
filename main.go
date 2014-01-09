@@ -14,6 +14,7 @@ import (
 	"rblog/controllers/feed"
 	"rblog/controllers/primary"
 	"rblog/controllers/search"
+	"rblog/controllers/upload"
 	"rblog/models"
 	"runtime"
 )
@@ -115,6 +116,7 @@ func main() {
 	// global filter
 	beego.AddFilter("/admin", "AfterStatic", utils.AuthFilter)
 	beego.AddFilter("/admin/:all", "AfterStatic", utils.AuthFilter)
+	beego.AddFilter("/post/upload", "AfterStatic", utils.AuthFilter)
 
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
@@ -145,6 +147,7 @@ func main() {
 	beego.Router("/admin/category", &admincontrollers.AdminCategoryController{})
 	beego.Router("/admin/comment", &admincontrollers.AdminCommentController{})
 	beego.Router("/admin/site", &admincontrollers.AdminSiteController{})
+	beego.Router("/admin/files", &admincontrollers.AdminFileController{})
 
 	//add http pprof url handler
 	beego.Router("/debug/pprof", &debugcontrollers.ProfController{})
@@ -152,6 +155,9 @@ func main() {
 
 	// add feed handler
 	beego.Router("/feed", &feedcontrollers.RssController{})
+
+	// file upload handler
+	beego.Router("/post/upload", &uploadcontrollers.UploadController{})
 
 	/*
 		go utils.SendEmailWithAttachments(
