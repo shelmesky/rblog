@@ -105,7 +105,7 @@ type DownloadController struct {
 	beego.Controller
 }
 
-// file upload handler
+// file download handler
 func (this *DownloadController) Get() {
 	// 根据hash从DB中查询文件上传记录
 	hashname := this.Ctx.Input.Param(":filehash")
@@ -122,7 +122,7 @@ func (this *DownloadController) Get() {
 	current_path, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		beego.Error(err)
-		this.Ctx.WriteString(`{"Error": "Upload error."}`)
+		this.Ctx.WriteString(`{"Error": "Get current dir error."}`)
 		return
 	}
 
