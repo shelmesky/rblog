@@ -51,9 +51,20 @@ type Category struct {
 	Name string `orm:"size(256)"`
 }
 
+//上传的文件
+type UploadFile struct {
+	Id         int       `orm:"auto"`
+	UploadTime time.Time `orm:"auto_now_add;type(datetime)"`
+	Filesize   int64
+	Filename   string `orm:"size(512)"`
+	Hashname   string `orm:"size(512)"`
+	Fullpath   string `orm:"size(512)"`
+}
+
 func init() {
 	orm.RegisterModel(new(Post))
 	orm.RegisterModel(new(SiteConfig))
 	orm.RegisterModel(new(Comment))
 	orm.RegisterModel(new(Category))
+	orm.RegisterModel(new(UploadFile))
 }
