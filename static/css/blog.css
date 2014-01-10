@@ -18,3 +18,7 @@ code {
 	font-family: consolas, sans-serif;
 	font-size: 10px;;
 }
+
+.navbar-inverse .navbar-brand {
+	color: #FFF;
+}
