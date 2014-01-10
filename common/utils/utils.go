@@ -247,3 +247,8 @@ func AttachFile(e *email.Email, filename string) (a *email.Attachment, err error
 	ct := mime.TypeByExtension(filepath.Ext(filename))
 	return e.Attach(f, file, ct)
 }
+
+func Exist(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil || os.IsExist(err)
+}

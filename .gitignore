@@ -3,3 +3,4 @@ rblog
 *.exe
 *.dat
 server*
+upload/

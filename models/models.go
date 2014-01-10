@@ -58,7 +58,6 @@ type UploadFile struct {
 	Filesize   int64
 	Filename   string `orm:"size(512)"`
 	Hashname   string `orm:"size(512)"`
-	Fullpath   string `orm:"size(512)"`
 }
 
 func init() {

@@ -159,6 +159,9 @@ func main() {
 	// file upload handler
 	beego.Router("/post/upload", &uploadcontrollers.UploadController{})
 
+	// file download handler
+	beego.Router("/post/download/:filehash([^/]+)", &uploadcontrollers.DownloadController{})
+
 	/*
 		go utils.SendEmailWithAttachments(
 			"ox55aa@126.com",
