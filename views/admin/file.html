@@ -155,12 +155,27 @@
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<th width="13"><input type="checkbox" class="checkbox" /></th>
-								<th>Title</th>
-								<th>Date</th>
-								<th>Short Name</th>
-								<th width="60" class="ac">Category</th>
-								<th width="110" class="ac">Actions</th>
+								<th>ID</th>
+								<th>UploadTime</th>
+								<th>FileSize</th>
+								<th>FileName</th>
+								<th>FullPath</th>
 							</tr>
+							
+							{{ $BlogUrl := .BlogUrl }}
+							{{ with .UploadFiles }}
+							{{ range . }}
+							<tr>
+							<td>
+								<input type="checkbox" class="checkbox" /></td>
+								<td><h3>{{ .Id }}</h3></td>
+								<td>{{date .UploadTime "Y-m-d H:i:s" }}</td>
+								<td>{{ .Filesize | filesize }}</td>
+								<td>{{ .Filename }}</td>
+								<td><a href="/post/download/{{ .Hashname }}" target="_blank">{{ .Hashname }}</a></td>
+							</tr>
+							{{ end }}
+							{{ end }}
 						</table>
 						
 						

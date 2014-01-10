@@ -120,6 +120,7 @@ func main() {
 
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
+	beego.AddFuncMap("filesize", utils.FileSize)
 	beego.EnableAdmin = true
 	beego.AdminHttpAddr = "0.0.0.0"
 	beego.AdminHttpPort = 8088

@@ -252,3 +252,8 @@ func Exist(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil || os.IsExist(err)
 }
+
+func FileSize(content interface{}) string {
+	value := content.(int64)
+	return fmt.Sprintf("%.2f MB", float64(value)/1000/1000)
+}

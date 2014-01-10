@@ -199,6 +199,17 @@ type AdminFileController struct {
 }
 
 func (this *AdminFileController) Get() {
+	o := orm.NewOrm()
+	var upload_files []models.UploadFile
+	num, err := o.QueryTable(new(models.UploadFile)).All(&upload_files)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	this.Data["MaxFiles"] = num
+	this.Data["UploadFiles"] = upload_files
+	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
+
 	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
 	this.TplNames = "admin/file.html"
 	this.Render()
