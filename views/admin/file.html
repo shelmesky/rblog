@@ -5,10 +5,22 @@
 	<title>RBlog Admin</title>
 	
 	<script src="/static/js/jquery-2.0.2.min.js"></script>
-	<script src="/static/ajax_upload/jquery.js" type="text/javascript"></script>
+	
 	<script src="/static/ajax_upload/ajaxfileupload.js" type="text/javascript"></script>
 	
         <script type="text/javascript">
+		function check_filesize(id) {
+			var upload_button = $("#buttonUpload_" + id);
+			var file_input = 'fileToUpload_' + id;
+			var f = document.getElementById(file_input).files;
+			var size = f[0].size;
+			if (size > 67108864) {
+				upload_button.hide("fast");
+				alert("文件大小超过64MB!");
+				return
+			}
+			upload_button.show("fast");
+		}
 	function ajaxFileUpload(id)
         {
             //starting setting some animation when the ajax starts and completes
@@ -68,8 +80,8 @@
         function add() {
             count += 1;
             var content = "<tr id='uparea_" + count +"'><td>";
-            content += "<input type='file' name='fileToUpload' id='fileToUpload_"+ count+"' class='input' /><input type='button' id='removeButton_" + count + "' value='Remove' onclick='iremove(this)' />";
-            content += "<button href='#' class='button' id='buttonUpload' onclick='return ajaxFileUpload(" + count +");'>上传</button>";
+            content += "<input type='file' name='fileToUpload' id='fileToUpload_"+ count+"' class='input' onchange='check_filesize(" + count + ");' /><input type='button' id='removeButton_" + count + "' value='Remove' onclick='iremove(this)' />";
+            content += "<button href='#' class='button' id='buttonUpload_" + count + "' onclick='return ajaxFileUpload(" + count +");'>上传</button>";
             content += "<img id='loading_" + count + "' src='/static/ajax_upload/loading.gif' style='display: none'";
             content += "</td></tr>";
             $("#fileArea").append(content);
@@ -216,13 +228,13 @@
 								{{ .xsrfdata }}
             					<div class="well" style="width: 70%;">
             					<h3>上传文件</h3>
-            						<p><input type="button" id="addButon" value="增加" onclick="add()" /></p>
+            						<p><input class="button" type="button" id="addButon" value="增加" onclick="add()" /></p>
             						<table id="fileArea">
                 						<tbody>
                 						<tr id="uparea_1">
                     						<td>
-                        						<input type="file" name="fileToUpload" id='fileToUpload_1' class="input" />
-                        						<button href="#" class="button" id="buttonUpload" onclick="return ajaxFileUpload(1);">上传</button>
+                        						<input type="file" name="fileToUpload" id='fileToUpload_1' class="input" onchange="check_filesize(1)" />
+                        						<button href="#" class="button" id="buttonUpload_1" onclick="return ajaxFileUpload(1);">上传</button>
                     							<img id="loading_1" src="/static/ajax_upload/loading.gif" style="display: none;" />
                     						</td>
                 						</tr>

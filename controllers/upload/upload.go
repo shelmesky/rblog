@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -14,11 +15,6 @@ import (
 	"rblog/common/utils"
 	"rblog/models"
 )
-
-// 获取文件大小
-type Sizer interface {
-	Size() int64
-}
 
 type MessageBody struct {
 	Filename string
@@ -44,15 +40,23 @@ func (this *UploadController) Post() {
 	file, info, err := this.GetFile("fileToUpload")
 	if err != nil {
 		beego.Critical(err)
-		this.Ctx.WriteString(`{"Error": "No selectd file."}`)
+		this.Ctx.WriteString(`{"Error": "No selectd file"}`)
 		return
 	}
 	defer file.Close()
 
-	file_size := file.(Sizer).Size()
+	buffer, err := ioutil.ReadAll(file)
+	if err != nil {
+		beego.Critical(err)
+		this.Ctx.WriteString(`{"Error": "ReadFull error"}`)
+		return
+	}
+
+	file_size := int64(len(buffer))
+
 	// if filesize more than 64MB
 	if file_size > 67108864 {
-		this.Ctx.WriteString(`{"Error": "Filesize more than 64MB."}`)
+		this.Ctx.WriteString(`{"Error": "Filesize more than 64MB"}`)
 		return
 	}
 
@@ -69,11 +73,13 @@ func (this *UploadController) Post() {
 	f, err := os.OpenFile(tofile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		beego.Error(err)
-		this.Ctx.WriteString(`{"Error": "Create file error."}`)
+		this.Ctx.WriteString(`{"Error": "Create file error"}`)
 		return
 	}
 	defer f.Close()
-	io.Copy(f, file)
+
+	file_reader := bytes.NewReader(buffer)
+	io.Copy(f, file_reader)
 
 	// 增加DB记录
 	o := orm.NewOrm()
@@ -84,7 +90,7 @@ func (this *UploadController) Post() {
 	_, err = o.Insert(upload_file)
 	if err != nil {
 		beego.Error(err)
-		this.Ctx.WriteString(`{"Error": "Insert database error."}`)
+		this.Ctx.WriteString(`{"Error": "Insert database error"}`)
 		return
 	}
 
@@ -114,7 +120,7 @@ func (this *DownloadController) Get() {
 	err := o.QueryTable(new(models.UploadFile)).Filter("Hashname", hashname).One(&upload_file)
 	if err == orm.ErrNoRows {
 		beego.Error(err)
-		this.Ctx.WriteString(`{"Error": "Can not find file."}`)
+		this.Ctx.WriteString(`{"Error": "Can not find file"}`)
 		return
 	}
 
@@ -122,7 +128,7 @@ func (this *DownloadController) Get() {
 	current_path, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		beego.Error(err)
-		this.Ctx.WriteString(`{"Error": "Get current dir error."}`)
+		this.Ctx.WriteString(`{"Error": "Get current dir error"}`)
 		return
 	}
 
@@ -130,7 +136,7 @@ func (this *DownloadController) Get() {
 	fullpath := path.Join(current_path, "upload", upload_file.Hashname)
 	if !utils.Exist(fullpath) {
 		beego.Error(err)
-		this.Ctx.WriteString(`{"Error": "File not exist."}`)
+		this.Ctx.WriteString(`{"Error": "File not exist"}`)
 		return
 	}
 
