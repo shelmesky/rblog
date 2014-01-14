@@ -160,8 +160,13 @@ func GetArchives() ([]ArchiveCount, error) {
 }
 
 var AuthFilter = func(ctx *context.Context) {
-	if !CheckAuth(ctx.ResponseWriter, ctx) {
-		beego.Error("Admin check user failed.")
+	user := ctx.Input.Session("admin_user")
+	if user == nil {
+		if !CheckAuth(ctx.ResponseWriter, ctx) {
+			beego.Error(ctx.Input.Url() + " Admin check user failed.")
+			return
+		}
+	} else {
 		return
 	}
 }
@@ -174,10 +179,12 @@ func CheckAuth(w http.ResponseWriter, r *context.Context) bool {
 		splited = strings.Split(authorization, " ")
 		data, err := base64.StdEncoding.DecodeString(splited[1])
 		if err != nil {
+			beego.Error(r.Input.Url() + " Decode Base64 Auth failed.")
 			SetBasicAuth(w)
 		}
 		auth_info := strings.Split(string(data), ":")
 		if auth_info[0] == "admin" && auth_info[1] == "password" {
+			r.Output.Session("admin_user", auth_info[0])
 			return true
 		}
 		SetBasicAuth(w)
