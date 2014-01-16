@@ -15,12 +15,13 @@
 			var file_input = 'fileToUpload_' + id;
 			var f = document.getElementById(file_input).files;
 			var size = f[0].size;
-			if (size > 67108864) {
-				upload_button.hide("fast");
-				alert("文件大小超过64MB!");
+			if (size > 134217728) {
+				upload_button.hide();
+				alert("文件大小超过128MB!");
 				return
 			}
-			upload_button.show("fast");
+			upload_button.css("display");
+			upload_button.show();
 		}
 	function ajaxFileUpload(id)
         {

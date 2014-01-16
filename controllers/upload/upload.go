@@ -54,8 +54,8 @@ func (this *UploadController) Post() {
 
 	file_size := int64(len(buffer))
 
-	// if filesize more than 64MB
-	if file_size > 67108864 {
+	// if filesize more than 128MB
+	if file_size > 134217728 {
 		this.Ctx.WriteString(`{"Error": "Filesize more than 64MB"}`)
 		return
 	}
