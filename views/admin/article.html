@@ -92,6 +92,7 @@
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<th width="13"><input type="checkbox" class="checkbox" /></th>
+								<th>Id</th>
 								<th>Title</th>
 								<th>Date</th>
 								<th>Short Name</th>
@@ -103,11 +104,12 @@
 							{{ range . }}
 							<tr>
 								<td><input type="checkbox" class="checkbox" /></td>
+								<td>{{ .Id }}</td>
 								<td><h3><a href="{{ $BlogUrl }}/post/{{ .Shortname }}.html" target="_blank">{{ .Title }}</a></h3></td>
 								<td>{{ .CreatedTime }}</td>
 								<td>{{ .Shortname }}</td>
 								<td>{{ .CategoryId | categoryname }}</td>
-								<td><a href="#" class="ico del">Delete</a><a href="#" class="ico edit">Edit</a></td>
+								<td><a href="#" class="ico del">Delete</a><a href="?action=update&id={{ .Id }}" class="ico edit">Edit</a></td>
 							</tr>
 							{{ end }}
 							{{ end }}
@@ -152,17 +154,17 @@
 								<p>
 									<span class="req">max 100 symbols</span>
 									<label>Article Title <span>(Required Field)</span></label>
-									<input name="Title" type="text" class="field size1" />
+									<input name="Title" type="text" class="field size1" value="{{ .Article.Title }}" />
 								</p>	
 								
 								<p class="inline-field">
 									<label>Password <span>(Optional Field)</span></label>
-									<input name="Password" type="text" class="field size3" />
+									<input name="Password" type="text" class="field size3" value="{{.Article.Password }}" />
 								</p>
 								
 								<p class="inline-field">
 									<label>User <span>(Required Field)</span></label>
-									<input name="User" type="text" class="field size3" />
+									<input name="User" type="text" class="field size3" value="{{ .Article.User }}" />
 								</p>
 								
 								<p class="inline-field">
@@ -178,19 +180,18 @@
 								
 								<p class="inline-field">
 									<label>Short Name <span>(Required Field)</span></label>
-									<input name="Shortname" type="text" class="field size1" />
+									<input name="Shortname" type="text" class="field size1" value="{{ .Article.Shortname }}" />
 								</p>
 								
 								<p>
-									<span class="req">max 100 symbols</span>
 									<label>Summary <span>(Optional Field)</span></label>
-									<textarea name="Summary" class="field size1" rows="10" cols="30"></textarea>
+									<textarea style="min-width: 718px; max-width: 718px; max-height: 100px;" name="Summary" class="field" rows="10">{{ .Article.Summary }}</textarea>
 								</p>
 								
 								<p>
-									<span class="req">max 100 symbols</span>
+									<span class="req">Markdown Syntax Supported</span>
 									<label>Content <span>(Required Field)</span></label>
-									<textarea name="Body" class="field size1" cols="30"></textarea>
+									<textarea style="min-width: 718px; max-width: 718px; min-height: 728px;" name="Body" class="field size1">{{ .Article.Body }}</textarea>
 								</p>	
 							
 						</div>

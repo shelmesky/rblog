@@ -68,10 +68,27 @@ type AdminArticleController struct {
 }
 
 func (this *AdminArticleController) Get() {
+	action := this.GetString("action")
+	id, err := this.GetInt("id")
+	if err != nil {
+		beego.Error(err)
+	}
+
+	var article models.Post
+	if action != "" && id >= 0 {
+		if action == "update" {
+			o := orm.NewOrm()
+			err := o.QueryTable(new(models.Post)).Filter("Id", id).One(&article)
+			if err != nil {
+				beego.Error(err)
+			}
+		}
+	}
 	var posts []*models.Post
 	o := orm.NewOrm()
 	o.QueryTable(new(models.Post)).All(&posts)
 	this.Data["Posts"] = posts
+	this.Data["Article"] = article
 
 	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 
