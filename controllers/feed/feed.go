@@ -20,7 +20,7 @@ func (this *RssController) Get() {
 	var posts []*models.Post
 	_, err := o.QueryTable(new(models.Post)).Limit(20).OrderBy("-id").All(&posts)
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	feed := &AtomFeed{
@@ -47,7 +47,7 @@ func (this *RssController) Get() {
 
 	xmlstr, err := ToXML(feed)
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	this.Ctx.WriteString(xmlstr)

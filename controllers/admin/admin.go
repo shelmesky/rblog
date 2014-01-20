@@ -69,10 +69,7 @@ type AdminArticleController struct {
 
 func (this *AdminArticleController) Get() {
 	action := this.GetString("action")
-	id, err := this.GetInt("id")
-	if err != nil {
-		beego.Error(err)
-	}
+	id, _ := this.GetInt("id")
 
 	var article models.Post
 	if action != "" && id >= 0 {
@@ -80,7 +77,7 @@ func (this *AdminArticleController) Get() {
 			o := orm.NewOrm()
 			err := o.QueryTable(new(models.Post)).Filter("Id", id).One(&article)
 			if err != nil {
-				beego.Error(err)
+				utils.Error(err)
 			}
 		}
 	}
@@ -119,7 +116,7 @@ func (this *AdminArticleController) Post() {
 
 	article := Article{}
 	if err := this.ParseForm(&article); err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 	o := orm.NewOrm()
 	var post models.Post
@@ -220,7 +217,7 @@ func (this *AdminFileController) Get() {
 	var upload_files []models.UploadFile
 	num, err := o.QueryTable(new(models.UploadFile)).All(&upload_files)
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	this.Data["MaxFiles"] = num

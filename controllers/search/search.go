@@ -23,7 +23,7 @@ func (this *SearchController) Post() {
 	Keyword := this.GetString("SearchKeyword")
 	if Keyword == "" {
 		this.Abort("404")
-		beego.Error("Search Keyword is empty.")
+		utils.Error("Search Keyword is empty.")
 	}
 
 	o := orm.NewOrm()
@@ -88,7 +88,7 @@ func (this *SearchPageController) Get() {
 	qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
 
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	count, _ = qs.Count()

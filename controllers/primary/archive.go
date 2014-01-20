@@ -21,7 +21,7 @@ func (this *ArchiveController) Get() {
 	_, err := qs.Limit(utils.Site_config.NumPerPage).All(&posts)
 	if err != nil {
 		this.Abort("404")
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	count, _ := qs.Count()
@@ -66,7 +66,7 @@ func (this *ArchivePageController) Get() {
 	_, err = qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
 
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	count, _ := qs.Count()

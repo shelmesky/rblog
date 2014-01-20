@@ -39,7 +39,7 @@ func (this *UploadController) Post() {
 	count, _ := this.GetInt("count")
 	file, info, err := this.GetFile("fileToUpload")
 	if err != nil {
-		beego.Critical(err)
+		utils.Error(err)
 		this.Ctx.WriteString(`{"Error": "No selectd file"}`)
 		return
 	}
@@ -47,7 +47,7 @@ func (this *UploadController) Post() {
 
 	buffer, err := ioutil.ReadAll(file)
 	if err != nil {
-		beego.Critical(err)
+		utils.Error(err)
 		this.Ctx.WriteString(`{"Error": "ReadFull error"}`)
 		return
 	}
@@ -72,7 +72,7 @@ func (this *UploadController) Post() {
 	tofile := path.Join("upload", hashname)
 	f, err := os.OpenFile(tofile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 		this.Ctx.WriteString(`{"Error": "Create file error"}`)
 		return
 	}
@@ -89,7 +89,7 @@ func (this *UploadController) Post() {
 	upload_file.Filename = filename
 	_, err = o.Insert(upload_file)
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 		this.Ctx.WriteString(`{"Error": "Insert database error"}`)
 		return
 	}
@@ -100,7 +100,7 @@ func (this *UploadController) Post() {
 	result := UploadResult{MessageBody{filename, buf.String(), count}, ""}
 	b, err := json.Marshal(&result)
 	if err != nil {
-		beego.Critical(err)
+		utils.Error(err)
 	}
 
 	this.Ctx.WriteString(string(b))
@@ -119,7 +119,7 @@ func (this *DownloadController) Get() {
 	o := orm.NewOrm()
 	err := o.QueryTable(new(models.UploadFile)).Filter("Hashname", hashname).One(&upload_file)
 	if err == orm.ErrNoRows {
-		beego.Error(err)
+		utils.Error(err)
 		this.Ctx.WriteString(`{"Error": "Can not find file"}`)
 		return
 	}
@@ -127,7 +127,7 @@ func (this *DownloadController) Get() {
 	// 获取文件完整路径
 	current_path, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 		this.Ctx.WriteString(`{"Error": "Get current dir error"}`)
 		return
 	}
@@ -135,7 +135,7 @@ func (this *DownloadController) Get() {
 	// 判断文件是否存在
 	fullpath := path.Join(current_path, "upload", upload_file.Hashname)
 	if !utils.Exist(fullpath) {
-		beego.Error(err)
+		utils.Error(err)
 		this.Ctx.WriteString(`{"Error": "File not exist"}`)
 		return
 	}

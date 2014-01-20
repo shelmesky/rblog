@@ -111,7 +111,7 @@ func GetCategoryName(content interface{}) string {
 			var category models.Category
 			err := o.QueryTable(new(models.Category)).Filter("Id", value).One(&category)
 			if err != nil {
-				beego.Error(err)
+				Error(err)
 				return string(value)
 			}
 			return category.Name
@@ -179,7 +179,7 @@ func CheckAuth(w http.ResponseWriter, r *context.Context) bool {
 		splited = strings.Split(authorization, " ")
 		data, err := base64.StdEncoding.DecodeString(splited[1])
 		if err != nil {
-			beego.Error(r.Input.Url() + " Decode Base64 Auth failed.")
+			Error(r.Input.Url() + " Decode Base64 Auth failed.")
 			SetBasicAuth(w)
 		}
 		auth_info := strings.Split(string(data), ":")
@@ -210,12 +210,12 @@ func SendEmailWithAttachments(from, subject string, to []string, message string,
 
 	if from == "" || subject == "" || message == "" {
 		err := errors.New("from or subject or body is empty.")
-		beego.Critical(err)
+		Error(err)
 		return err
 	}
 	if len(to) == 0 {
 		err := errors.New("to address is empty.")
-		beego.Critical(err)
+		Error(err)
 		return err
 	}
 
@@ -228,13 +228,13 @@ func SendEmailWithAttachments(from, subject string, to []string, message string,
 	for _, file := range attach_file {
 		_, err := AttachFile(e, file)
 		if err != nil {
-			beego.Critical(err)
+			Error(err)
 			return err
 		}
 	}
 	err = e.Send(smtp_host, auth)
 	if err != nil {
-		beego.Critical(err)
+		Error(err)
 		return err
 	}
 	return nil
@@ -247,7 +247,7 @@ func AttachFile(e *email.Email, filename string) (a *email.Attachment, err error
 	}
 	f, err := os.Open(filename)
 	if err != nil {
-		beego.Critical(err)
+		Error(err)
 		return nil, err
 	}
 	_, file := filepath.Split(filename)
@@ -267,4 +267,18 @@ func FileSize(content interface{}) string {
 	} else {
 		return fmt.Sprintf("%.2f MB", float64(value)/1000/1000)
 	}
+}
+
+func Debug(args ...interface{}) {
+	pc, _, line, _ := runtime.Caller(1)
+	function := runtime.FuncForPC(pc)
+	funcname := function.Name()
+	beego.Debug(funcname, ":", line, args)
+}
+
+func Error(args ...interface{}) {
+	pc, _, line, _ := runtime.Caller(1)
+	function := runtime.FuncForPC(pc)
+	funcname := function.Name()
+	beego.Error(funcname, ":", line, args)
 }

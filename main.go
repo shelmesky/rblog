@@ -66,7 +66,7 @@ func init() {
 	err = json.Unmarshal(buf, &config)
 	if err == nil {
 		// Set logger
-		log_config_str := `{"filename": "%s", "daily": true, "maxdays": 15, maxsize: 1<<26, "rotate": true}`
+		log_config_str := `{"filename": "%s", "daily": true, "maxdays": 15, maxsize: 67108864, "rotate": true}`
 		log_config := fmt.Sprintf(log_config_str, config.Log_Path)
 		beego.BeeLogger.SetLogger("file", log_config)
 		beego.SetLevel(beego.LevelTrace)

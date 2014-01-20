@@ -29,7 +29,7 @@ func (this *MainController) Get() {
 	qs := o.QueryTable(new(models.Post))
 	_, err := qs.Limit(utils.Site_config.NumPerPage).OrderBy("-id").All(&p)
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	this.TplNames = "index.html"
@@ -102,7 +102,7 @@ func (this *ArticleController) Get() {
 		beego.Debug(err)
 		this.Abort("404")
 	} else if err == orm.ErrMissPK {
-		beego.Debug(err)
+		utils.Error(err)
 		this.Abort("500")
 	} else {
 		if err == nil {
@@ -128,7 +128,7 @@ func (this *ArticleController) Get() {
 			this.Data["CopyRight"] = utils.Site_config.CopyRight
 
 			if body != nil {
-				beego.Debug("Hit cache for Post.")
+				utils.Debug("Hit cache for Post.")
 				this.Data["Id"] = body.Id
 				this.Data["Summary"] = body.Summary
 				this.Data["Body"] = body.Body
@@ -141,7 +141,7 @@ func (this *ArticleController) Get() {
 				category_name := utils.GetCategoryName(body.CategoryId)
 				this.Data["CategoryName"] = category_name
 			} else {
-				beego.Debug("Cache missed for Post.")
+				utils.Debug("Cache missed for Post.")
 				category_name := utils.GetCategoryName(p.CategoryId)
 				this.Data["CategoryName"] = category_name
 				this.Data["Id"] = p.Id
@@ -169,7 +169,7 @@ func (this *ArticleController) Get() {
 			qs := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int))
 			_, err = qs.Limit(comment_per_page, int(page_id)*comment_per_page).All(&comments)
 			if err != nil {
-				beego.Error(err)
+				utils.Error(err)
 			}
 
 			// 最大显示几页
@@ -239,7 +239,7 @@ func (this *ArticleController) Get() {
 			this.TplNames = "post.html"
 			this.Render()
 		} else {
-			beego.Debug(err)
+			utils.Error(err)
 			this.Abort("500")
 		}
 	}
@@ -256,7 +256,7 @@ func (this *ArticleController) Post() {
 		}
 		IdInt, err := strconv.Atoi(Id)
 		if err != nil {
-			beego.Error(err)
+			utils.Error(err)
 			this.Abort("500")
 		}
 
@@ -267,7 +267,7 @@ func (this *ArticleController) Post() {
 			o := orm.NewOrm()
 			err = o.QueryTable(new(models.Post)).Filter("Id", IdInt).One(&p)
 			if err != nil {
-				beego.Error(err)
+				utils.Error(err)
 				this.Abort("500")
 			}
 
@@ -323,7 +323,7 @@ func (this *ArticleController) Post() {
 				// check if the `page` number in url
 				comment_count, err := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int)).Count()
 				if (int(page_id) * utils.Site_config.CommentNumPerPage) > int(comment_count) {
-					beego.Error(err)
+					utils.Error(err)
 					this.Abort("404")
 				}
 
@@ -333,7 +333,7 @@ func (this *ArticleController) Post() {
 				qs := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int))
 				_, err = qs.Limit(comment_per_page, int(page_id)*comment_per_page).All(&comments)
 				if err != nil {
-					beego.Error(err)
+					utils.Error(err)
 				}
 
 				/*
@@ -407,12 +407,12 @@ func (this *ArticleController) Post() {
 	} else if FormType == "Comment" {
 		var comment_form = ArticleComment{}
 		if err := this.ParseForm(&comment_form); err != nil {
-			beego.Error(err)
+			utils.Error(err)
 		}
 		var comment models.Comment
 		PostId, err := strconv.Atoi(comment_form.PostId)
 		if err != nil {
-			beego.Error(err)
+			utils.Error(err)
 		}
 		o := orm.NewOrm()
 		UserIp := this.Ctx.Input.IP()
@@ -423,7 +423,7 @@ func (this *ArticleController) Post() {
 		comment.Ip = UserIp
 		_, err = o.Insert(&comment)
 		if err != nil {
-			beego.Error(err)
+			utils.Error(err)
 		}
 		url := this.Ctx.Input.Uri()
 		this.Ctx.Redirect(301, url)
@@ -438,7 +438,7 @@ func (this *CategoryController) Get() {
 	category_name := this.Ctx.Input.Param(":name")
 	category_id, err := utils.GetCategoryId(category_name)
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	o := orm.NewOrm()
@@ -447,7 +447,7 @@ func (this *CategoryController) Get() {
 	_, err = qs.Limit(utils.Site_config.NumPerPage).All(&posts)
 	if err != nil {
 		this.Abort("404")
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	count, _ := qs.Count()
@@ -482,7 +482,7 @@ func (this *CategoryPageController) Get() {
 	category_id, err := utils.GetCategoryId(category_name)
 	if err != nil {
 		this.Abort("404")
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	page_id_str := this.Ctx.Input.Param(":page_id")
@@ -497,7 +497,7 @@ func (this *CategoryPageController) Get() {
 	_, err = qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
 
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	count, _ := qs.Count()
@@ -551,7 +551,7 @@ func (this *PageController) Get() {
 	_, err = qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
 
 	if err != nil {
-		beego.Error(err)
+		utils.Error(err)
 	}
 
 	this.Data["Catagories"] = utils.Category_map.Items()
