@@ -174,8 +174,12 @@
 										{{ $article_category := .Article.CategoryId }}
 										{{ with .Categories }}
 										{{ range . }}
-											{{ if eq .Id $article_category }}
-												<option selected value="{{ .Id }}">{{ .Name }}</option>
+											{{ if $article_category }}
+												{{ if eq $article_category .Id }}
+													<option selected value="{{ .Id }}">{{ .Name }}</option>
+												{{ else }}
+													<option value="{{ .Id }}">{{ .Name }}</option>
+												{{ end }}
 											{{ else }}
 												<option value="{{ .Id }}">{{ .Name }}</option>
 											{{ end }}
