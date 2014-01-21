@@ -161,7 +161,6 @@ func (this *AdminArticleController) Post() {
 					hash.Write([]byte("/post/" + post.Shortname + ".html"))
 					var url_hash string
 					url_hash = hex.EncodeToString(hash.Sum(nil))
-					utils.Debug("Hash in admin", url_hash)
 					if ok := utils.Urllist.IsExist(url_hash); ok {
 						value := utils.Urllist.Get(url_hash)
 						if value != nil {
