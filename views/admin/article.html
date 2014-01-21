@@ -171,9 +171,14 @@
 								<p class="inline-field">
 									<label>Category <span>(Required Field)</span></label>
 									<select class="field" name="Category">
+										{{ $article_category := .Article.CategoryId }}
 										{{ with .Categories }}
 										{{ range . }}
-											<option value="{{ .Id }}">{{ .Name }}</option>
+											{{ if eq .Id $article_category }}
+												<option selected value="{{ .Id }}">{{ .Name }}</option>
+											{{ else }}
+												<option value="{{ .Id }}">{{ .Name }}</option>
+											{{ end }}
 										{{ end }}
 										{{ end }}
 									</select>
