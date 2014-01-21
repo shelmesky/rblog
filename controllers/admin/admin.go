@@ -134,7 +134,7 @@ func (this *AdminArticleController) Post() {
 	post.Archive = utils.YearMonth()
 
 	only_digests_match, _ := regexp.Match(`^[\d]+$`, []byte(post.Shortname))
-	if only_digests_match {
+	if only_digests_match && article.Id == 0 {
 		MessageError = "短名称不能为纯数字!"
 	} else {
 		if article.Id >= 0 {
