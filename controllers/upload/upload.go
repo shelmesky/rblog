@@ -135,7 +135,7 @@ func (this *DownloadController) Get() {
 	// 判断文件是否存在
 	fullpath := path.Join(current_path, "upload", upload_file.Hashname)
 	if !utils.Exist(fullpath) {
-		utils.Error(err)
+		utils.Error(fullpath, "not exist")
 		this.Ctx.WriteString(`{"Error": "File not exist"}`)
 		return
 	}
