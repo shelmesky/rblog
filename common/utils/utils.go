@@ -262,7 +262,7 @@ func Exist(filename string) bool {
 
 func FileSize(content interface{}) string {
 	value := content.(int64)
-	if value < 10000 {
+	if value < 1000000 {
 		return fmt.Sprintf("%.2f KB", float64(value)/1000)
 	} else {
 		return fmt.Sprintf("%.2f MB", float64(value)/1000/1000)
