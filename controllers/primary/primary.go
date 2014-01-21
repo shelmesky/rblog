@@ -112,7 +112,6 @@ func (this *ArticleController) Get() {
 			hash.Write([]byte(url))
 			var url_hash string
 			url_hash = hex.EncodeToString(hash.Sum(nil))
-			utils.Debug("Hash in primary", url_hash)
 			var body *models.Post
 			if ok := utils.Urllist.IsExist(url_hash); ok {
 				value := utils.Urllist.Get(url_hash)
