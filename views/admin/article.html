@@ -150,6 +150,7 @@
 					<form action="" method="post">
 						{{ .xsrfdata }}
 						<!-- Form -->
+						<input type="hidden" name="Id" value="{{ .Article.Id }}"> 
 						<div class="form">
 								<p>
 									<span class="req">max 100 symbols</span>

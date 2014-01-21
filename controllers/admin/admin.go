@@ -19,10 +19,13 @@ import (
 	"regexp"
 	"strings"
 	//"reflect"
+	"crypto/md5"
+	"encoding/hex"
 	"rblog/common/utils"
 )
 
 type Article struct {
+	Id        int    `form:"Id"`
 	Title     string `form:"Title"`
 	Password  string `form:"Password"`
 	User      string `form:"User"`
@@ -134,22 +137,60 @@ func (this *AdminArticleController) Post() {
 	if only_digests_match {
 		MessageError = "短名称不能为纯数字!"
 	} else {
-		// 检查短名称是否重复
-		post_count, _ := o.QueryTable(new(models.Post)).Filter("Shortname", post.Shortname).Count()
-		if post_count > 0 {
-			MessageError = "短名称重复!"
-		} else {
+		if article.Id >= 0 {
+			exist := o.QueryTable(new(models.Post)).Filter("Id", article.Id).Exist()
+			if exist {
+				_, err := o.QueryTable(new(models.Post)).Filter("Id", article.Id).Update(orm.Params{
+					"CategoryId": post.CategoryId,
+					"User":       post.User,
+					"Shortname":  post.Shortname,
+					"Title":      post.Title,
+					"Summary":    post.Summary,
+					"Body":       post.Body,
+					"Password":   post.Password,
+					"Archive":    post.Archive,
+					"Ip":         this.Ctx.Input.IP(),
+				})
+				if err != nil {
+					MessageError = "更新文章错误!"
+				} else {
+					this.Data["MessageOK"] = "Update article success."
 
-			post.Ip = this.Ctx.Input.IP()
-			o.Insert(&post)
+					// update cache
+					hash := md5.New()
+					hash.Write([]byte("/post/" + post.Shortname + ".html"))
+					var url_hash string
+					url_hash = hex.EncodeToString(hash.Sum(nil))
+					utils.Debug("Hash in admin", url_hash)
+					if ok := utils.Urllist.IsExist(url_hash); ok {
+						value := utils.Urllist.Get(url_hash)
+						if value != nil {
+							utils.Urllist.Delete(url_hash)
+							utils.Urllist.Put(url_hash, &post, 3600)
+						}
+					}
+				}
 
-			this.Data["MessageOK"] = "Post new article success."
+			} else {
+				// 检查短名称是否重复
+				post_count, _ := o.QueryTable(new(models.Post)).Filter("Shortname", post.Shortname).Count()
+				if post_count > 0 {
+					MessageError = "短名称重复!"
+				} else {
 
-			// 验证成功则删除session
-			// 解决由于失败也删除session
-			// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
-			this.DelSession(session_key)
+					post.Ip = this.Ctx.Input.IP()
+					o.Insert(&post)
+
+					this.Data["MessageOK"] = "Post new article success."
+
+					// 验证成功则删除session
+					// 解决由于失败也删除session
+					// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
+					this.DelSession(session_key)
+				}
+			}
 		}
+
 	}
 
 	// send articles to template
