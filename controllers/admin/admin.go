@@ -178,14 +178,23 @@ func (this *AdminArticleController) Post() {
 				} else {
 
 					post.Ip = this.Ctx.Input.IP()
-					o.Insert(&post)
+					id, _ := o.Insert(&post)
+					// 如果未指定Shortname，则使用id作为shortname
+					if post.Shortname == "" {
+						_, err := o.QueryTable(new(models.Post)).Filter("Id", id).Update(orm.Params{
+							"Shortname": id,
+						})
+						if err != nil {
+							MessageError = "更新Shortname错误!"
+						} else {
+							this.Data["MessageOK"] = "Post new article success."
 
-					this.Data["MessageOK"] = "Post new article success."
-
-					// 验证成功则删除session
-					// 解决由于失败也删除session
-					// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
-					this.DelSession(session_key)
+							// 验证成功则删除session
+							// 解决由于失败也删除session
+							// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
+							this.DelSession(session_key)
+						}
+					}
 				}
 			}
 		}
