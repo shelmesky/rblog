@@ -58,7 +58,7 @@
 		  {{ range . }}
           <!-- blog entry -->
           <h3><a href="/post/{{ .Shortname }}.html">{{ .Title }}</a></h3>
-          <p>Posted on <span class="glyphicon glyphicon-time"></span> {{ .CreatedTime }}</p>
+          <p>Posted on <span class="glyphicon glyphicon-time"></span> {{ .CreatedTime }} <a href="/category/{{ .CategoryId | categoryname }}">{{ .CategoryId | categoryname }}</a></p>
 		  {{ if .Password }}
 		  	<p>需要密码访问</p>
 		  {{ else }}
