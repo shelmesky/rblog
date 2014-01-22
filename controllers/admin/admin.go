@@ -1,27 +1,15 @@
 package admincontrollers
 
 import (
-	//"fmt"
-	//"strconv"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
-	"rblog/models"
-	//"github.com/astaxie/beego/cache"
-	//"github.com/astaxie/beego/context"
-	//"github.com/russross/blackfriday"
-	//"crypto/md5"
-	//"encoding/hex"
-	//"encoding/base64"
-	//"errors"
-	//"net/http/pprof"
-	//"net/http"
-	"html/template"
-	"regexp"
-	"strings"
-	//"reflect"
 	"crypto/md5"
 	"encoding/hex"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	"html/template"
 	"rblog/common/utils"
+	"rblog/models"
+	"regexp"
+	"strings"
 )
 
 type Article struct {
