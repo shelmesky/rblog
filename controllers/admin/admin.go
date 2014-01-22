@@ -137,8 +137,17 @@ func (this *AdminArticleController) Post() {
 	if only_digests_match && article.Id == 0 {
 		MessageError = "短名称不能为纯数字!"
 	} else {
+		//如果是更新文章
 		if article.Id >= 0 {
-			exist := o.QueryTable(new(models.Post)).Filter("Id", article.Id).Exist()
+
+			// 查询Id是否存在
+			var exist bool = false
+			var old_post models.Post
+			err := o.QueryTable(new(models.Post)).Filter("Id", article.Id).One(&old_post)
+			if err != orm.ErrNoRows {
+				exist = true
+			}
+
 			if exist {
 				_, err := o.QueryTable(new(models.Post)).Filter("Id", article.Id).Update(orm.Params{
 					"CategoryId": post.CategoryId,
@@ -164,7 +173,10 @@ func (this *AdminArticleController) Post() {
 					if ok := utils.Urllist.IsExist(url_hash); ok {
 						value := utils.Urllist.Get(url_hash)
 						if value != nil {
+							// 更新CreatedTime UpdateTime
 							utils.Urllist.Delete(url_hash)
+							post.CreatedTime = old_post.CreatedTime
+							post.UpdateTime = old_post.UpdateTime
 							utils.Urllist.Put(url_hash, &post, 3600)
 						}
 					}
