@@ -388,9 +388,8 @@ func (this *AdminFileController) Get() {
 				utils.Debug("Delete file:", fullpath)
 				err = os.Remove(fullpath)
 				if err != nil {
+					// 删除文件失败后，只记录日志
 					utils.Error(err)
-					this.Abort("500")
-					return
 				}
 			}
 
