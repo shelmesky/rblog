@@ -128,7 +128,7 @@ func (this *ArticleController) Get() {
 			this.Data["CopyRight"] = utils.Site_config.CopyRight
 
 			if body != nil {
-				utils.Debug("Hit cache for Post.")
+				// utils.Debug("Hit cache for Post.")
 				this.Data["Id"] = body.Id
 				this.Data["Summary"] = body.Summary
 				this.Data["Body"] = body.Body
@@ -141,7 +141,7 @@ func (this *ArticleController) Get() {
 				category_name := utils.GetCategoryName(body.CategoryId)
 				this.Data["CategoryName"] = category_name
 			} else {
-				utils.Debug("Cache missed for Post.")
+				// utils.Debug("Cache missed for Post.")
 				category_name := utils.GetCategoryName(p.CategoryId)
 				this.Data["CategoryName"] = category_name
 				this.Data["Id"] = p.Id
