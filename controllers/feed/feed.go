@@ -18,7 +18,7 @@ type RssController struct {
 func (this *RssController) Get() {
 	o := orm.NewOrm()
 	var posts []*models.Post
-	_, err := o.QueryTable(new(models.Post)).Limit(20).OrderBy("-id").All(&posts)
+	_, err := o.QueryTable(new(models.Post)).Limit(20).OrderBy("-CreatedTime").All(&posts)
 	if err != nil {
 		utils.Error(err)
 	}
