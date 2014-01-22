@@ -154,6 +154,10 @@ func (this *AdminArticleController) Get() {
 	this.Data["MaxPostPage"] = max_pages - 1
 	this.Data["MinPostPage"] = 0
 
+	if page_id >= 0 {
+		this.Data["PageId"] = page_id
+	}
+
 	/* 结束处理分页 */
 
 	this.Data["Article"] = article

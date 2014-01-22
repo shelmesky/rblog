@@ -99,6 +99,7 @@
 								<th width="60" class="ac">Category</th>
 								<th width="110" class="ac">Actions</th>
 							</tr>
+							{{ $page_id := .PageId }}
 							{{ $BlogUrl := .BlogUrl }}
 							{{ with .Posts }}
 							{{ range . }}
@@ -109,7 +110,7 @@
 								<td>{{ .CreatedTime }}</td>
 								<td>{{ .Shortname }}</td>
 								<td>{{ .CategoryId | categoryname }}</td>
-								<td><a href="#" class="ico del">Delete</a><a href="?action=update&id={{ .Id }}" class="ico edit">Edit</a></td>
+								<td><a href="#" class="ico del">Delete</a><a href="?action=update&id={{ .Id }}{{ if $page_id }}&page={{ $page_id }}{{ end }}" class="ico edit">Edit</a></td>
 							</tr>
 							{{ end }}
 							{{ end }}
