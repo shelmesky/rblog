@@ -17,7 +17,7 @@ func (this *ArchiveController) Get() {
 
 	o := orm.NewOrm()
 	var posts []*models.Post
-	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("Archive", archive)
+	qs := o.QueryTable(new(models.Post)).OrderBy("-CreatedTime").Filter("Archive", archive)
 	_, err := qs.Limit(utils.Site_config.NumPerPage).All(&posts)
 	if err != nil {
 		this.Abort("404")
@@ -62,7 +62,7 @@ func (this *ArchivePageController) Get() {
 
 	o := orm.NewOrm()
 	var posts []*models.Post
-	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("Archive", archive)
+	qs := o.QueryTable(new(models.Post)).OrderBy("-CreatedTime").Filter("Archive", archive)
 	_, err = qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
 
 	if err != nil {

@@ -27,7 +27,7 @@ func (this *MainController) Get() {
 	o := orm.NewOrm()
 	var p []*models.Post
 	qs := o.QueryTable(new(models.Post))
-	_, err := qs.Limit(utils.Site_config.NumPerPage).OrderBy("-id").All(&p)
+	_, err := qs.Limit(utils.Site_config.NumPerPage).OrderBy("-CreatedTime").All(&p)
 	if err != nil {
 		utils.Error(err)
 	}
@@ -443,7 +443,7 @@ func (this *CategoryController) Get() {
 
 	o := orm.NewOrm()
 	var posts []*models.Post
-	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("CategoryId", category_id)
+	qs := o.QueryTable(new(models.Post)).OrderBy("-CreatedTime").Filter("CategoryId", category_id)
 	_, err = qs.Limit(utils.Site_config.NumPerPage).All(&posts)
 	if err != nil {
 		this.Abort("404")
@@ -493,7 +493,7 @@ func (this *CategoryPageController) Get() {
 
 	o := orm.NewOrm()
 	var posts []*models.Post
-	qs := o.QueryTable(new(models.Post)).OrderBy("-id").Filter("CategoryId", category_id)
+	qs := o.QueryTable(new(models.Post)).OrderBy("-CreatedTime").Filter("CategoryId", category_id)
 	_, err = qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
 
 	if err != nil {
@@ -547,7 +547,7 @@ func (this *PageController) Get() {
 	}
 	o := orm.NewOrm()
 	var posts []*models.Post
-	qs := o.QueryTable(new(models.Post)).OrderBy("-id")
+	qs := o.QueryTable(new(models.Post)).OrderBy("-CreatedTime")
 	_, err = qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
 
 	if err != nil {

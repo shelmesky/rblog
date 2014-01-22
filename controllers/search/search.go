@@ -34,7 +34,7 @@ func (this *SearchController) Post() {
 	count, _ := qs.Count()
 
 	var posts []*models.Post
-	qs.Limit(utils.Site_config.NumPerPage).All(&posts)
+	qs.Limit(utils.Site_config.NumPerPage).OrderBy("-CreatedTime").All(&posts)
 
 	if count > 0 {
 		this.Data["Catagories"] = utils.Category_map.Items()
@@ -85,7 +85,7 @@ func (this *SearchPageController) Get() {
 	count, _ := qs.Count()
 
 	var posts []*models.Post
-	qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).All(&posts)
+	qs.Limit(utils.Site_config.NumPerPage, page_id*utils.Site_config.NumPerPage).OrderBy("-CreatedTime").All(&posts)
 
 	if err != nil {
 		utils.Error(err)
