@@ -17,6 +17,16 @@ textarea { overflow:hidden; }
 .button { background:#eee url(/static/admin/images/button.gif) repeat-x 0 0; border:solid 1px #b1a874; color:#7f7f7f; font-size:11px; padding:2px 6px 2px 6px; cursor:pointer; line-height:14px !important; }
 .button:hover { color:#333; border-color:#857b42; }
 
+#active_button {
+	color: #fff;
+	background: #ba4c32;
+	border-color: #8c3521;
+}
+
+.disabled {
+    cursor: default !important;
+    pointer-events: none;
+}
 
 .field:focus { color:#000; border-color:#857b42;}
 

@@ -118,19 +118,40 @@
 						
 						<!-- Pagging -->
 						<div class="pagging">
-							<div class="left">Showing 1-12 of 44</div>
+							{{ if .MaxPostPage }}
+							{{ $max_page := .MaxPostPage }}
+							{{ $min_page := .MinPostPage }}
+							{{ $current_page := .CurrentPostPage }}
+							{{ $prev_page := .PrevPostPage }}
+							{{ $next_page := .NextPostPage }}
+							<div class="left">Showing 1-12 of {{ .PostCountNums }}</div>
 							<div class="right">
-								<a href="#">Previous</a>
-								<a href="#">1</a>
-								<a href="#">2</a>
-								<a href="#">3</a>
-								<a href="#">4</a>
-								<a href="#">245</a>
-								<span>...</span>
-								<a href="#">Next</a>
-								<a href="#">View all</a>
+								{{ if gt $current_page $min_page }}
+									<a href="?page={{ $prev_page }}"><</a>
+								{{ else }}
+									<a class="disabled"><</a>
+								{{ end }}
+								
+								<!-- 迭代所有页，如果正好是当前页，则为disabled -->
+								{{ range $count, $value := .PostsCount }}
+								{{ if eq $value $current_page }}
+									<a href="#" id="active_button">{{ $value }}</a>
+								{{ else }}
+									<a href="?page={{ $value }}">{{ $value }}</a>
+								{{ end }}
+								{{ end }}
+			
+								<!-- 如果当前页等于最大的页数 -->
+								{{ if eq $current_page $max_page }}
+									<a class="disabled">></a>
+								{{ else if lt $current_page $max_page }}
+									<a href="?page={{ $next_page }}">></a>
+								{{ end }}
 							</div>
+							{{ end }}
 						</div>
+	
+		
 						<!-- End Pagging -->
 						
 					</div>

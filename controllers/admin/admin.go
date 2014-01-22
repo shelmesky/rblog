@@ -71,23 +71,100 @@ type AdminArticleController struct {
 }
 
 func (this *AdminArticleController) Get() {
+	page_id, _ := this.GetInt("page")
+	var limit int64 = 10
+
 	action := this.GetString("action")
 	id, _ := this.GetInt("id")
+
+	o := orm.NewOrm()
 
 	var article models.Post
 	if action != "" && id >= 0 {
 		if action == "update" {
-			o := orm.NewOrm()
 			err := o.QueryTable(new(models.Post)).Filter("Id", id).One(&article)
 			if err != nil {
 				utils.Error(err)
 			}
 		}
 	}
+
+	post_count, err := o.QueryTable(new(models.Post)).Count()
+	if (page_id * limit) > post_count {
+		utils.Error(err)
+		this.Abort("404")
+	}
+
 	var posts []*models.Post
-	o := orm.NewOrm()
-	o.QueryTable(new(models.Post)).All(&posts)
+	o.QueryTable(new(models.Post)).Limit(limit, page_id*limit).OrderBy("-CreatedTime").All(&posts)
+
+	/* 开始处理分页 */
+
+	// 最大显示几页
+	max_per_page := 5
+
+	// 计算总的页数，如果不能被max_per_page整除，则加1页
+	var max_pages int
+	max_pages = (int(post_count) / int(limit))
+	if (post_count % limit) > 0 {
+		max_pages += 1
+	}
+
+	var post_count_elements []int
+	// 默认从第0页开始
+	var start int = 0
+	var end int = 0
+
+	// 如果总页数大于5，则默认到第5页结束
+	// 否则到最大页数结束
+	if max_pages >= max_per_page {
+		end = max_per_page
+	} else {
+		end = max_pages
+	}
+
+	/*
+		如果当前页数，大于等于最大页数
+		就根据当前页数，算出当前页落在哪个区间
+		例如当前第7页，处于5~10这个区间
+	*/
+	if int(page_id) >= max_per_page {
+		current_five_page := int(page_id) / max_per_page
+		start = current_five_page * max_per_page
+		end = start + 5
+
+		/*
+			根据 总页数 % 最大显示页数 = 剩余的页数
+			如果有剩余的页数，则end等于剩余的页数
+			意味着页数不能被max_per_page整除
+
+			如果end大于最大的页数
+			说明已经达到末尾
+			应该根据remain_page_nums重新计算end
+		*/
+		if end > max_pages {
+			remain_page_nums := max_pages % max_per_page
+			if remain_page_nums > 0 {
+				end = start + remain_page_nums
+			}
+		}
+	}
+
+	for i := start; i < end; i++ {
+		post_count_elements = append(post_count_elements, i)
+	}
+
+	this.Data["PostCountNums"] = post_count
 	this.Data["Posts"] = posts
+	this.Data["PostsCount"] = post_count_elements
+	this.Data["CurrentPostPage"] = page_id
+	this.Data["PrevPostPage"] = page_id - 1
+	this.Data["NextPostPage"] = page_id + 1
+	this.Data["MaxPostPage"] = max_pages - 1
+	this.Data["MinPostPage"] = 0
+
+	/* 结束处理分页 */
+
 	this.Data["Article"] = article
 
 	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
