@@ -6,6 +6,9 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"html/template"
+	"os"
+	"path"
+	"path/filepath"
 	"rblog/common/utils"
 	"rblog/models"
 	"regexp"
@@ -342,7 +345,58 @@ func (this *AdminFileController) Get() {
 	page_id, _ := this.GetInt("page")
 	var limit int64 = 5
 
+	action := this.GetString("action")
+	id, _ := this.GetInt("id")
+
 	o := orm.NewOrm()
+
+	var upload_file models.UploadFile
+	if action != "" && id >= 0 {
+		if action == "delete" {
+			err := o.QueryTable(new(models.UploadFile)).Filter("Id", id).One(&upload_file)
+			if err != nil {
+				utils.Error(err)
+				this.Abort("404")
+				return
+			}
+
+			// 获取文件完整路径
+			current_path, err := filepath.Abs(filepath.Dir(os.Args[0]))
+			if err != nil {
+				utils.Error(err)
+				this.Abort("404")
+				return
+			}
+
+			var file_exist bool = true
+			// 判断文件是否存在
+			fullpath := path.Join(current_path, "upload", upload_file.Hashname)
+			if !utils.Exist(fullpath) {
+				file_exist = false
+			}
+
+			// 删除DB记录
+			_, err = o.QueryTable(new(models.UploadFile)).Filter("Id", id).Delete()
+			if err != nil {
+				utils.Error(err)
+				this.Abort("404")
+				return
+			}
+
+			// 从文件系统上删除文件
+			if file_exist {
+				utils.Debug("Delete file:", fullpath)
+				err = os.Remove(fullpath)
+				if err != nil {
+					utils.Error(err)
+					this.Abort("500")
+					return
+				}
+			}
+
+			this.Redirect("/admin/files", 301)
+		}
+	}
 
 	upload_count, err := o.QueryTable(new(models.UploadFile)).Count()
 	if (page_id * limit) > upload_count {

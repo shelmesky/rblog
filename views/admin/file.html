@@ -96,6 +96,17 @@
         function do_submit(args) {
             $("#main_form").submit();
         }
+		
+		function confirm_delete(filename, id) {
+			var msg = "确实要删除 " + filename + " 吗?";
+			var ret = window.confirm(msg);
+			if(ret) {
+				window.location = document.location.origin + document.location.pathname + "?action=delete&id=" + id;
+			} else {
+				return false;
+			}
+			
+		}
         
 </script>
 <link rel="stylesheet" href="/static/admin/css/style.css" type="text/css" media="all" />
@@ -174,6 +185,7 @@
 								<th>FileSize</th>
 								<th>FileName</th>
 								<th>FullPath</th>
+								<th>Actions</th>
 							</tr>
 							
 							{{ $BlogUrl := .BlogUrl }}
@@ -187,6 +199,7 @@
 								<td>{{ .Filesize | filesize }}</td>
 								<td>{{ .Filename }}</td>
 								<td><a href="/post/download/{{ .Hashname }}" target="_blank">{{ .Hashname }}</a></td>
+								<td><a href="javascript:confirm_delete('{{ .Filename }}', '{{ .Id }}');" class="ico del">Delete</a></td>
 							</tr>
 							{{ end }}
 							{{ end }}
