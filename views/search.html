@@ -121,8 +121,10 @@
 				<div class="col-lg-6">
                   <ul class="list-unstyled">
                     <li>
-						{{ range $k, $v := .Catagories }}
-						<a href="/category/{{ $v }}">{{ $v }}</a>
+						{{ with .Catagories }}
+						{{ range . }}
+							<a href="/category/{{ .Name }}">{{ .Name }} ({{ .Count }})</a><br />
+						{{ end }}
 						{{ end }}
 					</li>
                   </ul>

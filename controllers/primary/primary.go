@@ -34,7 +34,7 @@ func (this *MainController) Get() {
 
 	this.TplNames = "index.html"
 
-	this.Data["Catagories"] = utils.Category_map.Items()
+	this.Data["Catagories"] = utils.CatCount
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["Posts"] = p
 	this.Data["BlogName"] = utils.Site_config.BlogName
@@ -120,7 +120,7 @@ func (this *ArticleController) Get() {
 				}
 			}
 
-			this.Data["Catagories"] = utils.Category_map.Items()
+			this.Data["Catagories"] = utils.CatCount
 			this.Data["ArchiveCount"] = utils.ArCount
 			this.Data["BlogName"] = utils.Site_config.BlogName
 			this.Data["BlogUrl"] = utils.Site_config.BlogUrl
@@ -458,7 +458,7 @@ func (this *CategoryController) Get() {
 	}
 	this.Data["NewPage"] = -1
 
-	this.Data["Catagories"] = utils.Category_map.Items()
+	this.Data["Catagories"] = utils.CatCount
 	this.Data["Posts"] = posts
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["BlogName"] = utils.Site_config.BlogName
@@ -502,7 +502,7 @@ func (this *CategoryPageController) Get() {
 
 	count, _ := qs.Count()
 
-	this.Data["Catagories"] = utils.Category_map.Items()
+	this.Data["Catagories"] = utils.CatCount
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["CategoryName"] = category_name
 	this.Data["CategoryCounts"] = count
@@ -554,7 +554,7 @@ func (this *PageController) Get() {
 		utils.Error(err)
 	}
 
-	this.Data["Catagories"] = utils.Category_map.Items()
+	this.Data["Catagories"] = utils.CatCount
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["Posts"] = posts
 	this.Data["BlogName"] = utils.Site_config.BlogName

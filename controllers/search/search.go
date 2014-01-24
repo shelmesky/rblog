@@ -37,7 +37,7 @@ func (this *SearchController) Post() {
 	qs.Limit(utils.Site_config.NumPerPage).OrderBy("-CreatedTime").All(&posts)
 
 	if count > 0 {
-		this.Data["Catagories"] = utils.Category_map.Items()
+		this.Data["Catagories"] = utils.CatCount
 		this.Data["ArchiveCount"] = utils.ArCount
 		this.Data["SearchKeyword"] = Keyword
 		this.Data["ResultCounts"] = count
@@ -93,7 +93,7 @@ func (this *SearchPageController) Get() {
 
 	count, _ = qs.Count()
 
-	this.Data["Catagories"] = utils.Category_map.Items()
+	this.Data["Catagories"] = utils.CatCount
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["SearchKeyword"] = Keyword
 	this.Data["ResultCounts"] = count
