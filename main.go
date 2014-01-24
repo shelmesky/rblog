@@ -108,6 +108,12 @@ func init() {
 	if err != nil {
 		beego.Error(err)
 	}
+
+	// cache the categories count
+	utils.CatCount, err = utils.GetCategories()
+	if err != nil {
+		utils.Error(err)
+	}
 }
 
 func main() {

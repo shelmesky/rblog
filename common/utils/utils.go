@@ -33,11 +33,20 @@ var (
 	Urllist      cache.Cache
 	Site_config  models.SiteConfig
 	ArCount      []ArchiveCount
+	CatCount     []CategoryCount
 )
 
+// 每个Archive的文章数
 type ArchiveCount struct {
 	Archive string
 	Count   int
+}
+
+// 每个分类的文章数
+type CategoryCount struct {
+	Id    int
+	Name  string
+	Count int
 }
 
 func init() {
@@ -157,6 +166,21 @@ func GetArchives() ([]ArchiveCount, error) {
 		return archives, err
 	}
 	return archives, nil
+}
+
+func GetCategories() ([]CategoryCount, error) {
+	var sql = `SELECT DISTINCT a.category_id AS id, b.name,
+		COUNT( a.category_id ) AS count
+		FROM post a, category b
+		WHERE a.category_id = b.id
+		GROUP BY b.id`
+	o := orm.NewOrm()
+	var categories []CategoryCount
+	_, err := o.Raw(sql).QueryRows(&categories)
+	if err != nil {
+		return categories, err
+	}
+	return categories, err
 }
 
 var AuthFilter = func(ctx *context.Context) {
