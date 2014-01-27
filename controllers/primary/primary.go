@@ -83,165 +83,164 @@ func (this *ArticleController) Get() {
 
 	o := orm.NewOrm()
 
-	var use_Id bool = false
-	var p models.Post
+	var article_id_exist = false
+	var article_shortname_exist = false
+	var cond interface{}
 	if err == nil {
-		p = models.Post{Id: int(id)}
-		use_Id = true
+		cond = int(id)
+		exist := o.QueryTable(new(models.Post)).Filter("Id", cond).Exist()
+		if exist {
+			article_id_exist = true
+		}
 	} else {
-		p = models.Post{Shortname: id_str}
+		cond = id_str
+		exist := o.QueryTable(new(models.Post)).Filter("Shortname", cond).Exist()
+		if exist {
+			article_shortname_exist = true
+		}
 	}
 
-	if use_Id {
-		err = o.Read(&p)
-	} else {
-		err = o.Read(&p, "Shortname")
-	}
-
-	if err == orm.ErrNoRows {
+	if !article_id_exist && !article_shortname_exist {
 		beego.Debug(err)
 		this.Abort("404")
-	} else if err == orm.ErrMissPK {
-		utils.Error(err)
-		this.Abort("500")
 	} else {
-		if err == nil {
-			// query cache for article body
-			url := this.Ctx.Input.Uri()
-			hash := md5.New()
-			hash.Write([]byte(url))
-			var url_hash string
-			url_hash = hex.EncodeToString(hash.Sum(nil))
-			var body *models.Post
-			if ok := utils.Urllist.IsExist(url_hash); ok {
-				value := utils.Urllist.Get(url_hash)
-				if value != nil {
-					body = value.(*models.Post)
-				}
+		url := this.Ctx.Input.Uri()
+		hash := md5.New()
+		hash.Write([]byte(url))
+		var url_hash string
+		url_hash = hex.EncodeToString(hash.Sum(nil))
+		var body *models.Post
+		if ok := utils.Urllist.IsExist(url_hash); ok {
+			value := utils.Urllist.Get(url_hash)
+			if value != nil {
+				body = value.(*models.Post)
 			}
+		}
 
-			this.Data["Catagories"] = utils.CatCount
-			this.Data["ArchiveCount"] = utils.ArCount
-			this.Data["BlogName"] = utils.Site_config.BlogName
-			this.Data["BlogUrl"] = utils.Site_config.BlogUrl
-			this.Data["AdminEmail"] = utils.Site_config.AdminEmail
-			this.Data["CopyRight"] = utils.Site_config.CopyRight
+		this.Data["Catagories"] = utils.CatCount
+		this.Data["ArchiveCount"] = utils.ArCount
+		this.Data["BlogName"] = utils.Site_config.BlogName
+		this.Data["BlogUrl"] = utils.Site_config.BlogUrl
+		this.Data["AdminEmail"] = utils.Site_config.AdminEmail
+		this.Data["CopyRight"] = utils.Site_config.CopyRight
 
-			if body != nil {
-				// utils.Debug("Hit cache for Post.")
-				this.Data["Id"] = body.Id
-				this.Data["Summary"] = body.Summary
-				this.Data["Body"] = body.Body
-				this.Data["User"] = body.User
-				this.Data["Title"] = body.Title
-				this.Data["Password"] = body.Password
-				this.Data["CreatedTime"] = body.CreatedTime
-				this.Data["UpdateTime"] = body.UpdateTime
-				this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
-				category_name := utils.GetCategoryName(body.CategoryId)
-				this.Data["CategoryName"] = category_name
-			} else {
-				// utils.Debug("Cache missed for Post.")
-				category_name := utils.GetCategoryName(p.CategoryId)
-				this.Data["CategoryName"] = category_name
-				this.Data["Id"] = p.Id
-				this.Data["Summary"] = p.Summary
-				this.Data["Body"] = p.Body
-				this.Data["User"] = p.User
-				this.Data["Title"] = p.Title
-				this.Data["Password"] = p.Password
-				this.Data["CreatedTime"] = p.CreatedTime
-				this.Data["UpdateTime"] = p.UpdateTime
-				this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
-				utils.Urllist.Put(url_hash, &p, 3600)
+		if body != nil {
+			// utils.Debug("Hit cache for Post.")
+			this.Data["Id"] = body.Id
+			this.Data["Summary"] = body.Summary
+			this.Data["Body"] = body.Body
+			this.Data["User"] = body.User
+			this.Data["Title"] = body.Title
+			this.Data["Password"] = body.Password
+			this.Data["CreatedTime"] = body.CreatedTime
+			this.Data["UpdateTime"] = body.UpdateTime
+			this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+			category_name := utils.GetCategoryName(body.CategoryId)
+			this.Data["CategoryName"] = category_name
+		} else {
+			// utils.Debug("Cache missed for Post.")
+			var p models.Post
+			if article_id_exist {
+				o.QueryTable(new(models.Post)).Filter("Id", cond).One(&p)
+			} else if article_shortname_exist {
+				o.QueryTable(new(models.Post)).Filter("Shortname", cond).One(&p)
 			}
+			category_name := utils.GetCategoryName(p.CategoryId)
+			this.Data["CategoryName"] = category_name
+			this.Data["Id"] = p.Id
+			this.Data["Summary"] = p.Summary
+			this.Data["Body"] = p.Body
+			this.Data["User"] = p.User
+			this.Data["Title"] = p.Title
+			this.Data["Password"] = p.Password
+			this.Data["CreatedTime"] = p.CreatedTime
+			this.Data["UpdateTime"] = p.UpdateTime
+			this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+			utils.Urllist.Put(url_hash, &p, 3600)
+		}
 
-			// 检查是否URL中传递的页数超过总的页数
-			comment_count, err := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int)).Count()
-			if (int(page_id) * utils.Site_config.CommentNumPerPage) > int(comment_count) {
-				beego.Error(err)
-				this.Abort("404")
-			}
+		// 检查是否URL中传递的页数超过总的页数
+		comment_count, err := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int)).Count()
+		if (int(page_id) * utils.Site_config.CommentNumPerPage) > int(comment_count) {
+			beego.Error(err)
+			this.Abort("404")
+		}
 
-			// 获取每篇问站的评论
-			var comments []*models.Comment
-			comment_per_page := utils.Site_config.CommentNumPerPage
-			qs := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int))
-			_, err = qs.Limit(comment_per_page, int(page_id)*comment_per_page).All(&comments)
-			if err != nil {
-				utils.Error(err)
-			}
+		// 获取每篇问站的评论
+		var comments []*models.Comment
+		comment_per_page := utils.Site_config.CommentNumPerPage
+		qs := o.QueryTable(new(models.Comment)).Filter("PostId", this.Data["Id"].(int))
+		_, err = qs.Limit(comment_per_page, int(page_id)*comment_per_page).All(&comments)
+		if err != nil {
+			utils.Error(err)
+		}
 
-			// 最大显示几页
-			max_per_page := 5
+		// 最大显示几页
+		max_per_page := 5
 
-			// 计算总的页数，如果不能被max_per_page整除，则加1页
-			var max_pages int
-			max_pages = (int(comment_count) / comment_per_page)
-			if (int(comment_count) % comment_per_page) > 0 {
-				max_pages += 1
-			}
+		// 计算总的页数，如果不能被max_per_page整除，则加1页
+		var max_pages int
+		max_pages = (int(comment_count) / comment_per_page)
+		if (int(comment_count) % comment_per_page) > 0 {
+			max_pages += 1
+		}
 
-			var comment_count_elements []int
-			// 默认从第0页开始
-			var start int = 0
-			var end int = 0
+		var comment_count_elements []int
+		// 默认从第0页开始
+		var start int = 0
+		var end int = 0
 
-			// 如果总页数大于5，则默认到第5页结束
-			// 否则到最大页数结束
-			if max_pages >= max_per_page {
-				end = max_per_page
-			} else {
-				end = max_pages
-			}
+		// 如果总页数大于5，则默认到第5页结束
+		// 否则到最大页数结束
+		if max_pages >= max_per_page {
+			end = max_per_page
+		} else {
+			end = max_pages
+		}
+
+		/*
+			如果当前页数，大于等于最大页数
+			就根据当前页数，算出当前页落在哪个区间
+			例如当前第7页，处于5~10这个区间
+		*/
+		if int(page_id) >= max_per_page {
+			current_five_page := int(page_id) / max_per_page
+			start = current_five_page * max_per_page
+			end = start + 5
 
 			/*
-				如果当前页数，大于等于最大页数
-				就根据当前页数，算出当前页落在哪个区间
-				例如当前第7页，处于5~10这个区间
+				根据 总页数 % 最大显示页数 = 剩余的页数
+				如果有剩余的页数，则end等于剩余的页数
+				意味着页数不能被max_per_page整除
+
+				如果end大于最大的页数
+				说明已经达到末尾
+				应该根据remain_page_nums重新计算end
 			*/
-			if int(page_id) >= max_per_page {
-				current_five_page := int(page_id) / max_per_page
-				start = current_five_page * max_per_page
-				end = start + 5
-
-				/*
-					根据 总页数 % 最大显示页数 = 剩余的页数
-					如果有剩余的页数，则end等于剩余的页数
-					意味着页数不能被max_per_page整除
-
-					如果end大于最大的页数
-					说明已经达到末尾
-					应该根据remain_page_nums重新计算end
-				*/
-				if end > max_pages {
-					remain_page_nums := max_pages % max_per_page
-					if remain_page_nums > 0 {
-						end = start + remain_page_nums
-					}
+			if end > max_pages {
+				remain_page_nums := max_pages % max_per_page
+				if remain_page_nums > 0 {
+					end = start + remain_page_nums
 				}
 			}
-
-			for i := start; i < end; i++ {
-				comment_count_elements = append(comment_count_elements, i)
-			}
-
-			page_id := int(page_id)
-			this.Data["CommentCountNums"] = comment_count
-			this.Data["Comments"] = comments
-			this.Data["CommentsCount"] = comment_count_elements
-			this.Data["CurrentCommentPage"] = page_id
-			this.Data["PrevCommentPage"] = page_id - 1
-			this.Data["NextCommentPage"] = page_id + 1
-			this.Data["MaxCommentPage"] = max_pages - 1
-			this.Data["MinCommentPage"] = 0
-
-			this.TplNames = "post.html"
-			this.Render()
-		} else {
-			utils.Error(err)
-			this.Abort("500")
 		}
+
+		for i := start; i < end; i++ {
+			comment_count_elements = append(comment_count_elements, i)
+		}
+
+		page_id := int(page_id)
+		this.Data["CommentCountNums"] = comment_count
+		this.Data["Comments"] = comments
+		this.Data["CommentsCount"] = comment_count_elements
+		this.Data["CurrentCommentPage"] = page_id
+		this.Data["PrevCommentPage"] = page_id - 1
+		this.Data["NextCommentPage"] = page_id + 1
+		this.Data["MaxCommentPage"] = max_pages - 1
+		this.Data["MinCommentPage"] = 0
+
+		this.TplNames = "post.html"
+		this.Render()
 	}
 }
 
