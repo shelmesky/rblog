@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"html/template"
+	"net/url"
 	"rblog/common/utils"
 	"rblog/models"
 	"strconv"
@@ -104,9 +105,10 @@ func (this *ArticleController) Get() {
 		beego.Debug(err)
 		this.Abort("404")
 	} else {
-		url := this.Ctx.Input.Uri()
+		urlstr := this.Ctx.Input.Uri()
+		url_parsed, _ := url.QueryUnescape(urlstr)
 		hash := md5.New()
-		hash.Write([]byte(url))
+		hash.Write([]byte(url_parsed))
 		var url_hash string
 		url_hash = hex.EncodeToString(hash.Sum(nil))
 		var body *models.Post
