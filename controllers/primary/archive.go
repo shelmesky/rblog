@@ -32,7 +32,7 @@ func (this *ArchiveController) Get() {
 	}
 	this.Data["NewPage"] = -1
 
-	this.Data["Catagories"] = utils.Category_map.Items()
+	this.Data["Catagories"] = utils.CatCount
 	this.Data["Posts"] = posts
 	this.Data["ArchiveCount"] = utils.ArCount
 	this.Data["BlogName"] = utils.Site_config.BlogName

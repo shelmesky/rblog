@@ -4,3 +4,4 @@ rblog
 *.dat
 server*
 upload/
+nohup.out
