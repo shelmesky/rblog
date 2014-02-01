@@ -97,7 +97,13 @@
 				{{ .Body | markdown | str2html }}
 			</div>
 		{{ end }}
-          <hr>
+		
+		<!-- Prev and Next Article -->
+		<div>
+		{{ if .PrevPage }} <a href="/post/{{ .PrevPage.Shortname }}.html">前一篇: {{ .PrevPage.Title }}</a> {{ end }}
+		{{ if .NextPage }} <a class="pull-right" href="/post/{{ .NextPage.Shortname }}.html">后一篇: {{ .NextPage.Title }}</a> {{ end }}
+		</div>
+		<hr>
 
           <!-- the comment box -->
           <div class="well">

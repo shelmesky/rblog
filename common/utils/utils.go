@@ -49,6 +49,12 @@ type CategoryCount struct {
 	Count int
 }
 
+// 前一篇和后一篇文章
+type PrevNextPage struct {
+	Title     string
+	Shortname string
+}
+
 func init() {
 	// init cache
 	c, err := cache.NewCache("memory", `{"interval": 60}`)
@@ -181,6 +187,39 @@ func GetCategories() ([]CategoryCount, error) {
 		return categories, err
 	}
 	return categories, err
+}
+
+func GetPrevArticle(created_time string) (prev PrevNextPage, err error) {
+	var sql_raw = `
+		SELECT title, shortname 
+		FROM post
+		WHERE created_time < "%s"
+		ORDER BY created_time DESC 
+		LIMIT 1`
+	sql := fmt.Sprintf(sql_raw, created_time)
+	o := orm.NewOrm()
+	var prev_page PrevNextPage
+	err = o.Raw(sql).QueryRow(&prev_page)
+	if err != nil {
+		return prev_page, err
+	}
+	return prev_page, err
+}
+
+func GetNextArticle(created_time string) (next PrevNextPage, err error) {
+	var sql_raw = `
+		SELECT title, shortname 
+		FROM post
+		WHERE created_time > "%s"
+		LIMIT 1`
+	sql := fmt.Sprintf(sql_raw, created_time)
+	o := orm.NewOrm()
+	var next_page PrevNextPage
+	err = o.Raw(sql).QueryRow(&next_page)
+	if err != nil {
+		return next_page, err
+	}
+	return next_page, err
 }
 
 var AuthFilter = func(ctx *context.Context) {

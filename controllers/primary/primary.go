@@ -10,6 +10,7 @@ import (
 	"rblog/common/utils"
 	"rblog/models"
 	"strconv"
+	"time"
 )
 
 type ArticleComment struct {
@@ -240,6 +241,18 @@ func (this *ArticleController) Get() {
 		this.Data["NextCommentPage"] = page_id + 1
 		this.Data["MaxCommentPage"] = max_pages - 1
 		this.Data["MinCommentPage"] = 0
+
+		const layout = "2006-01-02 15:04:05"
+		created_time := this.Data["CreatedTime"].(time.Time).Format(layout)
+		prev_page, err := utils.GetPrevArticle(created_time)
+		if err == nil {
+			this.Data["PrevPage"] = prev_page
+		}
+
+		next_page, err := utils.GetNextArticle(created_time)
+		if err == nil {
+			this.Data["NextPage"] = next_page
+		}
 
 		this.TplNames = "post.html"
 		this.Render()
