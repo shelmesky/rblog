@@ -60,10 +60,24 @@ type UploadFile struct {
 	Hashname   string `orm:"size(512)"`
 }
 
+//关于
+type About struct {
+	Id      int    `orm:"auto"`
+	Content string `orm:"type(text)"`
+}
+
+//项目
+type Projects struct {
+	Id      int    `orm:"auto"`
+	Content string `orm:"type(text)"`
+}
+
 func init() {
 	orm.RegisterModel(new(Post))
 	orm.RegisterModel(new(SiteConfig))
 	orm.RegisterModel(new(Comment))
 	orm.RegisterModel(new(Category))
 	orm.RegisterModel(new(UploadFile))
+	orm.RegisterModel(new(About))
+	orm.RegisterModel(new(Projects))
 }

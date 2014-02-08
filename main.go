@@ -127,11 +127,14 @@ func main() {
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
 	beego.AddFuncMap("filesize", utils.FileSize)
+
 	beego.EnableAdmin = true
 	beego.AdminHttpAddr = "0.0.0.0"
 	beego.AdminHttpPort = 8088
 
 	beego.Router("/", &controllers.MainController{})
+	beego.Router("/about", &controllers.AboutController{})
+	beego.Router("/projects", &controllers.ProjectsController{})
 
 	beego.Router("/post/:id([^/]+).html", &controllers.ArticleController{})
 	beego.Router("/page/:page_id([^/]+)", &controllers.PageController{})
