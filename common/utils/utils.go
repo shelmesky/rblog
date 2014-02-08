@@ -234,6 +234,13 @@ var AuthFilter = func(ctx *context.Context) {
 	}
 }
 
+func VerifyAuth(username, password string) bool {
+	if username == Site_config.AdminUser && password == Site_config.AdminPassword {
+		return true
+	}
+	return false
+}
+
 func CheckAuth(w http.ResponseWriter, r *context.Context) bool {
 	authorization_array := r.Request.Header["Authorization"]
 	if len(authorization_array) > 0 {
@@ -246,7 +253,7 @@ func CheckAuth(w http.ResponseWriter, r *context.Context) bool {
 			SetBasicAuth(w)
 		}
 		auth_info := strings.Split(string(data), ":")
-		if auth_info[0] == "admin" && auth_info[1] == "password" {
+		if VerifyAuth(auth_info[0], auth_info[1]) {
 			r.Output.Session("admin_user", auth_info[0])
 			return true
 		}
