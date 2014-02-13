@@ -16,6 +16,10 @@
 	<script src="/static/js/highlight.pack.js"></script>
 	<script src="/static/js/jquery.highlight-4.js"></script>
 	
+	<!-- fancybox -->
+	<link rel="stylesheet" href="/static/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="/static/fancybox/jquery.fancybox.pack.js"></script>
+	
 	<link rel="stylesheet" href="/static/css/foundation.css">
     <!-- Add custom CSS here -->
     <link href="/static/css/blog.css" rel="stylesheet">
@@ -26,6 +30,17 @@
 		$(document).ready(function(){
 			$("#content_body").highlight("{{ .SearchKeyword }}");
 			$(".highlight").css({ backgroundColor: "#FFFF88" });
+			
+			$("img").fancybox({
+				'transitionIn': 'elastic',
+        		'transitionOut': 'elastic',
+        		'speedIn': 600, 
+        		'speedOut': 200, 
+        		'overlayShow': false,
+				afterClose: function() {
+					$("img").css("display", "inline");
+				},
+			});
 		});
 		
 	</script>

@@ -19,6 +19,10 @@
 	
 	<link rel="stylesheet" href="/static/css/foundation.css">
 	
+	<!-- fancybox -->
+	<link rel="stylesheet" href="/static/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="/static/fancybox/jquery.fancybox.pack.js"></script>
+	
     <!-- Add custom CSS here -->
     <link href="/static/css/blog.css" rel="stylesheet">
 	<script type="text/javascript">
@@ -35,6 +39,20 @@
 		function submit_search() {
 			$("#SearchForm").submit();
 		}
+		
+    	$(document).ready(function() {
+        	$("img").fancybox({
+				'transitionIn': 'elastic',
+        		'transitionOut': 'elastic',
+        		'speedIn': 600, 
+        		'speedOut': 200, 
+        		'overlayShow': false,
+				afterClose: function() {
+					$("img").css("display", "inline");
+				},
+			});
+    	});
+</script>
 		
 	</script>
 

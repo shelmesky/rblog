@@ -15,10 +15,29 @@
 	<script src="/static/js/bootstrap.min.js"></script>
 	<script src="/static/js/highlight.pack.js"></script>
 	
+	<!-- fancybox -->
+	<link rel="stylesheet" href="/static/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="/static/fancybox/jquery.fancybox.pack.js"></script>
+	
 	<link rel="stylesheet" href="/static/css/foundation.css">
     <!-- Add custom CSS here -->
     <link href="/static/css/blog.css" rel="stylesheet">
-	<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+	<script type="text/javascript">
+		hljs.initHighlightingOnLoad();
+		
+		$(document).ready(function() {
+        	$("img").fancybox({
+				'transitionIn': 'elastic',
+        		'transitionOut': 'elastic',
+        		'speedIn': 600, 
+        		'speedOut': 200, 
+        		'overlayShow': false,
+				afterClose: function() {
+					$("img").css("display", "inline");
+				},
+			});
+    	});
+	</script>
 
   </head>
 
