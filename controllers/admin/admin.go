@@ -272,13 +272,15 @@ func (this *AdminArticleController) Post() {
 							MessageError = "更新Shortname错误!"
 						} else {
 							this.Data["MessageOK"] = "Post new article success."
-
-							// 验证成功则删除session
-							// 解决由于失败也删除session
-							// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
-							this.DelSession(session_key)
 						}
+					} else {
+						this.Data["MessageOK"] = "Post new article success."
 					}
+
+					// 验证成功则删除session
+					// 解决由于失败也删除session
+					// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG
+					this.DelSession(session_key)
 				}
 			}
 		}
