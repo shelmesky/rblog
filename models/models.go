@@ -25,7 +25,7 @@ type Post struct {
 	User        string
 	Shortname   string
 	Title       string    `orm:"size(256)"`
-	Summary     string    `orm:"type:(text);null"`
+	Summary     string    `orm:"type(text);null"`
 	Body        string    `orm:"type(text)"`
 	Password    string    `orm:"size(256);null"`
 	CreatedTime time.Time `orm:"auto_now_add;type(datetime)"`
