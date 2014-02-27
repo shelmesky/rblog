@@ -277,6 +277,9 @@ func (this *AdminArticleController) Post() {
 						this.Data["MessageOK"] = "Post new article success."
 					}
 
+					// 重新载入Archives和Categories
+					utils.LoadArchivesAndCategory(o)
+
 					// 验证成功则删除session
 					// 解决由于失败也删除session
 					// 导致验证失败后，再次提交时直接刷新页面，无任何响应的BUG

@@ -92,28 +92,11 @@ func init() {
 	o := orm.NewOrm()
 	o.QueryTable(new(models.SiteConfig)).One(&utils.Site_config)
 
-	// int corotine safe map
+	// init corotine safe map
 	utils.Category_map = beego_utils.NewBeeMap()
 
-	// insert catagories to map
-	var categories []*models.Category
-	o.QueryTable(new(models.Category)).All(&categories)
-
-	for _, category := range categories {
-		utils.Category_map.Set(category.Id, category.Name)
-	}
-
-	// cache the archives count
-	utils.ArCount, err = utils.GetArchives()
-	if err != nil {
-		beego.Error(err)
-	}
-
-	// cache the categories count
-	utils.CatCount, err = utils.GetCategories()
-	if err != nil {
-		utils.Error(err)
-	}
+	// init archives and categories
+	utils.LoadArchivesAndCategory(o)
 }
 
 func main() {

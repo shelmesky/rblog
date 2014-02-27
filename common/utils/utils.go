@@ -66,6 +66,29 @@ func init() {
 	Urllist = c
 }
 
+func LoadArchivesAndCategory(o orm.Ormer) {
+	// insert catagories to map
+	var categories []*models.Category
+	o.QueryTable(new(models.Category)).All(&categories)
+
+	for _, category := range categories {
+		Category_map.Set(category.Id, category.Name)
+	}
+
+	// cache the archives count
+	ar_count, err := GetArchives()
+	if err != nil {
+		Error(err)
+	}
+	ArCount = ar_count
+
+	// cache the categories count
+	CatCount, err = GetCategories()
+	if err != nil {
+		Error(err)
+	}
+}
+
 func MakeRandomID() string {
 	nano := time.Now().UnixNano()
 	rand.Seed(nano)
