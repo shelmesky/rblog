@@ -190,6 +190,7 @@
 		<a name="comment"></a>
 		{{ with .Comments }}
 		{{ range . }}
+		  <a name="comment_{{ .Id }}"></a>
 		  <hr>
           <h3><a href="mailto:{{ .Email }}">{{ .User }}</a>&nbsp;&nbsp;<small>{{ date .CreatedTime "Y-m-d H:i:s" }}</small><small> From {{ .Ip }}</small></h3>
           <p>{{ .Body | markdown | str2html }}</p>

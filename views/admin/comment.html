@@ -7,6 +7,16 @@
 	<script src="/static/js/jquery-2.0.2.min.js"></script>
 	
     <script type="text/javascript">
+		function confirm_delete(article_name, id) {
+			var msg = "确实要删除 " + article_name + " 吗?";
+			var ret = window.confirm(msg);
+			if(ret) {
+				window.location = document.location.origin + document.location.pathname + "?action=delete&id=" + id;
+			} else {
+				return false;
+			}
+			
+		}
 	</script>
 <link rel="stylesheet" href="/static/admin/css/style.css" type="text/css" media="all" />
 </head>
@@ -80,25 +90,29 @@
 							<tr>
 								<th width="13"><input type="checkbox" class="checkbox" /></th>
 								<th>ID</th>
-								<th>UploadTime</th>
-								<th>FileSize</th>
-								<th>FileName</th>
-								<th>FullPath</th>
+								<th>CreatedTime</th>
+								<th>Article</th>
+								<th>User</th>
+								<th>Email</th>
+								<th>Body</th>
+								<th>IP</th>
 								<th>Actions</th>
 							</tr>
 							
 							{{ $BlogUrl := .BlogUrl }}
-							{{ with .UploadFiles }}
+							{{ with .Comments }}
 							{{ range . }}
 							<tr>
 							<td>
 								<input type="checkbox" class="checkbox" /></td>
 								<td><h3>{{ .Id }}</h3></td>
-								<td>{{date .UploadTime "Y-m-d H:i:s" }}</td>
-								<td>{{ .Filesize | filesize }}</td>
-								<td>{{ .Filename }}</td>
-								<td><a href="/post/download/{{ .Hashname }}" target="_blank">{{ .Hashname }}</a></td>
-								<td><a href="javascript:confirm_delete('{{ .Filename }}', '{{ .Id }}');" class="ico del">Delete</a></td>
+								<td>{{date .CreatedTime "Y-m-d H:i:s" }}</td>
+								<td>{{ .PostId }}</td>
+								<td>{{ .User }}</td>
+								<td>{{ .Email }}</td>
+								<td>{{ .Body }}</td>
+								<td>{{ .Ip }}</td>
+								<td><a href="javascript:confirm_delete('{{ .PostId }}', '{{ .Id }}');" class="ico del">Delete</a></td>
 							</tr>
 							{{ end }}
 							{{ end }}
@@ -107,13 +121,13 @@
 						
 						<!-- Pagging -->
 						<div class="pagging">
-							{{ if .MaxUploadPage }}
-							{{ $max_page := .MaxUploadPage }}
-							{{ $min_page := .MinUploadPage }}
-							{{ $current_page := .CurrentUploadPage }}
-							{{ $prev_page := .PrevUploadPage }}
-							{{ $next_page := .NextUploadPage }}
-							<div class="left">Showing 1-12 of {{ .UploadCountNums }}</div>
+							{{ if .MaxCommentPage }}
+							{{ $max_page := .MaxCommentPage }}
+							{{ $min_page := .MinCommentPage }}
+							{{ $current_page := .CurrentCommentPage }}
+							{{ $prev_page := .PrevCommentPage }}
+							{{ $next_page := .NextCommentPage }}
+							<div class="left">Showing 1-12 of {{ .CommentCountNums }}</div>
 							<div class="right">
 								{{ if gt $current_page $min_page }}
 									<a href="?page={{ $prev_page }}"><</a>
@@ -122,7 +136,7 @@
 								{{ end }}
 								
 								<!-- 迭代所有页，如果正好是当前页，则为disabled -->
-								{{ range $count, $value := .UploadsCount }}
+								{{ range $count, $value := .CommentsCount }}
 								{{ if eq $value $current_page }}
 									<a href="#" id="active_button">{{ $value }}</a>
 								{{ else }}
@@ -146,46 +160,6 @@
 					</div>
 					<!-- Table -->
 					
-				</div>
-				<!-- End Box -->
-				
-				<!-- Box -->
-				<div class="box">
-					<!-- Box Head -->
-					<div class="box-head">
-						<h2>Upload File</h2>
-					</div>
-					<!-- End Box Head -->
-					
-						<!-- Form -->
-						<div class="form">
-							<form name="form" action="" method="POST" enctype="multipart/form-data">
-								{{ .xsrfdata }}
-            					<div class="well" style="width: 100%;">
-            					<h3>上传文件</h3>
-            						<p><input class="button" type="button" id="addButon" value="增加" onclick="add()" /></p>
-            						<table id="fileArea">
-                						<tbody>
-                						<tr id="uparea_1">
-                    						<td>
-                        						<input type="file" name="fileToUpload" id='fileToUpload_1' class="input" onchange="check_filesize(1)" />
-                        						<button href="#" class="button" id="buttonUpload_1" onclick="return ajaxFileUpload(1);">上传</button>
-                    							<img id="loading_1" src="/static/ajax_upload/loading.gif" style="display: none;" />
-                    						</td>
-                						</tr>
-                						</tbody>
-            						</table>
-            					</div>
-        					</form>
-						</div>
-						<!-- End Form -->
-						
-						<!-- Form Buttons -->
-						<div class="buttons">
-							<input type="button" class="button" value="preview" />
-							<input type="submit" class="button" value="submit" />
-						</div>
-						<!-- End Form Buttons -->
 				</div>
 				<!-- End Box -->
 
