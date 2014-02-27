@@ -107,7 +107,7 @@
 								<td><input type="checkbox" class="checkbox" /></td>
 								<td>{{ .Id }}</td>
 								<td><h3><a href="{{ $BlogUrl }}/post/{{ .Shortname }}.html" target="_blank">{{ .Title }}</a></h3></td>
-								<td>{{ .CreatedTime }}</td>
+								<td>{{ date .CreatedTime "Y-m-d H:i:s" }}</td>
 								<td>{{ .Shortname }}</td>
 								<td>{{ .CategoryId | categoryname }}</td>
 								<td><a href="#" class="ico del">Delete</a><a href="?action=update&id={{ .Id }}{{ if $page_id }}&page={{ $page_id }}{{ end }}" class="ico edit">Edit</a></td>

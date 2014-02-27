@@ -34,6 +34,7 @@ var (
 	Site_config  models.SiteConfig
 	ArCount      []ArchiveCount
 	CatCount     []CategoryCount
+	Layout       = "2006-01-02 15:04:05"
 )
 
 // 每个Archive的文章数

@@ -129,7 +129,7 @@
           <h3 id="article_title">{{ .Title }}</h3>
           <a href="#comment">Comments({{ .CommentCountNums }})</a></p>
           <hr>
-          <p><span class="glyphicon glyphicon-time"></span> Posted on {{ .CreatedTime }}  <a href="/category/{{ .CategoryName }}">{{ .CategoryName }}</a></p>
+          <p><span class="glyphicon glyphicon-time"></span> Posted on {{ date .CreatedTime "Y-m-d H:i:s" }}  <a href="/category/{{ .CategoryName }}">{{ .CategoryName }}</a></p>
           <hr>
 		
 		{{ if .Password }}
@@ -191,7 +191,7 @@
 		{{ with .Comments }}
 		{{ range . }}
 		  <hr>
-          <h3><a href="mailto:{{ .Email }}">{{ .User }}</a>&nbsp;&nbsp;<small>{{ .CreatedTime }}</small><small> From {{ .Ip }}</small></h3>
+          <h3><a href="mailto:{{ .Email }}">{{ .User }}</a>&nbsp;&nbsp;<small>{{ date .CreatedTime "Y-m-d H:i:s" }}</small><small> From {{ .Ip }}</small></h3>
           <p>{{ .Body | markdown | str2html }}</p>
 		{{ end }}
 		{{ end }}
