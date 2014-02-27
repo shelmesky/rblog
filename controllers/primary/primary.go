@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/validation"
 	"html/template"
 	"net/url"
 	"rblog/common/utils"
@@ -428,6 +429,23 @@ func (this *ArticleController) Post() {
 		if err != nil {
 			utils.Error(err)
 		}
+
+		// valid comment data
+		valid := validation.Validation{}
+		valid.Required(comment_form.User, "User")
+		valid.Required(comment_form.Email, "Email")
+		valid.Required(comment_form.Body, "Body")
+		valid.MaxSize(comment_form.User, 32, "User")
+		valid.Email(comment_form.Email, "Email")
+		valid.MinSize(comment_form.Body, 6, "Body")
+		valid.MaxSize(comment_form.Body, 800, "Body")
+		if valid.HasErrors() {
+			for _, err := range valid.Errors {
+				utils.Error(err.Key, err.Message)
+			}
+			this.Abort("403")
+		}
+
 		o := orm.NewOrm()
 		UserIp := this.Ctx.Input.IP()
 		comment.PostId = PostId
