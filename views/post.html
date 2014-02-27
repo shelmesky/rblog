@@ -16,6 +16,8 @@
 	<script src="/static/js/jquery-2.0.2.min.js"></script>
 	<script src="/static/js/bootstrap.min.js"></script>
 	<script src="/static/js/highlight.pack.js"></script>
+	<script src="/static/js/jquery.validate.js"></script>
+	<script src="/static/js/validate.message.js"></script>
 	
 	<link rel="stylesheet" href="/static/css/foundation.css">
 	
@@ -40,6 +42,11 @@
 			$("#SearchForm").submit();
 		}
 		
+		jQuery.validator.setDefaults({
+  			debug: true,
+  			success: "valid"
+		});
+		
     	$(document).ready(function() {
         	$("img").fancybox({
 				'transitionIn': 'elastic',
@@ -51,7 +58,28 @@
 					$("img").css("display", "inline");
 				},
 			});
+			$("#CommentForm").validate({
+		  		rules: {
+			    	Email: {
+			      		required: true,
+			      		email: true
+			    	},
+					User: {
+						required: true,
+						maxlength: 16
+					},
+					Body: {
+						required: true,
+						minlength: 6,
+						maxlength: 800
+					}
+		  		}
+			});
+
     	});
+		
+		
+		
 </script>
 		
 	</script>
@@ -124,23 +152,23 @@
 
           <!-- the comment box -->
           <div class="well">
-            <form role="form" action="" method="post" name="CommentForm">
+            <form role="form" action="" method="post" name="CommentForm" id="CommentForm">
 			  {{ .xsrfdata }}
 			  <input type="hidden" name="FormType" value="Comment" />
 			  <input type="hidden" name="PostId" value="{{ .Id }}" />
 			  <h4>Name:</h4>
 			  <div class="form-group">
-				<input type="text" class="form-control" name="User" />
+				<input type="text" class="form-control" name="User" id="User" />
 			  </div>
 			
 			  <h4>Email:</h4>
 			  <div class="form-group">
-				<input type="text" class="form-control" name="Email" />
+				<input type="text" class="form-control" name="Email" id="Email" />
 			  </div>
 			
 			  <h4>Content:</h4>
               <div class="form-group">
-                <textarea class="form-control" rows="4" name="Body"></textarea>
+                <textarea class="form-control" rows="4" name="Body" id="Body"></textarea>
               </div>
 			
               <button class="btn btn-primary" onclick="submit_comment();">Submit</button>
