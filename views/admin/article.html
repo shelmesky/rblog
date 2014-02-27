@@ -4,6 +4,18 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<title>RBlog Admin</title>
 	<link rel="stylesheet" href="/static/admin/css/style.css" type="text/css" media="all" />
+	<script type="text/javascript">
+		function confirm_delete(article_name, id) {
+			var msg = "确实要删除文章 '" + article_name + "' 吗?";
+			var ret = window.confirm(msg);
+			if(ret) {
+				window.location = document.location.origin + document.location.pathname + "?action=delete&id=" + id;
+			} else {
+				return false;
+			}
+			
+		}
+	</script>
 </head>
 <body>
 <!-- Header -->
@@ -110,7 +122,7 @@
 								<td>{{ date .CreatedTime "Y-m-d H:i:s" }}</td>
 								<td>{{ .Shortname }}</td>
 								<td>{{ .CategoryId | categoryname }}</td>
-								<td><a href="#" class="ico del">Delete</a><a href="?action=update&id={{ .Id }}{{ if $page_id }}&page={{ $page_id }}{{ end }}" class="ico edit">Edit</a></td>
+								<td><a href="javascript:confirm_delete('{{ .Title }}', '{{ .Id }}');" class="ico del">Delete</a><a href="?action=update&id={{ .Id }}{{ if $page_id }}&page={{ $page_id }}{{ end }}" class="ico edit">Edit</a></td>
 							</tr>
 							{{ end }}
 							{{ end }}

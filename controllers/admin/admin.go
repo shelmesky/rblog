@@ -78,6 +78,16 @@ func (this *AdminArticleController) Get() {
 				utils.Error(err)
 			}
 		}
+		if action == "delete" {
+			// 删除DB记录
+			_, err := o.QueryTable(new(models.Post)).Filter("Id", id).Delete()
+			if err != nil {
+				utils.Error(err)
+				this.Abort("404")
+				return
+			}
+			this.Redirect("/admin/article", 301)
+		}
 	}
 
 	post_count, err := o.QueryTable(new(models.Post)).Count()
