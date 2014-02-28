@@ -137,6 +137,33 @@ func Now() string {
 	return t.NowString()
 }
 
+type SimplePostInfo struct {
+	Title     string
+	Shortname string
+}
+
+func GetPostInfo(content interface{}) string {
+	var ret string
+	var Id int
+	if Id, ok := content.(int); ok {
+		var post_info SimplePostInfo
+		sql_raw := `SELECT title, shortname
+				FROM post
+				WHERE id=%d`
+		sql := fmt.Sprintf(sql_raw, Id)
+		o := orm.NewOrm()
+		err := o.Raw(sql).QueryRow(&post_info)
+		if err != nil {
+			Error(err)
+			return ret
+		}
+		ret_raw := `<a href="/post/%s.html">%s</a>`
+		ret = fmt.Sprintf(ret_raw, post_info.Shortname, post_info.Title)
+		return ret
+	}
+	return string(Id)
+}
+
 func GetCategoryName(content interface{}) string {
 	//fmt.Println(reflect.TypeOf(content))
 	var category_name string
