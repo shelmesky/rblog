@@ -320,14 +320,19 @@ func SetBasicAuth(w http.ResponseWriter) {
 	http.Error(w, http.StatusText(401), 401)
 }
 
-func SendEmailWithAttachments(from, subject string, to []string, message string, attach_file []string) (err error) {
-	auth := smtp.PlainAuth(
-		"",
+/*
+发送带附件的邮件
+utils.SendEmailWithAttachments(
 		"ox55aa@126.com",
-		"63897100",
-		"smtp.126.com",
+		"来自126的测试邮件",
+		[]string{"33326771@qq.com"},
+		"附件列表",
+		[]string{"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/测试1.log",
+			"/home/roy/coding/Golang_SourceCode/rblog/src/rblog/测试2.log"},
 	)
-	smtp_host := "smtp.126.com:25"
+*/
+func SendEmailWithAttachments(auth smtp.Auth, smtp_host, from, subject string,
+	to []string, message string, attach_file []string) (err error) {
 
 	if from == "" || subject == "" || message == "" {
 		err := errors.New("from or subject or body is empty.")

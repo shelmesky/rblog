@@ -5,3 +5,5 @@ rblog
 server*
 upload/
 nohup.out
+backup
+bak/

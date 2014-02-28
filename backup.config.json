@@ -1,0 +1,22 @@
+{
+    "smtp_auth": {
+        "host": "smtp.qq.com:25",
+        "username": "1231233@qq.com",
+        "password": "xxxxx",
+        "from_host": "smtp.qq.com"
+    },
+
+    "mail_from": "1231233@qq.com",
+    "mail_sendto": "1231233@qq.com,
+
+    "mysql_host": "127.0.0.1",
+    "mysql_port": "3306",
+    "mysql_username": "root",
+    "mysql_password": "root",
+    "mysql_databases": "rblog",
+
+    "backup_dir": "./bak",
+	"upload_dir": "./upload",
+	
+	"log_file": "./logs.log"
+}
