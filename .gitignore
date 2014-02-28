@@ -7,3 +7,5 @@ upload/
 nohup.out
 backup
 bak/
+config.json
+backup.config.json
