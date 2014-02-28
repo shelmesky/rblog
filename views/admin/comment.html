@@ -7,8 +7,8 @@
 	<script src="/static/js/jquery-2.0.2.min.js"></script>
 	
     <script type="text/javascript">
-		function confirm_delete(article_name, id) {
-			var msg = "确实要删除 " + article_name + " 吗?";
+		function confirm_delete(id) {
+			var msg = "确实要删除 " + id + " 吗?";
 			var ret = window.confirm(msg);
 			if(ret) {
 				window.location = document.location.origin + document.location.pathname + "?action=delete&id=" + id;
@@ -75,7 +75,7 @@
 				<div class="box">
 					<!-- Box Head -->
 					<div class="box-head">
-						<h2 class="left">Current Files</h2>
+						<h2 class="left">Current Comments</h2>
 						<div class="right">
 							<label>search articles</label>
 							<input type="text" class="field small-field" />
@@ -112,7 +112,7 @@
 								<td>{{ .Email }}</td>
 								<td>{{ .Body }}</td>
 								<td><a href="http://www.ip138.com/ips138.asp?ip={{ .Ip }}">{{ .Ip }}</a></td>
-								<td><a href="javascript:confirm_delete('{{ .PostId }}', '{{ .Id }}');" class="ico del">Delete</a></td>
+								<td><a href="javascript:confirm_delete('{{ .Id }}');" class="ico del">Delete</a></td>
 							</tr>
 							{{ end }}
 							{{ end }}
