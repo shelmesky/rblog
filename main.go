@@ -151,10 +151,10 @@ func main() {
 	beego.Router("/feed", &feedcontrollers.RssController{})
 
 	// file upload handler
-	beego.Router("/post/upload", &uploadcontrollers.UploadController{})
+	beego.Router("/upload", &uploadcontrollers.UploadController{})
 
 	// file download handler
-	beego.Router("/post/download/:filehash([^/]+)", &uploadcontrollers.DownloadController{})
+	beego.Router("/file/:filehash([^/]+)", &uploadcontrollers.DownloadController{})
 
 	beego.Run()
 }

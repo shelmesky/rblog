@@ -39,7 +39,7 @@
             (
                 {
                     data: {count: id, _xsrf: xsrf},
-                    url:'/post/upload',
+                    url:'/upload',
                     secureuri:false,
                     fileElementId:'fileToUpload_' + id,
 					// 此处必须是JSON
@@ -198,7 +198,7 @@
 								<td>{{date .UploadTime "Y-m-d H:i:s" }}</td>
 								<td>{{ .Filesize | filesize }}</td>
 								<td>{{ .Filename }}</td>
-								<td><a href="/post/download/{{ .Hashname }}" target="_blank">{{ .Hashname }}</a></td>
+								<td><a href="/file/{{ .Hashname }}" target="_blank">{{ .Hashname }}</a></td>
 								<td><a href="javascript:confirm_delete('{{ .Filename }}', '{{ .Id }}');" class="ico del">Delete</a></td>
 							</tr>
 							{{ end }}
