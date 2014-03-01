@@ -128,9 +128,9 @@
           <!-- the actual blog post: title/author/date/content -->
           <h3 id="article_title">{{ .Title }}</h3>
           <a href="#comment">Comments({{ .CommentCountNums }})</a></p>
-          <hr>
+          <hr />
           <p><span class="glyphicon glyphicon-time"></span> Posted on {{ date .CreatedTime "Y-m-d H:i:s" }}  <a href="/category/{{ .CategoryName }}">{{ .CategoryName }}</a></p>
-          <hr>
+          <hr />
 		
 		{{ if .Password }}
 		<form action="" method="post" name="PasswordForm">
@@ -157,7 +157,7 @@
 		{{ if .PrevPage }} <a href="/post/{{ .PrevPage.Shortname }}.html">前一篇: {{ .PrevPage.Title }}</a> {{ end }}
 		{{ if .NextPage }} <a class="pull-right" href="/post/{{ .NextPage.Shortname }}.html">后一篇: {{ .NextPage.Title }}</a> {{ end }}
 		</div>
-		<hr>
+		<hr />
 
           <!-- the comment box -->
           <div class="well">
