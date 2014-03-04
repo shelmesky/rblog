@@ -66,6 +66,11 @@ func init() {
 	Urllist = c
 }
 
+func Page_not_found(rw http.ResponseWriter, r *http.Request) {
+	t, _ := template.New("404.html").ParseFiles(beego.ViewsPath + "/404.html")
+	t.Execute(rw, nil)
+}
+
 func LoadArchivesAndCategory(o orm.Ormer) {
 	// insert catagories to map
 	var categories []*models.Category

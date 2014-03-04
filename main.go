@@ -102,6 +102,8 @@ func init() {
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
+	beego.Errorhandler("404", utils.Page_not_found)
+
 	// global filter
 	beego.AddFilter("/admin", "AfterStatic", utils.AuthFilter)
 	beego.AddFilter("/admin/:all", "AfterStatic", utils.AuthFilter)
