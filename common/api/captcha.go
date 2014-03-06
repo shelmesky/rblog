@@ -2,14 +2,11 @@ package api
 
 import (
 	crand "crypto/rand"
-	"fmt"
 	"image"
 	"image/color"
 	"image/png"
 	"io"
 	"math/rand"
-	"net/http"
-	"strconv"
 	"time"
 )
 

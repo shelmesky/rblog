@@ -3,7 +3,6 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"rblog/common/api"
-	//"rblog/common/utils"
 	"strconv"
 )
 
