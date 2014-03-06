@@ -15,10 +15,11 @@ import (
 )
 
 type ArticleComment struct {
-	PostId string `form:"PostId"`
-	User   string `form:"User"`
-	Email  string `form:"Email"`
-	Body   string `form:"Body"`
+	PostId  string `form:"PostId"`
+	User    string `form:"User"`
+	Captcha string `form:"Captcha"`
+	Email   string `form:"Email"`
+	Body    string `form:"Body"`
 }
 
 type MainController struct {
@@ -433,16 +434,26 @@ func (this *ArticleController) Post() {
 		// valid comment data
 		valid := validation.Validation{}
 		valid.Required(comment_form.User, "User")
-		valid.Required(comment_form.Email, "Email")
-		valid.Required(comment_form.Body, "Body")
 		valid.MaxSize(comment_form.User, 32, "User")
+
+		valid.Required(comment_form.Captcha, "Captcha")
+		valid.MaxSize(comment_form.Captcha, 4, "Captcha")
+
 		valid.Email(comment_form.Email, "Email")
+		valid.Required(comment_form.Email, "Email")
+
+		valid.Required(comment_form.Body, "Body")
 		valid.MinSize(comment_form.Body, 6, "Body")
 		valid.MaxSize(comment_form.Body, 800, "Body")
+
 		if valid.HasErrors() {
 			for _, err := range valid.Errors {
 				utils.Error(err.Key, err.Message)
 			}
+			this.Abort("403")
+		}
+
+		if comment_form.Captcha != this.GetSession("captcha") {
 			this.Abort("403")
 		}
 

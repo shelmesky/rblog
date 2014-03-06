@@ -119,6 +119,7 @@ func main() {
 	beego.AdminHttpPort = 8088
 
 	beego.Router("/", &controllers.MainController{})
+	beego.Router("/captcha", &controllers.CaptchaController{})
 	beego.Router("/about", &controllers.AboutController{})
 	beego.Router("/projects", &controllers.ProjectsController{})
 

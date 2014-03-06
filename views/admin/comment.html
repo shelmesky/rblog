@@ -110,7 +110,7 @@
 								<td>{{ .PostId | postinfo | str2html }}</td>
 								<td>{{ .User }}</td>
 								<td>{{ .Email }}</td>
-								<td>{{ .Body }}</td>
+								<td>{{ substr .Body 0 10 }} ...</td>
 								<td><a href="http://www.ip138.com/ips138.asp?ip={{ .Ip }}">{{ .Ip }}</a></td>
 								<td><a href="javascript:confirm_delete('{{ .Id }}');" class="ico del">Delete</a></td>
 							</tr>

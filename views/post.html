@@ -47,7 +47,7 @@
 		});
 		
     	$(document).ready(function() {
-        	$("img").fancybox({
+        	$("#article_body img").fancybox({
 				'transitionIn': 'elastic',
         		'transitionOut': 'elastic',
         		'speedIn': 600, 
@@ -59,18 +59,21 @@
 			});
 			$("#CommentForm").validate({
 		  		rules: {
-			    	Email: {
-			      		required: true,
-			      		email: true
-			    	},
+					Email: {
+						required: true,
+						email: true
+					},
 					User: {
 						required: true,
 						maxlength: 16
 					},
+					Captcha: {
+					  required: true,
+					},
 					Body: {
 						required: true,
 						minlength: 6,
-						maxlength: 800
+						maxlength: 800,
 					}
 		  		},
 				submitHandler: function(form) {
@@ -160,15 +163,29 @@
 		<hr />
 
           <!-- the comment box -->
-          <div class="well">
+          <div class="well" id="comment_box">
             <form role="form" action="" method="post" name="CommentForm" id="CommentForm">
 			  {{ .xsrfdata }}
 			  <input type="hidden" name="FormType" value="Comment" />
 			  <input type="hidden" name="PostId" value="{{ .Id }}" />
-			  <h4>Name:</h4>
-			  <div class="form-group">
-				<input type="text" class="form-control" name="User" id="User" />
-			  </div>
+			 
+				<table>
+					<thead>
+						<tr>
+						<th style="width: 40%;"><label for="User">Name: </label></th>
+						<th style="width: 50%; padding-left: 10px;">Capatcha:</th>
+						</tr>
+					</thead>
+					
+					<tbody>
+						<tr>
+						<td><input type="text" class="form-control" name="User" id="User" /></td>
+						<td style="padding-left: 10px;">
+						  <input class="form-control small" type="text" name="Captcha" id="Captcha" style="display: inline; width: auto;" />
+						  <img id="captcha" style="margin-left: 10px;" border="1" src="/captcha" alt="验证码" onclick="this.src='/captcha'" /></td>
+						</tr>
+					</tbody>
+				</table>
 			
 			  <h4>Email:</h4>
 			  <div class="form-group">
