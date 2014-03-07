@@ -1,12 +1,12 @@
 {
-	"MySQL": {
-		"Host": "127.0.0.1",
-		"Port": "3306",
-		"Username": "root",
-		"Password": "root",
-		"Database": "rblog"
+	"mysql": {
+		"host": "127.0.0.1",
+		"port": "3306",
+		"username": "root",
+		"password": "root",
+		"database": "rblog"
 	},
 
-	"Static_Path": "/static",
-	"Log_Path": "logs.log"
+	"static_path": "/static",
+	"log_path": "logs.log"
 }
