@@ -7,6 +7,8 @@
     <meta name="author" content="">
 
     <title>{{ .BlogName }}</title>
+	
+	<link rel="stylesheet" href="/static/css/atelier-forest.light.css">
 
 	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/static/css/bootstrap-theme.min.css" rel="stylesheet">
@@ -24,10 +26,11 @@
     <!-- Add custom CSS here -->
     <link href="/static/css/blog.css" rel="stylesheet">
 	<script type="text/javascript">
-		hljs.initHighlightingOnLoad();
-		
 		
 		$(document).ready(function(){
+			
+			$('pre').each(function(i, e) {hljs.highlightBlock(e)});
+			
 			$("#content_body").highlight("{{ .SearchKeyword }}");
 			$(".highlight").css({ backgroundColor: "#FFFF88" });
 			

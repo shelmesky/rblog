@@ -6,6 +6,8 @@
     <meta name="author" content="">
 
     <title>{{ .BlogName }}</title>
+	
+	<link rel="stylesheet" href="/static/css/atelier-forest.light.css">
 
     <!-- Bootstrap core CSS -->
 	
@@ -18,7 +20,6 @@
 	<script src="/static/js/jquery.validate.js"></script>
 	<script src="/static/js/validate.message.js"></script>
 	
-	<link rel="stylesheet" href="/static/css/foundation.css">
 	
 	<!-- fancybox -->
 	<link rel="stylesheet" href="/static/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
@@ -27,7 +28,6 @@
     <!-- Add custom CSS here -->
     <link href="/static/css/blog.css" rel="stylesheet">
 	<script type="text/javascript">
-		hljs.initHighlightingOnLoad();
 		
 		function submit_encrypt() {
 			$("#PasswordForm").submit();
@@ -47,6 +47,9 @@
 		});
 		
     	$(document).ready(function() {
+			hljs.configure({tabReplace: '    '});
+			$('pre').each(function(i, e) {hljs.highlightBlock(e)});
+			
         	$("#article_body img").fancybox({
 				'transitionIn': 'elastic',
         		'transitionOut': 'elastic',

@@ -7,6 +7,8 @@
     <meta name="author" content="">
 
     <title>{{ .BlogName }}</title>
+	
+	<link rel="stylesheet" href="/static/css/atelier-forest.light.css">
 
 	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/static/css/bootstrap-theme.min.css" rel="stylesheet">
@@ -19,13 +21,13 @@
 	<link rel="stylesheet" href="/static/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
     <script type="text/javascript" src="/static/fancybox/jquery.fancybox.pack.js"></script>
 	
-	<link rel="stylesheet" href="/static/css/foundation.css">
     <!-- Add custom CSS here -->
     <link href="/static/css/blog.css" rel="stylesheet">
 	<script type="text/javascript">
-		hljs.initHighlightingOnLoad();
 		
 		$(document).ready(function() {
+			$('pre').each(function(i, e) {hljs.highlightBlock(e)});
+			
         	$("img").fancybox({
 				'transitionIn': 'elastic',
         		'transitionOut': 'elastic',
