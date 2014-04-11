@@ -219,7 +219,7 @@ func GetCategoryId(name string) (int, error) {
 }
 
 func GetArchives() ([]ArchiveCount, error) {
-	var sql = `select distinct archive as ar,count(archive) as count
+	var sql = `select distinct archive as archive,count(archive) as count
 	from post group by archive`
 	o := orm.NewOrm()
 	var archives []ArchiveCount
