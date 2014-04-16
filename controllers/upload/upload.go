@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"rblog/common/utils"
 	"rblog/models"
+	"mime"
 )
 
 type MessageBody struct {
@@ -69,6 +70,7 @@ func (this *UploadController) Post() {
 	if !utils.Exist("upload") {
 		os.Mkdir("upload", 0775)
 	}
+	full_name = hashname + "_" + filename
 	tofile := path.Join("upload", hashname)
 	f, err := os.OpenFile(tofile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
@@ -141,13 +143,18 @@ func (this *DownloadController) Get() {
 	}
 
 	// 开始下载
+	
+	
 	this.Ctx.Output.Header("Content-Description", "File Transfer")
-	this.Ctx.Output.Header("Content-Type", "application/octet-stream")
 	this.Ctx.Output.Header("Content-Disposition", "attachment; filename="+upload_file.Filename)
 	this.Ctx.Output.Header("Content-Transfer-Encoding", "binary")
 	this.Ctx.Output.Header("Expires", "0")
 	this.Ctx.Output.Header("Cache-Control", "must-revalidate")
 	this.Ctx.Output.Header("Pragma", "public")
+	
+	ctype := mime.TypeByExtension(filepath.Ext(upload_file.Filename))
+	this.Ctx.Output.Header("Content-Type", ctype)
+	
 
 	http.ServeFile(this.Ctx.Output.Context.ResponseWriter,
 		this.Ctx.Output.Context.Request,
