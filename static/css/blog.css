@@ -95,3 +95,7 @@ img {
    max-width: 100%; 
    border: 1px solid #ccc;
 }
+
+#fancybox-wrap, #fancybox-content{
+	box-sizing: content-box;
+}

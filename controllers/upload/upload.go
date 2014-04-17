@@ -70,7 +70,16 @@ func (this *UploadController) Post() {
 	if !utils.Exist("upload") {
 		os.Mkdir("upload", 0775)
 	}
-	full_name = hashname + "_" + filename
+	
+	// 检查文件是否有后缀名
+	file_ext := filepath.Ext(filename)
+	if file_ext == "" {
+		utils.Error(err)
+		this.Ctx.WriteString(`{"Error": "Filename incorrect, need suffix"}`)
+		return
+	}
+	
+	hashname = hashname + file_ext
 	tofile := path.Join("upload", hashname)
 	f, err := os.OpenFile(tofile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
