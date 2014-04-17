@@ -301,7 +301,7 @@ func (this *ArticleController) Post() {
 					}
 				}
 
-				this.Data["Catagories"] = utils.Category_map.Items()
+				this.Data["Catagories"] = utils.CatCount
 				this.Data["ArchiveCount"] = utils.ArCount
 				this.Data["BlogName"] = utils.Site_config.BlogName
 				this.Data["BlogUrl"] = utils.Site_config.BlogUrl
