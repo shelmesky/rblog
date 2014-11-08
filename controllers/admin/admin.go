@@ -62,7 +62,7 @@ type AdminArticleController struct {
 }
 
 func (this *AdminArticleController) Get() {
-	page_id, _ := this.GetInt("page")
+	page_id, _ := this.GetInt64("page")
 	var limit int64 = 10
 
 	action := this.GetString("action")
@@ -341,7 +341,7 @@ type AdminCommentController struct {
 }
 
 func (this *AdminCommentController) Get() {
-	page_id, _ := this.GetInt("page")
+	page_id, _ := this.GetInt64("page")
 	var limit int64 = 5
 
 	action := this.GetString("action")
@@ -463,11 +463,11 @@ type AdminFileController struct {
 }
 
 func (this *AdminFileController) Get() {
-	page_id, _ := this.GetInt("page")
+	page_id, _ := this.GetInt64("page")
 	var limit int64 = 5
 
 	action := this.GetString("action")
-	id, _ := this.GetInt("id")
+	id, _ := this.GetInt64("id")
 
 	o := orm.NewOrm()
 

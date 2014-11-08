@@ -37,7 +37,7 @@ func (this *UploadController) Post() {
 	/* 客户端的ajaxuploadfile需要的类型为text/html */
 	this.Ctx.Output.Header("Content-Type", "text/html;charset=UTF-8")
 
-	count, _ := this.GetInt("count")
+	count, _ := this.GetInt64("count")
 	file, info, err := this.GetFile("fileToUpload")
 	if err != nil {
 		utils.Error(err)

@@ -69,7 +69,7 @@ func init() {
 		log_config_str := `{"filename": "%s", "daily": true, "maxdays": 15, "maxsize": 67108864, "rotate": true}`
 		log_config := fmt.Sprintf(log_config_str, config.Log_Path)
 		beego.BeeLogger.SetLogger("file", log_config)
-		beego.SetLevel(beego.LevelTrace)
+		beego.SetLevel(beego.LevelDebug)
 
 		orm.RegisterDriver("mysql", orm.DR_MySQL)
 		// Init DB Connection
@@ -105,9 +105,9 @@ func main() {
 	beego.Errorhandler("404", utils.Page_not_found)
 
 	// global filter
-	beego.AddFilter("/admin", "AfterStatic", utils.AuthFilter)
-	beego.AddFilter("/admin/:all", "AfterStatic", utils.AuthFilter)
-	beego.AddFilter("/post/upload", "AfterStatic", utils.AuthFilter)
+	beego.InsertFilter("/admin", beego.BeforeExec, utils.AuthFilter)
+	beego.InsertFilter("/admin/:all", beego.BeforeExec, utils.AuthFilter)
+	beego.InsertFilter("/post/upload", beego.BeforeExec, utils.AuthFilter)
 
 	beego.AddFuncMap("markdown", utils.RenderMarkdown)
 	beego.AddFuncMap("categoryname", utils.GetCategoryName)
