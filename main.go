@@ -10,7 +10,6 @@ import (
 	"os"
 	"rblog/common/utils"
 	"rblog/controllers/admin"
-	"rblog/controllers/debug"
 	"rblog/controllers/feed"
 	"rblog/controllers/primary"
 	"rblog/controllers/search"
@@ -123,18 +122,18 @@ func main() {
 	beego.Router("/about", &controllers.AboutController{})
 	beego.Router("/projects", &controllers.ProjectsController{})
 
-	beego.Router("/post/:id([^/]+).html", &controllers.ArticleController{})
-	beego.Router("/page/:page_id([^/]+)", &controllers.PageController{})
+    beego.Router("/post/:id(.*).html", &controllers.ArticleController{})
+	beego.Router("/page/:page_id([0-9]+)", &controllers.PageController{})
 
-	beego.Router("/category/:name([^/]+)", &controllers.CategoryController{})
-	beego.Router("/category/:name([^/]+)/page/:page_id([^/]+)", &controllers.CategoryPageController{})
+	beego.Router("/category/:name([0-9a-z-]+)", &controllers.CategoryController{})
+	beego.Router("/category/:name([0-9a-z-]+)/page/:page_id([0-9]+)", &controllers.CategoryPageController{})
 
-	beego.Router("/archive/:name([^/]+)", &controllers.ArchiveController{})
-	beego.Router("/archive/:name([^/]+)/page/:page_id([^/]+)", &controllers.ArchivePageController{})
+	beego.Router("/archive/:name([0-9a-z-]+)", &controllers.ArchiveController{})
+	beego.Router("/archive/:name([0-9a-z-]+)/page/:page_id([0-9]+)", &controllers.ArchivePageController{})
 
 	// search handler
 	beego.Router("/post/search", &searchcontrollers.SearchController{})
-	beego.Router("/post/search/:keyword([^/]+)/page/:page_id([^/]+)", &searchcontrollers.SearchPageController{})
+	beego.Router("/post/search/:keyword(.*)/page/:page_id([0-9]+)", &searchcontrollers.SearchPageController{})
 
 	// admin console
 	beego.Router("/admin", &admincontrollers.AdminController{})
@@ -146,10 +145,6 @@ func main() {
 	beego.Router("/admin/site", &admincontrollers.AdminSiteController{})
 	beego.Router("/admin/files", &admincontrollers.AdminFileController{})
 
-	//add http pprof url handler
-	beego.Router("/debug/pprof", &debugcontrollers.ProfController{})
-	beego.Router("/debug/pprof/:pp([^/]+)", &debugcontrollers.ProfController{})
-
 	// add feed handler
 	beego.Router("/feed", &feedcontrollers.RssController{})
 
@@ -157,7 +152,7 @@ func main() {
 	beego.Router("/upload", &uploadcontrollers.UploadController{})
 
 	// file download handler
-	beego.Router("/file/:filehash([^/]+)", &uploadcontrollers.DownloadController{})
+	beego.Router("/file/:filehash([0-9a-zA-Z-]+)", &uploadcontrollers.DownloadController{})
 
 	beego.Run()
 }
