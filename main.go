@@ -152,7 +152,7 @@ func main() {
 	beego.Router("/upload", &uploadcontrollers.UploadController{})
 
 	// file download handler
-	beego.Router("/file/:filehash([0-9a-zA-Z-]+)", &uploadcontrollers.DownloadController{})
+	beego.Router("/file/:filehash([0-9a-zA-Z-.]+)", &uploadcontrollers.DownloadController{})
 
 	beego.Run()
 }
