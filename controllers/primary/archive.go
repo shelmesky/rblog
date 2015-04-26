@@ -3,8 +3,8 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"rblog/common/utils"
-	"rblog/models"
+	"github.com/shelmesky/rblog/common/utils"
+	"github.com/shelmesky/rblog/models"
 	"strconv"
 )
 

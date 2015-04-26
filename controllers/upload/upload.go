@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/shelmesky/rblog/common/utils"
+	"github.com/shelmesky/rblog/models"
 	"io"
 	"io/ioutil"
+	"mime"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
-	"rblog/common/utils"
-	"rblog/models"
-	"mime"
 )
 
 type MessageBody struct {
@@ -70,7 +70,7 @@ func (this *UploadController) Post() {
 	if !utils.Exist("upload") {
 		os.Mkdir("upload", 0775)
 	}
-	
+
 	// 检查文件是否有后缀名
 	file_ext := filepath.Ext(filename)
 	if file_ext == "" {
@@ -78,7 +78,7 @@ func (this *UploadController) Post() {
 		this.Ctx.WriteString(`{"Error": "Filename incorrect, need suffix"}`)
 		return
 	}
-	
+
 	hashname = hashname + file_ext
 	tofile := path.Join("upload", hashname)
 	f, err := os.OpenFile(tofile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
@@ -152,18 +152,16 @@ func (this *DownloadController) Get() {
 	}
 
 	// 开始下载
-	
-	
+
 	this.Ctx.Output.Header("Content-Description", "File Transfer")
 	this.Ctx.Output.Header("Content-Disposition", "attachment; filename="+upload_file.Filename)
 	this.Ctx.Output.Header("Content-Transfer-Encoding", "binary")
 	this.Ctx.Output.Header("Expires", "0")
 	this.Ctx.Output.Header("Cache-Control", "must-revalidate")
 	this.Ctx.Output.Header("Pragma", "public")
-	
+
 	ctype := mime.TypeByExtension(filepath.Ext(upload_file.Filename))
 	this.Ctx.Output.Header("Content-Type", ctype)
-	
 
 	http.ServeFile(this.Ctx.Output.Context.ResponseWriter,
 		this.Ctx.Output.Context.Request,

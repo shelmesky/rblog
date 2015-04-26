@@ -7,29 +7,29 @@ import (
 	"github.com/astaxie/beego/orm"
 	beego_utils "github.com/astaxie/beego/utils"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/shelmesky/rblog/common/utils"
+	"github.com/shelmesky/rblog/controllers/admin"
+	"github.com/shelmesky/rblog/controllers/feed"
+	"github.com/shelmesky/rblog/controllers/primary"
+	"github.com/shelmesky/rblog/controllers/search"
+	"github.com/shelmesky/rblog/controllers/upload"
+	"github.com/shelmesky/rblog/models"
 	"os"
-	"rblog/common/utils"
-	"rblog/controllers/admin"
-	"rblog/controllers/feed"
-	"rblog/controllers/primary"
-	"rblog/controllers/search"
-	"rblog/controllers/upload"
-	"rblog/models"
 	"runtime"
 )
 
 type MySQL_Config struct {
-	Host     string	`json:"host"`
-	Port     string	`json:"port"`
-	Username string	`json:"username"`
-	Password string	`json:"password"`
-	Database string	`json:"database"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Database string `json:"database"`
 }
 
 type Main_Config struct {
-	MySQL       MySQL_Config	`json:"mysql"`
-	Static_Path string 			`json:"static_path"`
-	Log_Path    string 			`json:"log_path"`
+	MySQL       MySQL_Config `json:"mysql"`
+	Static_Path string       `json:"static_path"`
+	Log_Path    string       `json:"log_path"`
 }
 
 func init() {
@@ -122,7 +122,7 @@ func main() {
 	beego.Router("/about", &controllers.AboutController{})
 	beego.Router("/projects", &controllers.ProjectsController{})
 
-    beego.Router("/post/:id(.*).html", &controllers.ArticleController{})
+	beego.Router("/post/:id(.*).html", &controllers.ArticleController{})
 	beego.Router("/page/:page_id([0-9]+)", &controllers.PageController{})
 
 	beego.Router("/category/:name([0-9a-z-]+)", &controllers.CategoryController{})
