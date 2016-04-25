@@ -42,7 +42,7 @@ func (this *ArchiveController) Get() {
 	this.Data["ArchiveCounts"] = count
 	this.Data["ArchiveName"] = archive
 
-	this.TplNames = "archive.html"
+	this.TplName = "archive.html"
 	this.Render()
 
 }
@@ -100,6 +100,6 @@ func (this *ArchivePageController) Get() {
 		以上是在index.html中判断
 	*/
 	this.Data["NewPage"] = page_id - 1
-	this.TplNames = "archive.html"
+	this.TplName = "archive.html"
 	this.Render()
 }

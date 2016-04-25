@@ -67,7 +67,7 @@ func init() {
 }
 
 func Page_not_found(rw http.ResponseWriter, r *http.Request) {
-	t, _ := template.New("404.html").ParseFiles(beego.ViewsPath + "/404.html")
+	t, _ := template.New("404.html").ParseFiles("views/404.html")
 	t.Execute(rw, nil)
 }
 
@@ -282,7 +282,7 @@ var AuthFilter = func(ctx *context.Context) {
 	user := ctx.Input.Session("admin_user")
 	if user == nil {
 		if !CheckAuth(ctx.ResponseWriter, ctx) {
-			beego.Error(ctx.Input.Url() + " Admin check user failed.")
+			beego.Error(ctx.Input.URL() + " Admin check user failed.")
 			return
 		}
 	} else {
@@ -305,7 +305,7 @@ func CheckAuth(w http.ResponseWriter, r *context.Context) bool {
 		splited = strings.Split(authorization, " ")
 		data, err := base64.StdEncoding.DecodeString(splited[1])
 		if err != nil {
-			Error(r.Input.Url() + " Decode Base64 Auth failed.")
+			Error(r.Input.URL() + " Decode Base64 Auth failed.")
 			SetBasicAuth(w)
 		}
 		auth_info := strings.Split(string(data), ":")

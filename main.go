@@ -70,7 +70,7 @@ func init() {
 		beego.BeeLogger.SetLogger("file", log_config)
 		beego.SetLevel(beego.LevelDebug)
 
-		orm.RegisterDriver("mysql", orm.DR_MySQL)
+		orm.RegisterDriver("mysql", orm.DRMySQL)
 		// Init DB Connection
 		mc := config.MySQL
 		conn_uri := mc.Username + ":" + mc.Password + "@tcp(" + mc.Host + ":" + mc.Port + ")" + "/" + mc.Database + "?charset=utf8"
@@ -101,7 +101,7 @@ func init() {
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	beego.Errorhandler("404", utils.Page_not_found)
+	//beego.Errorhandler("404", utils.Page_not_found)
 
 	// global filter
 	beego.InsertFilter("/admin", beego.BeforeExec, utils.AuthFilter)
@@ -113,16 +113,12 @@ func main() {
 	beego.AddFuncMap("filesize", utils.FileSize)
 	beego.AddFuncMap("postinfo", utils.GetPostInfo)
 
-	beego.EnableAdmin = true
-	beego.AdminHttpAddr = "0.0.0.0"
-	beego.AdminHttpPort = 8088
-
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/captcha", &controllers.CaptchaController{})
 	beego.Router("/about", &controllers.AboutController{})
 	beego.Router("/projects", &controllers.ProjectsController{})
 
-	beego.Router("/post/:id(.*).html", &controllers.ArticleController{})
+    	beego.Router("/post/:id(.*).html", &controllers.ArticleController{})
 	beego.Router("/page/:page_id([0-9]+)", &controllers.PageController{})
 
 	beego.Router("/category/:name([0-9a-z-]+)", &controllers.CategoryController{})

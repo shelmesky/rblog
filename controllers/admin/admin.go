@@ -32,7 +32,7 @@ type AdminController struct {
 }
 
 func (this *AdminController) Get() {
-	this.TplNames = "admin/home.html"
+	this.TplName = "admin/home.html"
 	this.Render()
 }
 
@@ -42,7 +42,7 @@ type AdminLoginController struct {
 }
 
 func (this *AdminLoginController) Get() {
-	this.TplNames = "admin/login.html"
+	this.TplName = "admin/login.html"
 	this.Render()
 }
 
@@ -52,7 +52,7 @@ type AdminLogoutController struct {
 }
 
 func (this *AdminLogoutController) Get() {
-	this.TplNames = "admin/logout.html"
+	this.TplName = "admin/logout.html"
 	this.Render()
 }
 
@@ -178,13 +178,13 @@ func (this *AdminArticleController) Get() {
 	o.QueryTable(new(models.Category)).All(&categories)
 	this.Data["Categories"] = categories
 
-	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+	this.Data["xsrfdata"] = template.HTML(this.XSRFFormHTML())
 
 	// 防止重复提交，设置session
 	session_key := "admin_article_get"
 	this.SetSession(session_key, utils.MakeRandomID())
 
-	this.TplNames = "admin/article.html"
+	this.TplName = "admin/article.html"
 	this.Render()
 }
 
@@ -311,7 +311,7 @@ func (this *AdminArticleController) Post() {
 	o.QueryTable(new(models.Category)).All(&categories)
 	this.Data["Categories"] = categories
 
-	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+	this.Data["xsrfdata"] = template.HTML(this.XSRFFormHTML())
 
 	// 再次设置session
 	// 解决POST文章之后，立刻再POST一篇会失败的问题
@@ -321,7 +321,7 @@ func (this *AdminArticleController) Post() {
 	this.SetSession(session_key, utils.MakeRandomID())
 
 	this.Data["MessageError"] = MessageError
-	this.TplNames = "admin/article.html"
+	this.TplName = "admin/article.html"
 	this.Render()
 }
 
@@ -331,7 +331,7 @@ type AdminCategoryController struct {
 }
 
 func (this *AdminCategoryController) Get() {
-	this.TplNames = "admin/category.html"
+	this.TplName = "admin/category.html"
 	this.Render()
 }
 
@@ -441,9 +441,9 @@ func (this *AdminCommentController) Get() {
 	this.Data["MaxComments"] = comment_count
 	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 
-	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+	this.Data["xsrfdata"] = template.HTML(this.XSRFFormHTML())
 
-	this.TplNames = "admin/comment.html"
+	this.TplName = "admin/comment.html"
 	this.Render()
 }
 
@@ -453,7 +453,7 @@ type AdminSiteController struct {
 }
 
 func (this *AdminSiteController) Get() {
-	this.TplNames = "admin/site.html"
+	this.TplName = "admin/site.html"
 	this.Render()
 }
 
@@ -597,7 +597,7 @@ func (this *AdminFileController) Get() {
 	this.Data["MaxFiles"] = upload_count
 	this.Data["BlogUrl"] = utils.Site_config.BlogUrl
 
-	this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
-	this.TplNames = "admin/file.html"
+	this.Data["xsrfdata"] = template.HTML(this.XSRFFormHTML())
+	this.TplName = "admin/file.html"
 	this.Render()
 }

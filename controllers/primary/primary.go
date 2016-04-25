@@ -36,7 +36,7 @@ func (this *MainController) Get() {
 		utils.Error(err)
 	}
 
-	this.TplNames = "index.html"
+	this.TplName = "index.html"
 
 	this.Data["Catagories"] = utils.CatCount
 	this.Data["ArchiveCount"] = utils.ArCount
@@ -65,10 +65,10 @@ type ArticleController struct {
 	如果是检查文章密码的表单，检测XSRF字段
 	如果是提交评论的表单，则直接返回true
 */
-func (this *ArticleController) CheckXsrfCookie() bool {
+func (this *ArticleController) CheckXSRFCookie() bool {
 	FormType := this.GetString("FormType")
 	if FormType == "Encrypt" {
-		return this.Controller.CheckXsrfCookie()
+		return this.Controller.CheckXSRFCookie()
 	} else if FormType == "Comment" {
 		return true
 	}
@@ -108,7 +108,7 @@ func (this *ArticleController) Get() {
 		beego.Debug(err)
 		this.Abort("404")
 	} else {
-		urlstr := this.Ctx.Input.Uri()
+		urlstr := this.Ctx.Input.URI()
 		url_parsed, _ := url.QueryUnescape(urlstr)
 		hash := md5.New()
 		hash.Write([]byte(url_parsed))
@@ -139,7 +139,7 @@ func (this *ArticleController) Get() {
 			this.Data["Password"] = body.Password
 			this.Data["CreatedTime"] = body.CreatedTime
 			this.Data["UpdateTime"] = body.UpdateTime
-			this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+			this.Data["xsrfdata"] = template.HTML(this.XSRFFormHTML())
 			category_name := utils.GetCategoryName(body.CategoryId)
 			this.Data["CategoryName"] = category_name
 		} else {
@@ -160,7 +160,7 @@ func (this *ArticleController) Get() {
 			this.Data["Password"] = p.Password
 			this.Data["CreatedTime"] = p.CreatedTime
 			this.Data["UpdateTime"] = p.UpdateTime
-			this.Data["xsrfdata"] = template.HTML(this.XsrfFormHtml())
+			this.Data["xsrfdata"] = template.HTML(this.XSRFFormHTML())
 			utils.Urllist.Put(url_hash, &p, 3600)
 		}
 
@@ -256,7 +256,7 @@ func (this *ArticleController) Get() {
 			this.Data["NextPage"] = next_page
 		}
 
-		this.TplNames = "post.html"
+		this.TplName = "post.html"
 		this.Render()
 	}
 }
@@ -276,7 +276,7 @@ func (this *ArticleController) Post() {
 			this.Abort("500")
 		}
 
-		url := this.Ctx.Input.Uri()
+		url := this.Ctx.Input.URI()
 
 		if Password != "" {
 			var p models.Post
@@ -411,7 +411,7 @@ func (this *ArticleController) Post() {
 				this.Data["MaxCommentPage"] = max_pages - 1
 				this.Data["MinCommentPage"] = 0
 
-				this.TplNames = "post.html"
+				this.TplName = "post.html"
 				this.Render()
 				return
 			}
@@ -468,7 +468,7 @@ func (this *ArticleController) Post() {
 		if err != nil {
 			utils.Error(err)
 		}
-		url := this.Ctx.Input.Uri()
+		url := this.Ctx.Input.URI()
 		this.Ctx.Redirect(301, url)
 	}
 }
@@ -511,7 +511,7 @@ func (this *CategoryController) Get() {
 	this.Data["CategoryCounts"] = count
 	this.Data["CategoryName"] = category_name
 
-	this.TplNames = "category.html"
+	this.TplName = "category.html"
 	this.Render()
 
 }
@@ -574,7 +574,7 @@ func (this *CategoryPageController) Get() {
 		以上是在index.html中判断
 	*/
 	this.Data["NewPage"] = page_id - 1
-	this.TplNames = "category.html"
+	this.TplName = "category.html"
 	this.Render()
 }
 
@@ -625,6 +625,6 @@ func (this *PageController) Get() {
 		以上是在index.html中判断
 	*/
 	this.Data["NewPage"] = page_id - 1
-	this.TplNames = "index.html"
+	this.TplName = "index.html"
 	this.Render()
 }

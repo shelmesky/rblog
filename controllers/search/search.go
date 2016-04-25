@@ -15,7 +15,7 @@ type SearchController struct {
 /*
 	如果是提交评论的表单，则直接返回true
 */
-func (this *SearchController) CheckXsrfCookie() bool {
+func (this *SearchController) CheckXSRFCookie() bool {
 	return true
 }
 
@@ -54,7 +54,7 @@ func (this *SearchController) Post() {
 		}
 		this.Data["NewPage"] = -1
 
-		this.TplNames = "search.html"
+		this.TplName = "search.html"
 		this.Render()
 	} else {
 		this.Abort("404")
@@ -122,6 +122,6 @@ func (this *SearchPageController) Get() {
 		以上是在index.html中判断
 	*/
 	this.Data["NewPage"] = page_id - 1
-	this.TplNames = "search.html"
+	this.TplName = "search.html"
 	this.Render()
 }

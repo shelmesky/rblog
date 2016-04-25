@@ -12,7 +12,7 @@ type AboutController struct {
 }
 
 func (this *AboutController) Get() {
-	this.TplNames = "about.html"
+	this.TplName = "about.html"
 
 	this.Data["Catagories"] = utils.CatCount
 	this.Data["ArchiveCount"] = utils.ArCount
