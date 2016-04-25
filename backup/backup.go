@@ -181,7 +181,7 @@ func main() {
 	// 备份MySQL数据库
 	data, err := DumpMysql(username, password, database)
 	if err != nil {
-		log.Println(err)
+		log.Println(string(data), err)
 		return
 	}
 
