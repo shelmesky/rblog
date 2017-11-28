@@ -3,7 +3,7 @@ package feedcontrollers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	. "github.com/gorilla/feeds"
+	"github.com/gorilla/feeds"
 	"github.com/shelmesky/rblog/common/utils"
 	"github.com/shelmesky/rblog/models"
 	"time"
@@ -23,29 +23,32 @@ func (this *RssController) Get() {
 		utils.Error(err)
 	}
 
-	feed := &AtomFeed{
+	feed := &feeds.AtomFeed{
 		Xmlns:    ns,
 		Title:    utils.Site_config.BlogName,
-		Link:     &AtomLink{Href: utils.Site_config.BlogUrl},
+		Link:     &feeds.AtomLink{Href: utils.Site_config.BlogUrl},
 		Subtitle: "编程/生活/思考",
-		Author:   &AtomAuthor{AtomPerson: AtomPerson{Name: "Roy Lieu", Email: "roy@rootk.com"}},
+		Author:   &feeds.AtomAuthor{AtomPerson: feeds.AtomPerson{Name: "Roy Lieu", Email: "roy@rootk.com"}},
 		Updated:  utils.Now(),
 	}
 
 	for _, post := range posts {
 		body := post.Body
 		body = utils.RenderMarkdown(body)
-		item := &AtomEntry{
+		links := make([]feeds.AtomLink, 0)
+		link := feeds.AtomLink{Rel: "alternate", Href: utils.Site_config.BlogUrl + "/post/" + post.Shortname + ".html"}
+		links = append(links, link)
+		item := &feeds.AtomEntry{
 			Title:     post.Title,
-			Content:   &AtomContent{Type: "text/html", Content: body},
-			Link:      &AtomLink{Rel: "alternate", Href: utils.Site_config.BlogUrl + "/post/" + post.Shortname + ".html"},
+			Content:   &feeds.AtomContent{Type: "text/html", Content: body},
+			Links:     links,
 			Updated:   post.CreatedTime.Format(time.RFC3339),
 			Published: post.CreatedTime.Format(time.RFC3339),
 		}
 		feed.Entries = append(feed.Entries, item)
 	}
 
-	xmlstr, err := ToXML(feed)
+	xmlstr, err := feeds.ToXML(feed)
 	if err != nil {
 		utils.Error(err)
 	}
